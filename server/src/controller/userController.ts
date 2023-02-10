@@ -28,7 +28,7 @@ class UserController {
   updateUser: RequestHandler = async (req, res) => {
     UserModel.getById(req.params.id)
       .then(() => {
-        UserModel.create(req.body)
+        UserModel.update(req.params.id, req.body)
           .then(data => res.status(200).json(data))
           .catch(err => res.status(400).json(err.message));
       })

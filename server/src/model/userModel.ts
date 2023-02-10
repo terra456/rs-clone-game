@@ -26,6 +26,22 @@ class UserModel {
     return newUser;
   };
 
+  update = async (id:string, obj: UserType): Promise<UserType | Error> => {
+    const userIndex = users.findIndex((el) => el.id === id);
+    const user = users[userIndex];
+    const newUser = {
+      id: user.id,
+      name: obj.name || user.name,
+      password: obj.password || user.password,
+      avatar: obj.avatar || user.avatar,
+      settings: obj.settings || user.settings,
+      lastLevel: obj.lastLevel || user.lastLevel || 0,
+      totalScore: obj.totalScore || user.totalScore || 0
+    };
+    users.splice(userIndex, 1, newUser);
+    return newUser;
+  };
+
   getById = async (id: string): Promise<UserType | Error> => {
     const userIndex = users.findIndex((el) => el.id === id);
 
