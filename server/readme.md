@@ -67,7 +67,8 @@
 - Method: POST
 - Properties:
   - `id` — unique identifier (`string`, `uuid`) generated on server side
-    `userId` — unique identifier (`string`, `uuid`) get from user info to link it
+  - `userId` — unique identifier (`string`, `uuid`) get from user info to link it
+  -  name - name of the saving (`string`, **required**)
   - `date` — current timestamp (`string`, **required**)
   - `level` — game level (`string`, **required**)
   - `dificulty` — game dificulty (`string`, **required**)
@@ -77,9 +78,9 @@
 - Server answer with `status code` **400** and corresponding message if request `body` does not contain **required** fields
 
 ### Get info about saved games
-- URL /api/saved/user/{userId}
+- URL /api/saved/{userId}
 - Method: GET
-- Server answer with `status code` **200** and all records with `userId === {userId}` if it exists
+- Server answer with `status code` **200** and [all] records with `userId === {userId}` if it exists
 - Server answer with `status code` **400** and corresponding message if `userId` is invalid (not `uuid`)
 - Server answer with `status code` **404** and corresponding message if record with `id === userId` doesn't exist
 
