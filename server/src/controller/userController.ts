@@ -6,32 +6,40 @@ import { UserType } from 'types';
 import UserModel from '../model/userModel';
 
 class UserController {
-  // createUser(req: Request, res: Response) => Promise;
 
-  createUser: RequestHandler = (req, res) => {
-    try {
-      const post = UserModel.create(req.body);
-      res.json(post);
-    } catch (e) {
-      res.status(500).json(e);
-    }
+  createUser: RequestHandler = async (req, res) => {
+    UserModel.create(req.body)
+      .then(data => res.status(201).json(data))
+      .catch(err => res.status(400).json(err.message));
   };
 
-  // async getUser(req, res) {
-  //   return res.json(userModel.getAll())
-  // }
+  getUser: RequestHandler = async (req, res) => {
+    UserModel.getById(req.params.id)
+      .then(data => res.status(200).json(data))
+      .catch(err => res.status(404).json(err.message));
+  };
 
-  // async getAllUsers(req, res) {
+  getAllUsers: RequestHandler = async (req, res) => {
+    UserModel.getAll()
+      .then(data => res.status(200).json(data))
+      .catch(err => res.status(404).json(err.message));
+  };
 
-  // }
+  updateUser: RequestHandler = async (req, res) => {
+    UserModel.getById(req.params.id)
+      .then(() => {
+        UserModel.create(req.body)
+          .then(data => res.status(200).json(data))
+          .catch(err => res.status(400).json(err.message));
+      })
+      .catch(err => res.status(404).json(err.message));
+  };
 
-  // async updateUser(req, res) {
-
-  // }
-
-  // async deliteUser(req: Request, res: Response) {
-
-  // }
+  deleteUser: RequestHandler = async (req, res) => {
+    UserModel.removeById(req.params.id)
+      .then((data) => res.status(204).json(data))
+      .catch((err) => res.status(404).json(err.message));
+  };
 }
 
 export default new UserController();
