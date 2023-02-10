@@ -35,7 +35,7 @@
 - Server answer with` status code` **400** and corresponding message if format of record is not json or is invalid
 - Server answer with` status code` **404** and corresponding message if record with `id === userId` doesn't exist
 
-### Delite user
+### Delete user
 - URL /api/users/{userId}
 - Method: DELETE
 - Server answer with` status code` **204** if the record is found and deleted
@@ -62,6 +62,12 @@
 - Server answer with `status code` **400** and corresponding message if `userId` is invalid (not `uuid`)
 - Server answer with `status code` **404** and corresponding message if record with `id === userId` doesn't exist
 
+### Delete info about all win games
+- URL /api/games/{userId}
+- Method: DELETE
+- Server answer with` status code` **204** if the records are found and deleted
+- Server answer with` status code` **404** and corresponding message if record with `id === userId` doesn't exist
+
 ### Save game
 - URL /api/saved
 - Method: POST
@@ -77,16 +83,15 @@
 - Server answer with `status code` **201** and newly created record
 - Server answer with `status code` **400** and corresponding message if request `body` does not contain **required** fields
 
-### Get info about saved games
+### Get info about all saved games
 - URL /api/saved/{userId}
 - Method: GET
 - Server answer with `status code` **200** and [all] records with `userId === {userId}` if it exists
 - Server answer with `status code` **400** and corresponding message if `userId` is invalid (not `uuid`)
 - Server answer with `status code` **404** and corresponding message if record with `id === userId` doesn't exist
 
-### Get info about save game
-- URL /api/saved/{savedId}
-- Method: GET
-- Server answer with `status code` **200** and info about the game in json
-- Server answer with `status code` **400** and corresponding message if `userId` is invalid (not `uuid`)
-- Server answer with `status code` **404** and corresponding message if record with `id === userId` doesn't exist
+### Delite saved game
+- URL /api/saved/{savedGameId}
+- Method: DELETE
+- Server answer with` status code` **204** if the record is found and deleted
+- Server answer with` status code` **404** and corresponding message if record with `id === savedGameId` doesn't exist
