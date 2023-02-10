@@ -47,7 +47,7 @@
 - Method: POST
 - Properties:
   - `id` — unique identifier (`string`, `uuid`) generated on server side
-    `userId` — unique identifier (`string`, `uuid`) get from user info to link it
+  - `userId` — unique identifier (`string`, `uuid`) get from user info to link it
   - `date` — current timestamp (`string`, **required**)
   - `level` — game level (`string`, **required**)
   - `dificulty` — game dificulty (`string`, **required**)
