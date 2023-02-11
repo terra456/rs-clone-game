@@ -23,6 +23,12 @@ class UserModel {
   };
 
   update = async (id:string, obj: UserType): Promise<UserType | Error> => {
+    if(!id) {
+      throw new Error('Нет ID');
+    }
+    if(!obj) {
+      throw new Error('Параметры не получены');
+    }
     return this.dbModel.getById(id)
       .then(() => {
         return this.dbModel.update(id, obj);
@@ -31,6 +37,9 @@ class UserModel {
   };
 
   getById = async (id: string): Promise<UserType | Error> => {
+    if(!id) {
+      throw new Error('Нет ID');
+    }
     return this.dbModel.getById(id);
   };
 
@@ -45,6 +54,9 @@ class UserModel {
   // };
 
   removeById = async (id: string): Promise<string | Error> => {
+    if(!id) {
+      throw new Error('Нет ID');
+    }
     return this.dbModel.removeById(id);
   };
 
