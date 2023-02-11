@@ -3,40 +3,36 @@
 
 import { RequestHandler } from 'express';
 import { UserType } from 'types';
-import UserModel from '../model/userModel';
+import userModel from '../model/userModel';
 
 class UserController {
 
   createUser: RequestHandler = async (req, res) => {
-    UserModel.create(req.body)
+    userModel.create(req.body)
       .then(data => res.status(201).json(data))
       .catch(err => res.status(400).json(err.message));
   };
 
   getUser: RequestHandler = async (req, res) => {
-    UserModel.getById(req.params.id)
+    userModel.getById(req.params.id)
       .then(data => res.status(200).json(data))
       .catch(err => res.status(404).json(err.message));
   };
 
   getAllUsers: RequestHandler = async (req, res) => {
-    UserModel.getAll()
+    userModel.getAll()
       .then(data => res.status(200).json(data))
       .catch(err => res.status(404).json(err.message));
   };
 
   updateUser: RequestHandler = async (req, res) => {
-    UserModel.getById(req.params.id)
-      .then(() => {
-        UserModel.update(req.params.id, req.body)
-          .then(data => res.status(200).json(data))
-          .catch(err => res.status(400).json(err.message));
-      })
-      .catch(err => res.status(404).json(err.message));
+    userModel.update(req.params.id, req.body)
+      .then(data => res.status(200).json(data))
+      .catch(err => res.status(400).json(err.message));
   };
 
   deleteUser: RequestHandler = async (req, res) => {
-    UserModel.removeById(req.params.id)
+    userModel.removeById(req.params.id)
       .then((data) => res.status(204).json(data))
       .catch((err) => res.status(404).json(err.message));
   };

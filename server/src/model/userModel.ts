@@ -1,20 +1,17 @@
 import { UserType } from 'types';
-import { v4 as uuidv4 } from 'uuid';
-
-const users: Array<UserType> = [
-  { id: '1', name: 'Ulbi TV', password: '23' }
-];
+import UserMemoryModel from './userMemoryModel';
 
 class UserModel {
+  dbModel: UserMemoryModel;
+  constructor() {
+    this.dbModel = new UserMemoryModel();
+  }
+
   create = async (obj: UserType): Promise<UserType | Error> => {
     if (!obj.name) {
       throw new Error('Укажите имя пользователя');
     }
-    if(users.find((el) => el.name === obj.name)) {
-      throw new Error('Пользователь уже существует');
-    }
-    const newUser = {
-      id: uuidv4(),
+    const newUser: UserType = {
       name: obj.name,
       password: obj.password,
       avatar: obj.avatar,
@@ -22,52 +19,38 @@ class UserModel {
       lastLevel: 0,
       totalScore: 0
     };
-    users.push(newUser);
-    return newUser;
+    return this.dbModel.create(newUser);
   };
 
   update = async (id:string, obj: UserType): Promise<UserType | Error> => {
-    const userIndex = users.findIndex((el) => el.id === id);
-    const user = users[userIndex];
-    const newUser = {
-      id: user.id,
-      name: obj.name || user.name,
-      password: obj.password || user.password,
-      avatar: obj.avatar || user.avatar,
-      settings: obj.settings || user.settings,
-      lastLevel: obj.lastLevel || user.lastLevel || 0,
-      totalScore: obj.totalScore || user.totalScore || 0
-    };
-    users.splice(userIndex, 1, newUser);
-    return newUser;
+    return this.dbModel.getById(id)
+      .then(() => {
+        return this.dbModel.update(id, obj);
+      })
+      .catch((e) => e);
   };
 
   getById = async (id: string): Promise<UserType | Error> => {
-    const userIndex = users.findIndex((el) => el.id === id);
-
-    if(userIndex === -1) {
-      throw new Error('Пользователь не найден');
-    }
-
-    return users[userIndex];
+    return this.dbModel.getById(id);
   };
 
+  // getByName = async (name: string): Promise<UserType | Error> => {
+  //   const userIndex = users.findIndex((el) => el.name === name);
+
+  //   if(userIndex === -1) {
+  //     throw new Error('Пользователь не найден');
+  //   }
+
+  //   return users[userIndex];
+  // };
+
   removeById = async (id: string): Promise<string | Error> => {
-    const userIndex = users.findIndex((el) => el.id === String(id));
-
-    if(userIndex === -1) {
-      throw new Error('Пользователь не найден');
-    }
-
-    users.splice(userIndex, 1);
-
-    return id;
+    return this.dbModel.removeById(id);
   };
 
   getAll = async (): Promise<Array<UserType> | Error> => {
-    return users;
+    return this.dbModel.getAll();
   };
-
 }
 
 export default new UserModel();
