@@ -3,7 +3,7 @@
 
 import { RequestHandler } from 'express';
 import { UserType } from 'types';
-import userModel from '../model/userModel';
+import userModel from '../model/user/userModel';
 
 class UserController {
 
