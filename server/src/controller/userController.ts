@@ -1,8 +1,4 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
 import { RequestHandler } from 'express';
-import { UserType } from 'types';
 import userModel from '../model/user/userModel';
 
 class UserController {
