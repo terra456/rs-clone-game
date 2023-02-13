@@ -1,6 +1,7 @@
 import { GameSavedType, GameWinType, rawGameSavedType, rawGameWinType } from 'types';
 import { v4 as uuidv4 } from 'uuid';
 import GamesMemoryModel from './gamesMemoryModel';
+import createError from 'http-errors';
 
 class GamesModel {
   dbModel: GamesMemoryModel;
@@ -10,18 +11,19 @@ class GamesModel {
 
   addWin = async (user: string, obj: rawGameWinType): Promise<GameWinType | Error> => {
     if (!user) {
-      throw new Error('Неверно указан ID пользователя');
+      //TODO проверить существование пользователя в БД
+      throw createError(401, 'Неверно указан ID пользователя');
     }
     const {level, dificulty, score } = obj;
 
     if (!Number(level)) {
-      throw new Error('Неверно указан уровень игры');
+      throw createError(400, 'Неверно указан уровень игры');
     }
-    if (dificulty !== ('easy' || 'normal' || 'hard')) {
-      throw new Error('Неверно указана сложность');
+    if (dificulty != 'easy' && dificulty != 'normal' && dificulty != 'hard') {
+      throw createError(400, 'Неверно указана сложность');
     }
     if (!Number(score)) {
-      throw new Error('Неверный скор');
+      throw createError(400, 'Неверный скор');
     }
     const newGame: GameWinType = {
       id: uuidv4(),
@@ -36,7 +38,7 @@ class GamesModel {
 
   getWinGame = async (id: string): Promise<GameWinType | Error> => {
     if(!id) {
-      throw new Error('Нет ID');
+      throw createError(404, 'Нет ID');
     }
     return this.dbModel.getWinGame(id);
   };
@@ -51,7 +53,7 @@ class GamesModel {
   
   removeWinGame = async (id: string): Promise<string | Error> => {
     if(!id) {
-      throw new Error('Нет ID');
+      throw createError(404, 'Нет ID');
     }
     return this.dbModel.removeWinGame(id);
   };
@@ -64,25 +66,26 @@ class GamesModel {
   };
 
   saveGame = async (user: string, obj: rawGameSavedType): Promise<GameSavedType | Error> => {
+    console.log(user);
     if (!user) {
-      throw new Error('Неверно указан ID пользователя');
+      throw createError(404, 'Неверно указан ID пользователя');
     }
     const {level, dificulty, score, name, state } = obj;
 
     if (!Number(level)) {
-      throw new Error('Неверно указан уровень игры');
+      throw createError(400, 'Неверно указан уровень игры');
     }
-    if (dificulty !== ('easy' || 'normal' || 'hard')) {
-      throw new Error('Неверно указана сложность');
+    if (dificulty != 'easy' && dificulty != 'normal' && dificulty != 'hard') {
+      throw createError(400, 'Неверно указана сложность');
     }
     if (!Number(score)) {
-      throw new Error('Неверный скор');
+      throw createError(400, 'Неверный скор');
     }
     if (!name) {
-      throw new Error('Укажите название');
+      throw createError(400, 'Укажите название');
     }
-    if (JSON.stringify(state)) {
-      throw new Error('Неверный формат данных');
+    if (!state || !JSON.parse(state)) {
+      throw createError(400, 'Неверный формат данных');
     }
     const newGame: GameSavedType = {
       id: uuidv4(),
@@ -92,14 +95,14 @@ class GamesModel {
       level: Number(level),
       date: new Date(),
       name: name,
-      state: JSON.stringify(state)
+      state: state
     };
     return this.dbModel.saveGame(newGame);
   };
 
   getSavedGame = async (id: string): Promise<GameWinType | Error> => {
-    if(!id) {
-      throw new Error('Нет ID');
+    if(!id || id == 'user') {
+      throw createError(400, 'Нет ID');
     }
     return this.dbModel.getSavedGame(id);
   };

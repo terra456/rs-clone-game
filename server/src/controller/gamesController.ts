@@ -6,7 +6,7 @@ class GamesController {
   addWinGame: RequestHandler = async (req, res) => {
     gamesModel.addWin(req.params.id, req.body)
       .then(data => res.status(201).json(data))
-      .catch(err => res.status(404).json(err.message));
+      .catch(err => res.status(err.status).json(err.message));
   };
 
   getWinGame: RequestHandler = async (req, res) => {

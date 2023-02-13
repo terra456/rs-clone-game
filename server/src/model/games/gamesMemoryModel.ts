@@ -53,7 +53,7 @@ class GamesMemoryModel {
   };
 
   getAllWinGames = async (id: string): Promise<Array<GameWinType> | Error> => {
-    const games = this.winGames.filter((el) => el.id === id);
+    const games = this.winGames.filter((el) => el.userId === id);
     if (games) {
       return games;
     } else {
@@ -89,8 +89,8 @@ class GamesMemoryModel {
   };
 
   getAllSaved = async (id: string) => {
-    const games = this.savedGames.filter((el) => el.id === id);
-    if (games) {
+    const games = this.savedGames.filter((el) => el.userId === id);
+    if (games.length > 0) {
       return games;
     } else {
       throw new Error('Сохраненных игр нет');

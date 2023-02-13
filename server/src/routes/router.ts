@@ -26,5 +26,10 @@ router.get('/saved/user/:id', gamesController.getAllSaveGames);
 router.delete('/saved/:id', gamesController.deliteSavedGame);
 router.delete('/saved/user/:id', gamesController.deliteAllSavedGames);
 
+router.use((req, res, next) => {
+  res.status(500).send('Something broke!');
+  next();
+});
+
 export default router;
 
