@@ -1,5 +1,6 @@
 import { openApp, openForNewUser } from "../../index";
 import { BaseComponent } from "../BaseComponent";
+import GameCanvas from "../../game/GameCanvas";
 import './login.scss';
 import './../../style.scss';
 
@@ -14,11 +15,12 @@ export class Login extends BaseComponent {
             <button class="btn login__register" id="btnRegister">Register</button>
           </div>
           <p class="login__error">Please fill inputs</p>
-          <button class="btn">Play now</button>
+          <button class="btn"id="btnStart">Play now</button>
         `;
 
         const btnRegister: HTMLElement | null = this.element.querySelector('#btnRegister');
         const btnLogin: HTMLElement | null = this.element.querySelector('#btnLogin');
+        const btnStart: HTMLElement | null = this.element.querySelector('#btnStart');
         const error: HTMLElement | null = this.element.querySelector('.login__error');
 
         if (btnRegister !== null) {
@@ -34,6 +36,13 @@ export class Login extends BaseComponent {
                 this.validateInputs() ? openApp() : error?.classList.add('login__error--visible');
             });
         }
+
+        if (btnStart !== null) {
+            btnStart.addEventListener('click', () => {
+                error?.classList.remove('login__error--visible');
+                this.startGame(document.body);
+            });
+        }
     }
 
     validateInputs(): boolean {
@@ -43,4 +52,8 @@ export class Login extends BaseComponent {
         }
         return false;
     }
+
+    startGame(node: HTMLElement) {
+        const gameCanvas = new GameCanvas(node);
+    };
 }
