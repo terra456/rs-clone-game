@@ -1,0 +1,24 @@
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+
+    padding: 30px 0;
+
+    &__btn {
+        margin-left: 30px;
+    }
+}
+
+.btn {
+    display: block;
+    border-radius: 10px;
+    border: none;
+    padding: 10px 20px;
+    background-color: cornflowerblue;
+
+    &--out {
+        background-color: coral;
+    }
+}

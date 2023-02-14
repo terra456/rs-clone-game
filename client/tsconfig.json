@@ -2,7 +2,7 @@
   "compilerOptions": {
     "sourceMap": true,
     "outDir": "./dist",
-    "rootDir": "/",
+    //"rootDir": "/.src",
     "allowSyntheticDefaultImports": true,
     "noImplicitAny": true,
     "module": "es6",
