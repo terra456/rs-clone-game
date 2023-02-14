@@ -75,6 +75,13 @@ export class Login extends BaseComponent {
                 this.element.remove();
             });
         }
+
+        if (btnStart !== null) {
+            btnStart.addEventListener('click', () => {
+                error?.classList.remove('login__error--visible');
+                this.startGame(document.body);
+            });
+        }
     }
 
     validateInputs(): boolean {
