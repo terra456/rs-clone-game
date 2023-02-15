@@ -12,7 +12,6 @@ class Sprite {
   }
 
   draw () {
-    console.log(this.image);
     if (!this.image) {
       return;
     }
