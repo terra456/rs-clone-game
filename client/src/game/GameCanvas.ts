@@ -8,14 +8,16 @@ class GameCanvas {
   scaledCanvas: { width: number, height: number };
   canvas: HTMLCanvasElement;
   context: CanvasRenderingContext2D;
+  scale: number;
 
   constructor (parentNode: HTMLElement, width = 1024, height = 576) {
     this.canvas = document.createElement('canvas');
     this.canvas.width = width;
     this.canvas.height = height;
+    this.scale = 4;
     this.scaledCanvas = {
-      width: width / 4,
-      height: height / 4
+      width: width / this.scale,
+      height: height / this.scale
     };
     parentNode.appendChild(this.canvas);
     const context = this.canvas.getContext('2d');
@@ -29,12 +31,12 @@ class GameCanvas {
       left: false,
       right: false
     };
-    const player = new Player(context, { x: 10, y: 10 }, { width: this.canvas.width, height: this.canvas.height });
-    const player2 = new Player(context, { x: 50, y: 50 }, { width: this.canvas.width, height: this.canvas.height });
-    const background = new Sprite(context, { x: 0, y: 0 }, '../assets/background.png');
     const collusionField = new CollusionField(context, 16);
     const floorCollusions = collusionField.generateCollusionBlocks(floorCollisions);
     const platformCollusions = collusionField.generateCollusionBlocks(platformCollisions);
+    const background = new Sprite(context, { x: 0, y: 0 }, '../assets/background.png');
+    const player = new Player(context, this.scale, { x: 10, y: 10 }, { width: this.canvas.width, height: this.canvas.height }, floorCollusions);
+    const player2 = new Player(context, this.scale, { x: 50, y: 50 }, { width: this.canvas.width, height: this.canvas.height }, floorCollusions);
     function animationLoop () {
       window.requestAnimationFrame(animationLoop);
       context.fillStyle = 'grey';
@@ -49,7 +51,6 @@ class GameCanvas {
       platformCollusions.forEach((block) => {
         block.update();
       });
-      context.restore();
       player.update();
       player.velocity.x = 0;
       if (keys.left) {
@@ -58,6 +59,7 @@ class GameCanvas {
         player.velocity.x = 3;
       }
       player2.update();
+      context.restore();
     };
     animationLoop();
     window.addEventListener('keydown', (event: KeyboardEvent) => {
@@ -68,7 +70,7 @@ class GameCanvas {
           break;
         case 38:
           console.log('up');
-          player.velocity.y = -15;
+          player.velocity.y = -10;
           break;
         case 39:
           console.log('right');
@@ -90,18 +92,14 @@ class GameCanvas {
     window.addEventListener('keyup', (event: KeyboardEvent) => {
       switch (event.keyCode) {
         case 37:
-          console.log('left');
           keys.left = false;
           break;
         case 39:
-          console.log('right');
           keys.right = false;
           break;
         case 40:
-          console.log('down');
           break;
         case 32:
-          console.log('space');
           event.preventDefault();
           break;
 
