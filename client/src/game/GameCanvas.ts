@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import Player from './mobs/Player';
 import Sprite from './sprite/Sprite';
-import { floorCollisions, platformCollisions } from './levels/maps/collisions';
-import CollusionField from './levels/maps/CollusionField';
+import { floorCollisions, platformCollisions } from './maps/collisions';
+import CollusionField from './collusions/CollusionField';
 
 class GameCanvas {
   scaledCanvas: { width: number, height: number };

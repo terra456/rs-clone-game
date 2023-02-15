@@ -1,4 +1,4 @@
-import type CollusionBlock from '../levels/maps/CollusionBlock';
+import type CollusionBlock from '../collusions/CollusionBlock';
 
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 class Player {
