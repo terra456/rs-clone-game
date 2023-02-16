@@ -53,7 +53,7 @@ class UserMemoryModel {
     return id;
   };
 
-  getAll = async (): Promise<Array<UserType> | Error> => {
+  getAll = async (): Promise<Array<UserType>> => {
     return this.users;
   };
 }

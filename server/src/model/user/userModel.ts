@@ -1,15 +1,19 @@
 import { UserType } from 'types';
-import UserMemoryModel from './userMemoryModel';
+import UserPostgresModel from './userPostgresModel';
+// import UserMemoryModel from './userMemoryModel';
 
 class UserModel {
-  dbModel: UserMemoryModel;
+  dbModel: UserPostgresModel;
   constructor() {
-    this.dbModel = new UserMemoryModel();
+    this.dbModel = new UserPostgresModel();
   }
 
   create = async (obj: UserType): Promise<UserType | Error> => {
     if (!obj.name) {
       throw new Error('Укажите имя пользователя');
+    }
+    if (await this.getByName(obj.name)) {
+      throw new Error(`Пользователь с именем ${obj.name} уже существует`);
     }
     const newUser: UserType = {
       name: obj.name,
@@ -22,46 +26,52 @@ class UserModel {
     return this.dbModel.create(newUser);
   };
 
-  update = async (id:string, obj: UserType): Promise<UserType | Error> => {
-    if(!id) {
-      throw new Error('Нет ID');
-    }
-    if(!obj) {
-      throw new Error('Параметры не получены');
-    }
-    return this.dbModel.getById(id)
-      .then(() => {
-        return this.dbModel.update(id, obj);
-      })
-      .catch((e) => e);
-  };
-
-  getById = async (id: string): Promise<UserType | Error> => {
-    if(!id) {
-      throw new Error('Нет ID');
-    }
-    return this.dbModel.getById(id);
-  };
-
-  // getByName = async (name: string): Promise<UserType | Error> => {
-  //   const userIndex = users.findIndex((el) => el.name === name);
-
-  //   if(userIndex === -1) {
-  //     throw new Error('Пользователь не найден');
+  // update = async (id:string, obj: UserType): Promise<UserType | Error> => {
+  //   if(!id) {
+  //     throw new Error('Нет ID');
   //   }
-
-  //   return users[userIndex];
+  //   if(!obj) {
+  //     throw new Error('Параметры не получены');
+  //   }
+  //   return this.dbModel.getById(id)
+  //     .then(() => {
+  //       return this.dbModel.update(id, obj);
+  //     })
+  //     .catch((e) => e);
   // };
 
-  removeById = async (id: string): Promise<string | Error> => {
-    if(!id) {
-      throw new Error('Нет ID');
+  // getById = async (id: string): Promise<UserType | Error> => {
+  //   if(!id) {
+  //     throw new Error('Нет ID');
+  //   }
+  //   return this.dbModel.getById(id);
+  // };
+
+  getByName = async (name: string): Promise<UserType | Error | boolean> => {
+    const users = await this.getAll();
+    if (Array.isArray(users)) {
+      const userIndex = users.findIndex((el) => el.name === name);
+      if(userIndex === -1) {
+        return false;
+      }  
+      return users[userIndex];
     }
-    return this.dbModel.removeById(id);
+    return false;
   };
 
+  // removeById = async (id: string): Promise<string | Error> => {
+  //   if(!id) {
+  //     throw new Error('Нет ID');
+  //   }
+  //   return this.dbModel.removeById(id);
+  // };
+
   getAll = async (): Promise<Array<UserType> | Error> => {
-    return this.dbModel.getAll();
+    const users = await this.dbModel.getAll();
+    if (users.length === 0) {
+      throw new Error('Пользователей нет в БД');
+    }
+    return users;
   };
 }
 
