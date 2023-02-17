@@ -31,7 +31,7 @@ class GamesModel {
       dificulty: dificulty,
       score: Number(score),
       level: Number(level),
-      date: Date.now().toString(),
+      date: Date.now(),
       wins_user_id_fkey: Number(user)
     };
 
