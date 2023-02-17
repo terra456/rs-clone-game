@@ -1,14 +1,16 @@
+import { IUser } from './../../utils/types';
 import { openApp, openForNewUser } from "../../index";
 import { BaseComponent } from "../BaseComponent";
 import './login.scss';
 import './../../style.scss';
+import { createUser } from "../../utils/db";
 
 export class Login extends BaseComponent {
     constructor() {
         super('div', 'login');
         this.element.innerHTML = `
-          <input class="login__input" placeholder="Username" type="text">
-          <input class="login__input" placeholder="Password" type="password">
+          <input id="nameInput" class="login__input" placeholder="Username" type="text">
+          <input id="passInput" class="login__input" placeholder="Password" type="password">
           <div class="login__controls">
             <button class="btn" id="btnLogin">Login</button>
             <button class="btn login__register" id="btnRegister">Register</button>
@@ -24,7 +26,25 @@ export class Login extends BaseComponent {
         if (btnRegister !== null) {
             btnRegister.addEventListener('click', () => {
                 error?.classList.remove('login__error--visible');
-                this.validateInputs() ? openForNewUser() : error?.classList.add('login__error--visible');
+                if (this.validateInputs()) {
+                    const name: string = (this.element.querySelector('#nameInput') as HTMLInputElement).value;
+                    const pass: string = (this.element.querySelector('#passInput') as HTMLInputElement).value;
+                    const newUser: IUser = {
+                        name: name,
+                        password: pass,
+                        avatar: "",
+                        settings: "",
+                        lastLevel: 1,
+                        totalScore: 0,
+                    }
+                    console.log(newUser)
+                    createUser(newUser).then((data) =>{
+                        console.log(data);
+                        openForNewUser();
+                    });
+                } else {
+                    error?.classList.add('login__error--visible');
+                }
             });
         }
 
