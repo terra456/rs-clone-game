@@ -13,6 +13,7 @@ class Player extends Sprite {
   collusions: CollusionBlock[];
   scale: number;
   imageSrc: string;
+  hitbox: { position: { x: number; y: number; }; width: number; height: number; };
 
   constructor (cont: CanvasRenderingContext2D, scale: number, position: { x: number, y: number }, field: { width: number, height: number }, collusions: CollusionBlock[], imageSrc: string, frameRate: number) {
     super(cont, position, imageSrc, frameRate, scale);
@@ -28,6 +29,14 @@ class Player extends Sprite {
     };
     this.gravity = 0.5;
     this.collusions = collusions;
+    this.hitbox = {
+      position: {
+        x: this.position.x,
+        y: this.position.y,
+      },
+      width: 10,
+      height: 10,
+    }
   }
 
   //draw () {
@@ -37,10 +46,13 @@ class Player extends Sprite {
 
   update () {
     this.updateFrames();
+    this.updateHitbox();
     this.draw();
     this.position.x += this.velocity.x;
+    this.updateHitbox();
     this.checkForHorizontalCollusions();
     this.applyGravity();
+    this.updateHitbox();
     this.checkForVerticalCollusions();
     // this.position.y += this.velocity.y;
     // if (this.position.y + this.height + this.velocity.y < this.field.height) {
@@ -50,21 +62,34 @@ class Player extends Sprite {
     // }
   }
 
+  updateHitbox() {
+    this.hitbox = {
+      position: {
+        x: this.position.x + 35,
+        y: this.position.y + 26,
+      },
+      width: 14,
+      height: 27,
+    }
+  }
+
   checkForHorizontalCollusions () {
     for (let i = 0; i < this.collusions.length; i++) {
       const collusionBlock = this.collusions[i];
-      if (this.position.y + this.height >= collusionBlock.position.y &&
-        this.position.y <= collusionBlock.position.y + collusionBlock.height &&
-        this.position.x <= collusionBlock.position.x + collusionBlock.width &&
-        this.position.x + this.width >= collusionBlock.position.x) {
+      if (this.hitbox.position.y + this.hitbox.height >= collusionBlock.position.y &&
+        this.hitbox.position.y <= collusionBlock.position.y + collusionBlock.height &&
+        this.hitbox.position.x <= collusionBlock.position.x + collusionBlock.width &&
+        this.hitbox.position.x + this.hitbox.width >= collusionBlock.position.x) {
         if (this.velocity.x > 0) {
           this.velocity.x = 0;
-          this.position.x = collusionBlock.position.x - this.width - 0.01;
+          const offset: number = this.hitbox.position.x - this.position.x + this.hitbox.width;
+          this.position.x = collusionBlock.position.x - offset - 0.01;
           break;
         }
         if (this.velocity.x < 0) {
           this.velocity.x = 0;
-          this.position.x = collusionBlock.position.x + collusionBlock.width + 0.01;
+          const offset: number = this.hitbox.position.x - this.position.x;
+          this.position.x = collusionBlock.position.x + collusionBlock.width - offset + 0.01;
           break;
         }
       }
@@ -74,18 +99,20 @@ class Player extends Sprite {
   checkForVerticalCollusions () {
     for (let i = 0; i < this.collusions.length; i++) {
       const collusionBlock = this.collusions[i];
-      if (this.position.y + this.height >= collusionBlock.position.y &&
-        this.position.y <= collusionBlock.position.y + collusionBlock.height &&
-        this.position.x <= collusionBlock.position.x + collusionBlock.width &&
-        this.position.x + this.width >= collusionBlock.position.x) {
+      if (this.hitbox.position.y + this.hitbox.height >= collusionBlock.position.y &&
+        this.hitbox.position.y <= collusionBlock.position.y + collusionBlock.height &&
+        this.hitbox.position.x <= collusionBlock.position.x + collusionBlock.width &&
+        this.hitbox.position.x + this.hitbox.width >= collusionBlock.position.x) {
         if (this.velocity.y > 0) {
           this.velocity.y = 0;
-          this.position.y = collusionBlock.position.y - this.height - 0.01;
+          const offset: number = this.hitbox.position.y - this.position.y + this.hitbox.height;
+          this.position.y = collusionBlock.position.y - offset - 0.01;
           break;
         }
         if (this.velocity.y < 0) {
           this.velocity.y = 0;
-          this.position.y = collusionBlock.position.y + collusionBlock.height + 0.01;
+          const offset: number = this.hitbox.position.y - this.position.y;
+          this.position.y = collusionBlock.position.y + collusionBlock.height - offset + 0.01;
           break;
         }
       }
