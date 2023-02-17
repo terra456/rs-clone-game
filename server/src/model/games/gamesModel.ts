@@ -1,6 +1,4 @@
 import { GameSavedType, GameWinType, rawGameSavedType, rawGameWinType } from 'types';
-import { v4 as uuidv4 } from 'uuid';
-import GamesMemoryModel from './gamesMemoryModel';
 import createError from 'http-errors';
 import GamesPostgressModel from './gamesPostgressModel';
 

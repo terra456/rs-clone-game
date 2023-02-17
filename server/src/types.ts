@@ -10,6 +10,7 @@ export type UserType = {
 
 export type GameWinType = {
   id?: string,
+  userId?:string,
   user_id:string | number,
   date?: Date | string | any,
   level: number,
