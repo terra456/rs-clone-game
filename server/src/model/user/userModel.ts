@@ -13,7 +13,9 @@ class UserModel {
     if (!obj.name) {
       throw new Error('Укажите имя пользователя');
     }
-    if (await this.getByName(obj.name)) {
+    const user = await this.getByName(obj.name);
+    console.log(user);
+    if (user) {
       throw new Error(`Пользователь с именем ${obj.name} уже существует`);
     }
     const newUser: UserType = {
@@ -54,7 +56,7 @@ class UserModel {
       const userIndex = users.findIndex((el) => el.name === name);
       if(userIndex === -1) {
         return false;
-      }  
+      }
       return users[userIndex];
     }
     return false;

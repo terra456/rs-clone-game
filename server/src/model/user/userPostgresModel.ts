@@ -66,7 +66,6 @@ class UserPostgresModel {
   getAll = async (): Promise<any> => {
     try {
       const res = await db.query('SELECT * FROM users;');
-      console.log(res.rows);
       if (res.rows) {
         return res.rows;
       }
