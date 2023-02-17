@@ -18,33 +18,46 @@ class UserPostgresModel {
     }
   };
 
-  // update = async (id:string, obj: UserType): Promise<UserType | Error> => {
-  //   const userIndex = users.findIndex((el) => el.id === id);
-  //   const user = users[userIndex];
-  //   const newUser = {
-  //     id: user.id,
-  //     name: obj.name || user.name,
-  //     password: obj.password || user.password,
-  //     avatar: obj.avatar || user.avatar,
-  //     settings: obj.settings || user.settings,
-  //     lastLevel: obj.lastLevel || user.lastLevel || 0,
-  //     totalScore: obj.totalScore || user.totalScore || 0
-  //   };
-  //   users.splice(userIndex, 1, newUser);
-  //   return newUser;userPostgresModel
-  //     throw new Error('Пользователь не найден');
-  //   }
+  update = async (id:string, obj: UserType): Promise<any | Error> => {
+    const user = await this.getById(id);
+    if (!user) {
+      throw new Error(`Пользователя с id = ${id} не найдено`);
+    }
+    // const newUser = {
+    //   name: obj.name || user.name,
+    //   password: obj.password || user.password,
+    //   avatar: obj.avatar || user.avatar,
+    //   settings: obj.settings || user.settings,
+    //   lastLevel: obj.lastLevel || user.lastLevel || 0,
+    //   totalScore: obj.totalScore || user.totalScore || 0
+    // };
+    // const keys = Object.keys(newUser);
+    // const values = Object.values(newUser);
+    // const text = `UPDATE users (${keys.join(', ')}) VALUES(${keys.map((el, i) => '$' + (i+1)).join(', ')}) WHERE id = ${id};`;
+    console.log(id);
+    try {
+      if (obj.name) {
+        const text = `UPDATE users SET name = ${obj.name} WHERE id = ${Number(id)};`;
+        console.log(text);
+        const res = await db.query(text);
+        if (!res) {
+          throw new Error('Нет результата');
+        }
+        return res;
+      }
+      // const res = await db.query(text, values);
+    } catch (err: any) {
+      throw new Error(err.message);
+    }
+  };
 
-  //   return users[userIndex];
-  // };
-
-  getById = async (id: string | number): Promise<any[] | Error> => {
+  getById = async (id: string | number): Promise<any | Error> => {
     try {
       const res = await db.query(`SELECT * FROM users WHERE id = ${id};`);
       if (!res.rows || res.rows.length === 0) {
         throw new Error(`Пользователя с id = ${id} не найдено`);
       }
-      return res.rows;
+      return res.rows[0];
     } catch (err: any) {
       throw new Error(err.message);
     }

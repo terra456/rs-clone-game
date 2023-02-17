@@ -14,7 +14,6 @@ class UserModel {
       throw new Error('Укажите имя пользователя');
     }
     const user = await this.getByName(obj.name);
-    console.log(user);
     if (user) {
       throw new Error(`Пользователь с именем ${obj.name} уже существует`);
     }
@@ -29,19 +28,15 @@ class UserModel {
     return this.dbModel.create(newUser);
   };
 
-  // update = async (id:string, obj: UserType): Promise<UserType | Error> => {
-  //   if(!id) {
-  //     throw new Error('Нет ID');
-  //   }
-  //   if(!obj) {
-  //     throw new Error('Параметры не получены');
-  //   }
-  //   return this.dbModel.getById(id)
-  //     .then(() => {
-  //       return this.dbModel.update(id, obj);
-  //     })
-  //     .catch((e) => e);
-  // };
+  update = async (id:string, obj: UserType): Promise<any | Error> => {
+    if(!id) {
+      throw new Error('Нет ID');
+    }
+    if(!obj) {
+      throw new Error('Параметры не получены');
+    }
+    return await this.dbModel.update(id, obj);
+  };
 
   getById = async (id: string): Promise<any[] | Error> => {
     if(!id) {

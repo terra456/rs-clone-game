@@ -12,7 +12,7 @@ router.use((req, res, next) => {
 router.get('/users', userController.getAllUsers);
 router.post('/users', userController.createUser);
 router.get('/users/:id', userController.getUser);
-// router.put('/users/:id', userController.updateUser);
+router.put('/users/:id', userController.updateUser);
 router.delete('/users/:id', userController.deleteUser);
 
 router.post('/games/user/:id', gamesController.addWinGame);

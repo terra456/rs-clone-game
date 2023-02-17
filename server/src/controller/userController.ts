@@ -21,11 +21,11 @@ class UserController {
       .catch(err => res.status(404).json(err.message));
   };
 
-  // updateUser: RequestHandler = async (req, res) => {
-  //   userModel.update(req.params.id, req.body)
-  //     .then(data => res.status(200).json(data))
-  //     .catch(err => res.status(400).json(err.message));
-  // };
+  updateUser: RequestHandler = async (req, res) => {
+    userModel.update(req.params.id, req.body)
+      .then(data => res.status(200).json(data))
+      .catch(err => res.status(400).json(err.message));
+  };
 
   deleteUser: RequestHandler = async (req, res) => {
     userModel.removeById(req.params.id)
