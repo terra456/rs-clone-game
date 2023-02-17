@@ -4,8 +4,8 @@ create TABLE users (
   password VARCHAR (50),
   avatar VARCHAR (255),
   settings VARCHAR,
-  level smallint,
-  score int,
+  lastLevel smallint,
+  totalScore int,
   date timestamp
 );
 

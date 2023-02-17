@@ -1,19 +1,21 @@
+import { QueryResult } from 'pg';
 import { UserType } from 'types';
 import db from '../../database/dbPool';
 
 class UserPostgresModel {
-  create = async (obj: UserType): Promise<UserType | Error> => {
+  create = async (obj: UserType): Promise<any[] | Error> => {
     const keys = Object.keys(obj);
     const values = Object.values(obj);
-    // eslint-disable-next-line quotes
     const text = `INSERT INTO users(${keys.join(', ')}) VALUES(${keys.map((el, i) => '$' + (i+1)).join(', ')}) RETURNING *`;
-    console.log(text);
-    db.query(text, values)
-      .then(res => {
-        console.log(res.rows[0]);
-      })
-      .catch(e => console.error(e.stack));
-    return obj;
+    try {
+      const res = await db.query(text, values);
+      if (!res.rows) {
+        throw new Error('Ошибка записи в БД');
+      }
+      return res.rows;
+    } catch (err) {
+      throw new Error('Ошибка записи в БД');
+    }
   };
 
   // update = async (id:string, obj: UserType): Promise<UserType | Error> => {
@@ -36,34 +38,37 @@ class UserPostgresModel {
   //   return users[userIndex];
   // };
 
-  // getByName = async (name: string): Promise<UserType | Error> => {
-  //   const userIndex = users.findIndex((el) => el.name === name);
+  getById = async (id: string | number): Promise<any[] | Error> => {
+    try {
+      const res = await db.query(`SELECT * FROM users WHERE id = ${id};`);
+      if (!res.rows || res.rows.length === 0) {
+        throw new Error(`Пользователя с id = ${id} не найдено`);
+      }
+      return res.rows;
+    } catch (err: any) {
+      throw new Error(err.message);
+    }
+  };
 
-  //   if(userIndex === -1) {
-  //     throw new Error('Пользователь не найден');
-  //   }
 
-  //   return users[userIndex];
-  // };
-
-  // removeById = async (id: string): Promise<string | Error> => {
-  //   const userIndex = users.findIndex((el) => el.id === String(id));
-
-  //   if(userIndex === -1) {
-  //     throw new Error('Пользователь не найден');
-  //   }
-
-  //   users.splice(userIndex, 1);
-
-  //   return id;
-  // };
+  removeById = async (id: string): Promise<number | Error> => {
+    try {
+      const res = await db.query(`DELETE FROM users WHERE id = ${id};`);
+      if (!res.rowCount || res.rowCount == 0) {
+        throw new Error(`Пользователя с id = ${id} не найдено`);
+      }
+      return res.rowCount;
+    } catch (err: any) {
+      throw new Error(err.message);
+    }
+  };
 
   getAll = async (): Promise<any> => {
     try {
-      const res = await db.query('SELECT NOW() as now');
-      console.log(res);
-      if (res) {
-        return res;
+      const res = await db.query('SELECT * FROM users;');
+      console.log(res.rows);
+      if (res.rows) {
+        return res.rows;
       }
     } catch (err) {
       throw new Error('Ошибка в БД');
