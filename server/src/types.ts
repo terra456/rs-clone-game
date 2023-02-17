@@ -9,27 +9,30 @@ export type UserType = {
 };
 
 export type GameWinType = {
-  id: string,
-  userId:string,
-  date: Date,
+  id?: string,
+  user_id:string | number,
+  date?: Date | string | any,
   level: number,
   dificulty: string,
-  score: number
+  score: number,
+  wins_user_id_fkey?: number
 };
 
 export type rawGameWinType = {
   id?: string,
   userId?:string,
-  date?: Date,
+  date?: Date | string,
   level?: number,
   dificulty?: string,
   score?: number
 };
 
 export type GameSavedType = {
-  id: string,
-  userId:string,
-  date: Date,
+  id?: string,
+  user_id?: number,
+  userId?:string,
+  saved_user_id_fkey?: number
+  date?: Date | Date,
   level: number,
   dificulty: string,
   score: number,
@@ -40,7 +43,7 @@ export type GameSavedType = {
 export type rawGameSavedType = {
   id?: string,
   userId?: string,
-  date?: Date,
+  date?: Date | Date,
   level?: number,
   dificulty?: string,
   score?: number,

@@ -12,10 +12,10 @@ create TABLE users (
 create TABLE wins (
   id SERIAL PRIMARY KEY,
   user_id int,
-  date timestamp NOT NULL,
-  level smallint NOT NULL,
-  dificulty VARCHAR (50) NOT NULL,
-  score int NOT NULL,
+  date VARCHAR (50),
+  level smallint,
+  dificulty VARCHAR (50),
+  score int,
   FOREIGN KEY (user_id) REFERENCES users (id)
 );
 
@@ -23,10 +23,10 @@ create TABLE saved (
   id SERIAL PRIMARY KEY,
   user_id int,
   name  VARCHAR (50) NOT NULL,
-  date timestamp NOT NULL,
-  level smallint NOT NULL,
-  dificulty VARCHAR (50) NOT NULL,
-  score int NOT NULL,
-  state VARCHAR NOT NULL,
+  date VARCHAR (50),
+  level smallint,
+  dificulty VARCHAR (50),
+  score int,
+  state VARCHAR,
   FOREIGN KEY (user_id) REFERENCES users (id)
 );

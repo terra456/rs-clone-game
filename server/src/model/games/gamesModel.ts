@@ -2,11 +2,12 @@ import { GameSavedType, GameWinType, rawGameSavedType, rawGameWinType } from 'ty
 import { v4 as uuidv4 } from 'uuid';
 import GamesMemoryModel from './gamesMemoryModel';
 import createError from 'http-errors';
+import GamesPostgressModel from './gamesPostgressModel';
 
 class GamesModel {
-  dbModel: GamesMemoryModel;
+  dbModel: GamesPostgressModel;
   constructor() {
-    this.dbModel = new GamesMemoryModel();
+    this.dbModel = new GamesPostgressModel();
   }
 
   addWin = async (user: string, obj: rawGameWinType): Promise<GameWinType | Error> => {
@@ -26,13 +27,14 @@ class GamesModel {
       throw createError(400, 'Неверный скор');
     }
     const newGame: GameWinType = {
-      id: uuidv4(),
-      userId: user,
+      user_id: Number(user),
       dificulty: dificulty,
       score: Number(score),
       level: Number(level),
-      date: new Date()
+      date: Date.now().toString(),
+      wins_user_id_fkey: Number(user)
     };
+
     return this.dbModel.addWin(newGame);
   };
 
@@ -65,8 +67,7 @@ class GamesModel {
     return this.dbModel.deleteAllWinGames(userId);
   };
 
-  saveGame = async (user: string, obj: rawGameSavedType): Promise<GameSavedType | Error> => {
-    console.log(user);
+  saveGame = async (user: string, obj: rawGameSavedType): Promise<any | Error> => {
     if (!user) {
       throw createError(404, 'Неверно указан ID пользователя');
     }
@@ -88,14 +89,14 @@ class GamesModel {
       throw createError(400, 'Неверный формат данных');
     }
     const newGame: GameSavedType = {
-      id: uuidv4(),
-      userId: user,
+      user_id: Number(user),
+      saved_user_id_fkey: Number(user),
       dificulty: dificulty,
       score: Number(score),
       level: Number(level),
       date: new Date(),
       name: name,
-      state: state
+      state: state,
     };
     return this.dbModel.saveGame(newGame);
   };
