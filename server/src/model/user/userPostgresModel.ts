@@ -50,6 +50,17 @@ class UserPostgresModel {
     }
   };
 
+  getByName = async (name: string | number): Promise<any[] | Error> => {
+    try {
+      const res = await db.query(`SELECT * FROM users WHERE name = ${name};`);
+      if (!res.rows || res.rows.length === 0) {
+        throw new Error(`Пользователя с id = ${name} не найдено`);
+      }
+      return res.rows;
+    } catch (err: any) {
+      throw new Error(err.message);
+    }
+  };
 
   removeById = async (id: string): Promise<number | Error> => {
     try {

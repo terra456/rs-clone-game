@@ -50,16 +50,8 @@ class UserModel {
     return await this.dbModel.getById(id);
   };
 
-  getByName = async (name: string): Promise<UserType | Error | boolean> => {
-    const users = await this.getAll();
-    if (Array.isArray(users)) {
-      const userIndex = users.findIndex((el) => el.name === name);
-      if(userIndex === -1) {
-        return false;
-      }
-      return users[userIndex];
-    }
-    return false;
+  getByName = async (name: string): Promise<any | Error> => {
+    return await this.dbModel.getByName(name);
   };
 
   removeById = async (id: string): Promise<number | Error> => {
