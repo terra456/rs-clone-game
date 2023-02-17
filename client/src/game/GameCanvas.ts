@@ -1,3 +1,4 @@
+import { Directions, IAnimations } from './types';
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import Player from './mobs/Player';
 import Sprite from './sprite/Sprite';
@@ -35,8 +36,50 @@ class GameCanvas {
     const floorCollusions = collusionField.generateCollusionBlocks(floorCollisions);
     const platformCollusions = collusionField.generateCollusionBlocks(platformCollisions);
     const background = new Sprite(context, { x: 0, y: 0 }, '../assets/background.png');
-    const player = new Player(context, this.scale, { x: 10, y: 10 }, { width: this.canvas.width, height: this.canvas.height }, floorCollusions, '../../assets/warrior/Idle.png', 8);
-    const player2 = new Player(context, this.scale, { x: 50, y: 50 }, { width: this.canvas.width, height: this.canvas.height }, floorCollusions,'../../assets/warrior/Idle.png', 8);
+    const playerAnimation: IAnimations = {
+      idle: {
+        imageSrc: '../../assets/warrior/Idle.png',
+        frameRate: 8,
+        frameBuffer: 3,
+      },
+      idleLeft: {
+        imageSrc: '../../assets/warrior/IdleLeft.png',
+        frameRate: 8,
+        frameBuffer: 3,
+      },
+      run: {
+        imageSrc: '../../assets/warrior/Run.png',
+        frameRate: 8,
+        frameBuffer: 5,
+      },
+      runLeft: {
+        imageSrc: '../../assets/warrior/RunLeft.png',
+        frameRate: 8,
+        frameBuffer: 5,
+      },
+      jump: {
+        imageSrc: '../../assets/warrior/Jump.png',
+        frameRate: 2,
+        frameBuffer: 3,
+      },
+      jumpLeft: {
+        imageSrc: '../../assets/warrior/JumpLeft.png',
+        frameRate: 2,
+        frameBuffer: 3,
+      },
+      fall: {
+        imageSrc: '../../assets/warrior/Fall.png',
+        frameRate: 2,
+        frameBuffer: 3,
+      },
+      fallLeft: {
+        imageSrc: '../../assets/warrior/FallLeft.png',
+        frameRate: 2,
+        frameBuffer: 3,
+      },      
+    }
+    const player = new Player(context, this.scale, { x: 10, y: 10 }, { width: this.canvas.width, height: this.canvas.height }, floorCollusions, '../../assets/warrior/Idle.png', 8, playerAnimation);
+    //const player2 = new Player(context, this.scale, { x: 50, y: 50 }, { width: this.canvas.width, height: this.canvas.height }, floorCollusions,'../../assets/warrior/Idle.png', 8);
     function animationLoop () {
       window.requestAnimationFrame(animationLoop);
       context.fillStyle = 'grey';
@@ -54,11 +97,29 @@ class GameCanvas {
       player.update();
       player.velocity.x = 0;
       if (keys.left) {
-        player.velocity.x = -3;
+        player.switchSprite('runLeft');
+        player.velocity.x = -2;
+        player.lastDirection = Directions.left;
       } else if (keys.right) {
-        player.velocity.x = 3;
+        player.switchSprite('run');
+        player.velocity.x = 2;
+        player.lastDirection = Directions.right;
+      } else if (player.velocity.y === 0) {
+        player.lastDirection === Directions.right ? player.switchSprite('idle') : player.switchSprite('idleLeft');
       }
-      player2.update();
+
+      if (player.velocity.y < 0) {
+        player.lastDirection === Directions.right ? player.switchSprite('jump') : player.switchSprite('jumpLeft');
+      } else if (player.velocity.y > 0) {
+        if (player.lastDirection === Directions.right) {
+          player.switchSprite('fall');
+        } else {
+          player.switchSprite('fallLeft');
+        }
+      }
+
+
+      //player2.update();
       context.restore();
     };
     animationLoop();

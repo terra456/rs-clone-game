@@ -1,3 +1,4 @@
+import { IAnimations, Directions } from './../types';
 import type CollusionBlock from '../collusions/CollusionBlock';
 import Sprite from '../sprite/Sprite';
 
@@ -14,8 +15,10 @@ class Player extends Sprite {
   scale: number;
   imageSrc: string;
   hitbox: { position: { x: number; y: number; }; width: number; height: number; };
+  animations: any;
+  lastDirection: Directions;
 
-  constructor (cont: CanvasRenderingContext2D, scale: number, position: { x: number, y: number }, field: { width: number, height: number }, collusions: CollusionBlock[], imageSrc: string, frameRate: number) {
+  constructor (cont: CanvasRenderingContext2D, scale: number, position: { x: number, y: number }, field: { width: number, height: number }, collusions: CollusionBlock[], imageSrc: string, frameRate: number, animations: IAnimations) {
     super(cont, position, imageSrc, frameRate, scale);
     this.context = cont;
     this.position = position;
@@ -37,12 +40,27 @@ class Player extends Sprite {
       width: 10,
       height: 10,
     }
+    this.animations = animations;
+    this.lastDirection = Directions.right;
+
+    for (let key in this.animations) {
+      const image: HTMLImageElement = new Image();
+      image.src = this.animations[key].imageSrc;
+      this.animations[key].image = image;
+    }
   }
 
   //draw () {
     //this.context.fillStyle = 'red';
     //this.context.fillRect(this.position.x, this.position.y, this.width, this.height);
   //}
+
+  switchSprite(key: string) {
+    if (this.image === this.animations[key] || !this.loaded) return;
+    this.image = this.animations[key].image;
+    this.frameBuffer = this.animations[key].frameBuffer;
+    this.frameRate = this.animations[key].frameRate;
+  }
 
   update () {
     this.updateFrames();
@@ -120,8 +138,8 @@ class Player extends Sprite {
   }
 
   applyGravity () {
-    this.position.y += this.velocity.y;
     this.velocity.y += this.gravity;
+    this.position.y += this.velocity.y;
   }
 }
 
