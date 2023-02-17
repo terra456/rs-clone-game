@@ -1,24 +1,27 @@
 import type CollusionBlock from '../collusions/CollusionBlock';
+import Sprite from '../sprite/Sprite';
 
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-class Player {
+class Player extends Sprite {
   context: CanvasRenderingContext2D;
   position: { x: number, y: number };
-  width: number;
-  height: number;
+  //width: number;
+  //height: number;
   velocity: { x: number, y: number };
   gravity: number;
   field: { width: number, height: number };
   collusions: CollusionBlock[];
   scale: number;
+  imageSrc: string;
 
-  constructor (cont: CanvasRenderingContext2D, scale: number, position: { x: number, y: number }, field: { width: number, height: number }, collusions: CollusionBlock[]) {
+  constructor (cont: CanvasRenderingContext2D, scale: number, position: { x: number, y: number }, field: { width: number, height: number }, collusions: CollusionBlock[], imageSrc: string, frameRate: number) {
+    super(cont, position, imageSrc, frameRate, scale);
     this.context = cont;
     this.position = position;
     this.field = field;
     this.scale = scale;
-    this.width = 100 / this.scale;
-    this.height = 100 / this.scale;
+    //this.width = 100 / this.scale;
+    //this.height = 100 / this.scale;
     this.velocity = {
       x: 0,
       y: 1
@@ -27,12 +30,13 @@ class Player {
     this.collusions = collusions;
   }
 
-  draw () {
-    this.context.fillStyle = 'red';
-    this.context.fillRect(this.position.x, this.position.y, this.width, this.height);
-  }
+  //draw () {
+    //this.context.fillStyle = 'red';
+    //this.context.fillRect(this.position.x, this.position.y, this.width, this.height);
+  //}
 
   update () {
+    this.updateFrames();
     this.draw();
     this.position.x += this.velocity.x;
     this.checkForHorizontalCollusions();

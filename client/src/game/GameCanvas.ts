@@ -35,8 +35,8 @@ class GameCanvas {
     const floorCollusions = collusionField.generateCollusionBlocks(floorCollisions);
     const platformCollusions = collusionField.generateCollusionBlocks(platformCollisions);
     const background = new Sprite(context, { x: 0, y: 0 }, '../assets/background.png');
-    const player = new Player(context, this.scale, { x: 10, y: 10 }, { width: this.canvas.width, height: this.canvas.height }, floorCollusions);
-    const player2 = new Player(context, this.scale, { x: 50, y: 50 }, { width: this.canvas.width, height: this.canvas.height }, floorCollusions);
+    const player = new Player(context, this.scale, { x: 10, y: 10 }, { width: this.canvas.width, height: this.canvas.height }, floorCollusions, '../../assets/warrior/Idle.png', 8);
+    const player2 = new Player(context, this.scale, { x: 50, y: 50 }, { width: this.canvas.width, height: this.canvas.height }, floorCollusions,'../../assets/warrior/Idle.png', 8);
     function animationLoop () {
       window.requestAnimationFrame(animationLoop);
       context.fillStyle = 'grey';
