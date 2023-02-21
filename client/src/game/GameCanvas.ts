@@ -4,18 +4,26 @@ import Player from './mobs/Player';
 import Sprite from './sprite/Sprite';
 import { floorCollisions, platformCollisions } from './maps/collisions';
 import CollusionField from './collusions/CollusionField';
+import Background from './maps/1_level/Background';
+import SpriteBase from './sprite/SpriteBase';
 
 class GameCanvas {
   scaledCanvas: { width: number, height: number };
   canvas: HTMLCanvasElement;
   context: CanvasRenderingContext2D;
   scale: number;
+  gameField: { width: number, height: number };
 
   constructor (parentNode: HTMLElement, width = 1024, height = 576) {
     this.canvas = document.createElement('canvas');
     this.canvas.width = width;
     this.canvas.height = height;
-    this.scale = 4;
+    this.gameField = {
+      width: 576,
+      height: 432
+    };
+    //делим на высоту фона, т.е игрового поля.
+    this.scale = this.canvas.height / this.gameField.height;
     this.scaledCanvas = {
       width: width / this.scale,
       height: height / this.scale
@@ -27,15 +35,19 @@ class GameCanvas {
     }
   }
 
-  animate (context: CanvasRenderingContext2D, w: number, h: number, scale: { width: number, height: number }) {
+  animate (context: CanvasRenderingContext2D, w: number, h: number, scaledCanvas: { width: number, height: number }) {
     const keys = {
       left: false,
       right: false
     };
+    const scale: number = this.scale;
+
     const collusionField = new CollusionField(context, 16);
     const floorCollusions = collusionField.generateCollusionBlocks(floorCollisions);
     const platformCollusions = collusionField.generateCollusionBlocks(platformCollisions);
-    const background = new Sprite(context, { x: 0, y: 0 }, '../assets/background.png');
+    const background = new Background(context, '../../assets/background.png');
+    console.log(background.image.height);
+    // const background2 = new SpriteBase(context, { x: 0, y: 0 }, '../assets/background/1_level/bg_1.png', 1);
     const playerAnimation: IAnimations = {
       idle: {
         imageSrc: '../../assets/warrior/Idle.png',
@@ -76,18 +88,20 @@ class GameCanvas {
         imageSrc: '../../assets/warrior/FallLeft.png',
         frameRate: 2,
         frameBuffer: 3,
-      },      
-    }
-    const player = new Player(context, this.scale, { x: 10, y: 10 }, { width: this.canvas.width, height: this.canvas.height }, floorCollusions, '../../assets/warrior/Idle.png', 8, playerAnimation);
+      },
+    };
+    const player = new Player(context, scale, { x: 10, y: 10 }, { width: this.canvas.width, height: this.canvas.height }, floorCollusions, '../../assets/warrior/Idle.png', 8, playerAnimation);
     //const player2 = new Player(context, this.scale, { x: 50, y: 50 }, { width: this.canvas.width, height: this.canvas.height }, floorCollusions,'../../assets/warrior/Idle.png', 8);
     function animationLoop () {
       window.requestAnimationFrame(animationLoop);
       context.fillStyle = 'grey';
       context.fillRect(0, 0, w, h);
       context.save();
-      context.scale(4, 4);
-      context.translate(0, -Number(background.image.height) + scale.height);
+      context.scale(scale, scale);
+      // ecли scale 1, то scaledCanvas.height = this.canvas.height
+      context.translate(0, -Number(background.image.height) + scaledCanvas.height);
       background.update();
+      // background2.update();
       floorCollusions.forEach((block) => {
         block.update();
       });
