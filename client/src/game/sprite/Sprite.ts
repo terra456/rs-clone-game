@@ -12,7 +12,7 @@ class Sprite {
   scale: any;
   loaded: boolean;
 
-  constructor (context: CanvasRenderingContext2D, position: { x: number, y: number }, imageSrc: string, frameRate: number = 1, frameBuffer: number = 3, scale: number = 0.4) {
+  constructor (context: CanvasRenderingContext2D, position: { x: number, y: number }, imageSrc: string, frameRate: number = 1, frameBuffer: number = 3, scale: number = 1) {
     this.context = context;
     this.position = position;
     this.scale = scale;

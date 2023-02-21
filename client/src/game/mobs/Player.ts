@@ -6,15 +6,13 @@ import Sprite from '../sprite/Sprite';
 class Player extends Sprite {
   context: CanvasRenderingContext2D;
   position: { x: number, y: number };
-  //width: number;
-  //height: number;
   velocity: { x: number, y: number };
   gravity: number;
   field: { width: number, height: number };
   collusions: CollusionBlock[];
   scale: number;
   imageSrc: string;
-  hitbox: { position: { x: number; y: number; }; width: number; height: number; };
+  hitbox: { position: { x: number; y: number; }; width: number; height: number; offset: {x: number, y: number}};
   animations: any;
   lastDirection: Directions;
 
@@ -24,8 +22,6 @@ class Player extends Sprite {
     this.position = position;
     this.field = field;
     this.scale = scale;
-    //this.width = 100 / this.scale;
-    //this.height = 100 / this.scale;
     this.velocity = {
       x: 0,
       y: 1
@@ -37,8 +33,12 @@ class Player extends Sprite {
         x: this.position.x,
         y: this.position.y,
       },
-      width: 10,
-      height: 10,
+      width: 35 * this.scale,
+      height: 55 * this.scale,
+      offset: {
+        x: 65 * this.scale,
+        y: 50 * this.scale,
+      }
     }
     this.animations = animations;
     this.lastDirection = Directions.right;
@@ -50,11 +50,6 @@ class Player extends Sprite {
     }
   }
 
-  //draw () {
-    //this.context.fillStyle = 'red';
-    //this.context.fillRect(this.position.x, this.position.y, this.width, this.height);
-  //}
-
   switchSprite(key: string) {
     if (this.image === this.animations[key] || !this.loaded) return;
     this.image = this.animations[key].image;
@@ -63,6 +58,11 @@ class Player extends Sprite {
   }
 
   update () {
+    //квадраты для видимости
+    this.context.fillStyle = 'rgba(255, 0, 0, 0.2)';
+    this.context.fillRect(this.position.x, this.position.y, this.width, this.height);
+    this.context.fillStyle = 'rgba(0, 0, 255, 0.2)';
+    this.context.fillRect(this.hitbox.position.x, this.hitbox.position.y, this.hitbox.width, this.hitbox.height);
     this.updateFrames();
     this.updateHitbox();
     this.draw();
@@ -80,15 +80,9 @@ class Player extends Sprite {
     // }
   }
 
-  updateHitbox() {
-    this.hitbox = {
-      position: {
-        x: this.position.x + 35,
-        y: this.position.y + 26,
-      },
-      width: 14,
-      height: 27,
-    }
+  updateHitbox () {
+    this.hitbox.position.x = this.position.x + this.hitbox.offset.x;
+    this.hitbox.position.y = this.position.y + this.hitbox.offset.y;
   }
 
   checkForHorizontalCollusions () {
