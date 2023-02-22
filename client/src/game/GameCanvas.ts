@@ -89,7 +89,16 @@ class GameCanvas {
         frameBuffer: 3,
       },
     };
-    const player = new Player(context, 0.5, { x: 10, y: 300 }, { width: this.canvas.width, height: this.canvas.height }, floorCollusions.concat(platformCollusions), '../../assets/warrior/Idle.png', 8, playerAnimation);
+    const player = new Player(
+      context,
+      0.5,
+      { x: 10, y: 300 },
+      { width: this.canvas.width, height: this.canvas.height },
+      floorCollusions,
+      platformCollusions,
+      '../../assets/warrior/Idle.png',
+      8,
+      playerAnimation);
     //const player2 = new Player(context, this.scale, { x: 50, y: 50 }, { width: this.canvas.width, height: this.canvas.height }, floorCollusions,'../../assets/warrior/Idle.png', 8);
     function animationLoop () {
       window.requestAnimationFrame(animationLoop);
