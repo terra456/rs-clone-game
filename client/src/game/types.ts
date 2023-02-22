@@ -40,4 +40,6 @@ export interface CollusionBlock {
   width: number
   height: number
   size: number
+  draw: () => void
+  update: () => void
 }

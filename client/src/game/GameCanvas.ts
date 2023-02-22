@@ -1,11 +1,12 @@
 import { Directions, IAnimations } from './types';
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import Player from './mobs/Player';
+// import Player from './mobs/Player';
 import Sprite from './sprite/Sprite';
 import { floorCollisions, platformCollisions } from './maps/collisions';
 import CollusionField from './collusions/CollusionField';
 import Background from './maps/1_level/Background';
 import SpriteBase from './sprite/SpriteBase';
+import Warior from './mobs/Warior';
 
 class GameCanvas {
   scaledCanvas: { width: number, height: number };
@@ -36,16 +37,23 @@ class GameCanvas {
   }
 
   animate (context: CanvasRenderingContext2D, w: number, h: number, scaledCanvas: { width: number, height: number }) {
+    const field = scaledCanvas;
     const keys = {
       left: false,
       right: false
     };
     const scale: number = this.scale;
+    const camera = {
+      position: {
+        x: 0,
+        y: 0
+      }
+    };
 
     const collusionField = new CollusionField(context, 16);
     const floorCollusions = collusionField.generateCollusionBlocks(floorCollisions);
     const platformCollusions = collusionField.generateCollusionBlocks(platformCollisions);
-    const background = new Background(context, '../../assets/background.png', scaledCanvas.width);
+    const background = new Background(context, '../../assets/background.png', field.width);
     // const background2 = new SpriteBase(context, { x: 0, y: 0 }, '../assets/background/1_level/bg_1.png', 1);
     const playerAnimation: IAnimations = {
       idle: {
@@ -89,11 +97,11 @@ class GameCanvas {
         frameBuffer: 3,
       },
     };
-    const player = new Player(
+    const player = new Warior(
       context,
       0.5,
       { x: 10, y: 300 },
-      { width: this.canvas.width, height: this.canvas.height },
+      field,
       floorCollusions,
       platformCollusions,
       '../../assets/warrior/Idle.png',
@@ -107,7 +115,7 @@ class GameCanvas {
       context.save();
       context.scale(scale, scale);
       // ecли scale 1, то scaledCanvas.height = this.canvas.height
-      context.translate(0, 0);
+      context.translate(camera.position.x, 0);
       background.update();
       // background2.update();
       floorCollusions.forEach((block) => {
@@ -126,6 +134,10 @@ class GameCanvas {
         player.switchSprite('run');
         player.velocity.x = 2;
         player.lastDirection = Directions.right;
+        // if (player.isCameraLeft()) {
+        //   camera.position.x -= player.velocity.x;
+        // };
+        player.isCameraLeft(camera);
       } else if (player.velocity.y === 0) {
         player.lastDirection === Directions.right ? player.switchSprite('idle') : player.switchSprite('idleLeft');
       }
