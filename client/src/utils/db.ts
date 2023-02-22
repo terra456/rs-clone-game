@@ -1,5 +1,5 @@
 import { IUser } from './types';
-const server: String = 'http://127.0.0.1:3000';
+const server: String = 'https://rs-clone-game-production.up.railway.app';
 
 enum Paths {
     users = '/api/users'
@@ -17,8 +17,25 @@ export async function createUser(newUser: IUser) {
     };
     try {
         const response = await fetch(`${server}${Paths.users}`, settings);
-        const car = await response.json();
-        return car;
+        const user = await response.json();
+        return user;
+    } catch(err) {
+        console.error(err); 
+    }
+}
+
+export async function getUsers() {
+    const settings = {
+        method: 'GET',
+        headers: {
+          accept: 'application/json',
+          'Access-Control-Allow-Origin': '*',
+        },
+      };
+    try {
+        const response = await fetch(`${server}${Paths.users}`, settings);
+        const users = await response.json();
+        return users;
     } catch(err) {
         console.error(err); 
     }
