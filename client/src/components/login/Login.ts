@@ -3,7 +3,7 @@ import { openApp, openForNewUser } from "../../index";
 import { BaseComponent } from "../BaseComponent";
 import './login.scss';
 import './../../style.scss';
-import { createUser } from "../../utils/db";
+import { createUser, getUsers } from "../../utils/db";
 
 export class Login extends BaseComponent {
     constructor() {
@@ -51,7 +51,14 @@ export class Login extends BaseComponent {
         if (btnLogin !== null) {
             btnLogin.addEventListener('click', () => {
                 error?.classList.remove('login__error--visible');
-                this.validateInputs() ? openApp() : error?.classList.add('login__error--visible');
+                if (this.validateInputs()) {
+                    getUsers().then((data) =>{
+                        console.log(data);
+                        openApp();
+                    });
+                } else {
+                    error?.classList.add('login__error--visible');
+                }
             });
         }
     }
