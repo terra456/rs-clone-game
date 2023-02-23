@@ -14,18 +14,20 @@ class UserModel {
       throw new Error('Укажите имя пользователя');
     }
     const user = await this.getByName(obj.name);
-    if (user) {
+    console.log(user);
+    if (!user.name) {
+        const newUser: UserType = {
+          name: obj.name,
+          password: obj.password,
+          avatar: obj.avatar,
+          settings: obj.settings,
+          lastLevel: 0,
+          totalScore: 0
+        };
+        return this.dbModel.create(newUser);      
+    } else {
       throw new Error(`Пользователь с именем ${obj.name} уже существует`);
     }
-    const newUser: UserType = {
-      name: obj.name,
-      password: obj.password,
-      avatar: obj.avatar,
-      settings: obj.settings,
-      lastLevel: 0,
-      totalScore: 0
-    };
-    return this.dbModel.create(newUser);
   };
 
   update = async (id:string, obj: UserType): Promise<any | Error> => {
