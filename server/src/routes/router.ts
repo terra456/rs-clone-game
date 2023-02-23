@@ -6,7 +6,7 @@ import gamesController from '../controller/gamesController';
 const router = express.Router();
 
 router.use(cors(), (req, res, next) => {
-  console.log('Time: ', Date.now());
+  console.log('Time: ', Date.now(), req.body);
   next();
 });
 
