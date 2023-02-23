@@ -13,9 +13,6 @@ class UserModel {
     if (!obj.name) {
       throw new Error('Укажите имя пользователя');
     }
-    const user = await this.getByName(obj.name);
-    console.log(user);
-    if (!user.name) {
         const newUser: UserType = {
           name: obj.name,
           password: obj.password,
@@ -25,9 +22,7 @@ class UserModel {
           totalScore: 0
         };
         return this.dbModel.create(newUser);      
-    } else {
-      throw new Error(`Пользователь с именем ${obj.name} уже существует`);
-    }
+    
   };
 
   update = async (id:string, obj: UserType): Promise<any | Error> => {
