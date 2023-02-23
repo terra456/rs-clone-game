@@ -65,11 +65,11 @@ class UserPostgresModel {
     }
   };
 
-  getByName = async (name: string | number): Promise<any[] | Error> => {
+  getByName = async (UserName: string | number): Promise<any[] | Error> => {
     try {
-      const res = await db.query(`SELECT * FROM users WHERE name = ${name};`);
+      const res = await db.query(`SELECT * FROM users WHERE name = ${UserName};`);
       if (!res.rows || res.rows.length === 0) {
-        throw new Error(`Пользователя с name = ${name} не найдено`);
+        throw new Error(`Пользователя с name = ${UserName} не найдено`);
       }
       return res.rows;
     } catch (err: any) {
