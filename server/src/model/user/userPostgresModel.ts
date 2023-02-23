@@ -69,11 +69,11 @@ class UserPostgresModel {
     try {
       const res = await db.query(`SELECT * FROM users WHERE name = ${name};`);
       if (!res.rows || res.rows.length === 0) {
-        throw new Error(`Пользователя с id = ${name} не найдено`);
+        throw new Error(`Пользователя с name = ${name} не найдено`);
       }
       return res.rows;
     } catch (err: any) {
-      throw new Error(err.message);
+      throw new Error('!!!' + err.message);
     }
   };
 
