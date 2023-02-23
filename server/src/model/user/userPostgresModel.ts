@@ -7,6 +7,8 @@ class UserPostgresModel {
     const keys = Object.keys(obj);
     const values = Object.values(obj);
     const text = `INSERT INTO users(${keys.join(', ')}) VALUES(${keys.map((el, i) => '$' + (i+1)).join(', ')}) RETURNING *`;
+    console.log(text);
+    console.log(values);
     try {
       const res = await db.query(text, values);
       if (!res.rows) {
