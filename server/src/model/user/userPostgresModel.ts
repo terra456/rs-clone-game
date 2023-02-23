@@ -4,8 +4,8 @@ import db from '../../database/dbPool';
 
 class UserPostgresModel {
   create = async (obj: UserType): Promise<any[] | Error> => {
-    const keys = Object.keys(obj);
-    const values = Object.values(obj);
+    const values = Object.keys(obj);
+    const keys = Object.values(obj);
     const text = `INSERT INTO users (${keys.join(', ')}) VALUES(${keys.map((el, i) => '$' + (i+1)).join(', ')}) RETURNING *`;
     console.log(text);
     console.log(values);
