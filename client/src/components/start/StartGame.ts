@@ -1,4 +1,5 @@
 import { openLogin } from "../../index";
+import { setUserAuthorized } from "../../utils/db";
 import { BaseComponent } from "../BaseComponent";
 import './start.scss';
 
@@ -15,6 +16,7 @@ export class StartGame extends BaseComponent {
         const btnOut: HTMLElement | null = this.element.querySelector('.btn--out');
         if (btnOut !== null) {
           btnOut.addEventListener('click', () => {
+            setUserAuthorized(0);
             openLogin();
           });
         }

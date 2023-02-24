@@ -4,12 +4,14 @@ import { BaseComponent } from "../BaseComponent";
 import GameCanvas from "../../game/GameCanvas";
 import './login.scss';
 import './../../style.scss';
-import { createUser, getUsers, loginUser } from "../../utils/db";
+import { createUser, getUsers, loginUser, setUserAuthorized } from "../../utils/db";
 
 export class Login extends BaseComponent {
     constructor() {
         super('div', 'login');
         this.element.innerHTML = `
+          <div class="login__main">
+          <div class="login__close">X</div>
           <input id="nameInput" class="login__input" placeholder="Username" type="text">
           <input id="passInput" class="login__input" placeholder="Password" type="password">
           <div class="login__controls">
@@ -24,6 +26,7 @@ export class Login extends BaseComponent {
         const btnLogin: HTMLElement | null = this.element.querySelector('#btnLogin');
         const btnStart: HTMLElement | null = this.element.querySelector('#btnStart');
         const error: HTMLElement | null = this.element.querySelector('.login__error');
+        const btnClose: HTMLElement | null = this.element.querySelector('.login__close');
 
         if (btnRegister !== null) {
             btnRegister.addEventListener('click', () => {
@@ -40,7 +43,7 @@ export class Login extends BaseComponent {
                         totalScore: 0,
                     }
                     createUser(newUser).then((data) =>{
-                        console.log(data);
+                        setUserAuthorized(data.id);
                         openForNewUser();
                     })
                     .catch((err) => {
@@ -67,10 +70,9 @@ export class Login extends BaseComponent {
             });
         }
 
-        if (btnStart !== null) {
-            btnStart.addEventListener('click', () => {
-                error?.classList.remove('login__error--visible');
-                this.startGame(document.body);
+        if (btnClose !== null) {
+            btnClose.addEventListener('click', () => {
+                this.element.remove();
             });
         }
     }
