@@ -8,8 +8,7 @@ const btnLogin: HTMLElement | null = document.querySelector('#loginBtn');
 const btnStartGame: HTMLElement | null = document.querySelector('#startGameBtn');
 const btnSettings: HTMLElement | null = document.querySelector('#settingsBtn');
 
-//проверка авторизован ли пользователь
- const isAuthorized: boolean = false;
+ const isAuthorized: boolean = Number(localStorage.getItem('authorized')) === 0 ? false : true;
  isAuthorized ? openApp : openLogin();
 
 if (btnLogin !== null) {
@@ -61,7 +60,8 @@ function openStartGame() {
 }
 
 export function openLogin() {
-    openTab(new Login().element);
+    const loginBlock: HTMLElement | null = document.querySelector('.login');
+    if (loginBlock === null && main !== null) main.appendChild(new Login().element);
     toggleLoginBtn(true);
 }
 
