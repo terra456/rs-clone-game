@@ -2,7 +2,8 @@ import { IUser, IUserFull } from './types';
 const server: String = 'https://rs-clone-game-production.up.railway.app';
 
 enum Paths {
-    users = '/api/users'
+    users = '/api/users',
+    games = '/api/saved'
 }
 
 export async function createUser(newUser: IUser) {
@@ -34,6 +35,23 @@ export async function getUsers() {
         const response = await fetch(`${server}${Paths.users}`, settings);
         const users = await response.json();
         return users;
+    } catch(err) {
+        console.error(err); 
+    }
+}
+
+export async function getSavedGames(userId: string) {
+    const settings = {
+        method: 'GET',
+        headers: {
+          accept: 'application/json',
+          'Access-Control-Allow-Origin': '*',
+        },
+      };
+    try {
+        const response = await fetch(`${server}${Paths.games}/user/${userId}`, settings);
+        const savedGames = await response.json();
+        return savedGames;
     } catch(err) {
         console.error(err); 
     }
