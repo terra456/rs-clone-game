@@ -15,7 +15,7 @@ class CollusionBlock {
   }
 
   draw () {
-    this.context.fillStyle = 'rgba(255, 0, 0, 0.5)';
+    this.context.fillStyle = 'rgba(0, 255, 0, 0.5)';
     this.context.fillRect(this.position.x, this.position.y, this.size, this.size);
   }
 

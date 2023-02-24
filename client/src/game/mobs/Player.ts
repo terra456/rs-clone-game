@@ -1,45 +1,48 @@
-import { IAnimations, Directions } from './../types';
+import { IAnimations, Directions, hitboxType } from './../types';
 import type CollusionBlock from '../collusions/CollusionBlock';
 import Sprite from '../sprite/Sprite';
+import { collision, platformCollision } from '../utils';
 
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 class Player extends Sprite {
   context: CanvasRenderingContext2D;
   position: { x: number, y: number };
-  //width: number;
-  //height: number;
   velocity: { x: number, y: number };
   gravity: number;
   field: { width: number, height: number };
   collusions: CollusionBlock[];
   scale: number;
   imageSrc: string;
-  hitbox: { position: { x: number; y: number; }; width: number; height: number; };
+  hitbox: hitboxType;
   animations: any;
   lastDirection: Directions;
+  platformCollusions: CollusionBlock[];
 
-  constructor (cont: CanvasRenderingContext2D, scale: number, position: { x: number, y: number }, field: { width: number, height: number }, collusions: CollusionBlock[], imageSrc: string, frameRate: number, animations: IAnimations) {
+  constructor (cont: CanvasRenderingContext2D, scale: number, position: { x: number, y: number }, field: { width: number, height: number }, collusions: CollusionBlock[], floorCollusions: CollusionBlock[], imageSrc: string, frameRate: number, animations: IAnimations) {
     super(cont, position, imageSrc, frameRate, scale);
     this.context = cont;
     this.position = position;
     this.field = field;
     this.scale = scale;
-    //this.width = 100 / this.scale;
-    //this.height = 100 / this.scale;
     this.velocity = {
       x: 0,
       y: 1
     };
     this.gravity = 0.5;
     this.collusions = collusions;
+    this.platformCollusions = floorCollusions;
     this.hitbox = {
       position: {
         x: this.position.x,
         y: this.position.y,
       },
-      width: 10,
-      height: 10,
-    }
+      width: 35 / this.scale,
+      height: 55 / this.scale,
+      offset: {
+        x: 65 / this.scale,
+        y: 50 / this.scale,
+      }
+    };
     this.animations = animations;
     this.lastDirection = Directions.right;
 
@@ -50,11 +53,6 @@ class Player extends Sprite {
     }
   }
 
-  //draw () {
-    //this.context.fillStyle = 'red';
-    //this.context.fillRect(this.position.x, this.position.y, this.width, this.height);
-  //}
-
   switchSprite(key: string) {
     if (this.image === this.animations[key] || !this.loaded) return;
     this.image = this.animations[key].image;
@@ -63,6 +61,11 @@ class Player extends Sprite {
   }
 
   update () {
+    //квадраты для видимости
+    this.context.fillStyle = 'rgba(255, 0, 0, 0.2)';
+    this.context.fillRect(this.position.x, this.position.y, this.width, this.height);
+    this.context.fillStyle = 'rgba(0, 0, 255, 0.2)';
+    this.context.fillRect(this.hitbox.position.x, this.hitbox.position.y, this.hitbox.width, this.hitbox.height);
     this.updateFrames();
     this.updateHitbox();
     this.draw();
@@ -80,24 +83,15 @@ class Player extends Sprite {
     // }
   }
 
-  updateHitbox() {
-    this.hitbox = {
-      position: {
-        x: this.position.x + 35,
-        y: this.position.y + 26,
-      },
-      width: 14,
-      height: 27,
-    }
+  updateHitbox () {
+    this.hitbox.position.x = this.position.x + this.hitbox.offset.x;
+    this.hitbox.position.y = this.position.y + this.hitbox.offset.y;
   }
 
   checkForHorizontalCollusions () {
     for (let i = 0; i < this.collusions.length; i++) {
       const collusionBlock = this.collusions[i];
-      if (this.hitbox.position.y + this.hitbox.height >= collusionBlock.position.y &&
-        this.hitbox.position.y <= collusionBlock.position.y + collusionBlock.height &&
-        this.hitbox.position.x <= collusionBlock.position.x + collusionBlock.width &&
-        this.hitbox.position.x + this.hitbox.width >= collusionBlock.position.x) {
+      if (collision(this.hitbox, collusionBlock)) {
         if (this.velocity.x > 0) {
           this.velocity.x = 0;
           const offset: number = this.hitbox.position.x - this.position.x + this.hitbox.width;
@@ -117,10 +111,7 @@ class Player extends Sprite {
   checkForVerticalCollusions () {
     for (let i = 0; i < this.collusions.length; i++) {
       const collusionBlock = this.collusions[i];
-      if (this.hitbox.position.y + this.hitbox.height >= collusionBlock.position.y &&
-        this.hitbox.position.y <= collusionBlock.position.y + collusionBlock.height &&
-        this.hitbox.position.x <= collusionBlock.position.x + collusionBlock.width &&
-        this.hitbox.position.x + this.hitbox.width >= collusionBlock.position.x) {
+      if (collision(this.hitbox, collusionBlock)) {
         if (this.velocity.y > 0) {
           this.velocity.y = 0;
           const offset: number = this.hitbox.position.y - this.position.y + this.hitbox.height;
@@ -131,6 +122,18 @@ class Player extends Sprite {
           this.velocity.y = 0;
           const offset: number = this.hitbox.position.y - this.position.y;
           this.position.y = collusionBlock.position.y + collusionBlock.height - offset + 0.01;
+          break;
+        }
+      }
+    }
+    //platform collusions
+    for (let i = 0; i < this.platformCollusions.length; i++) {
+      const platformCollusionBlock = this.platformCollusions[i];
+      if (platformCollision(this.hitbox, platformCollusionBlock)) {
+        if (this.velocity.y > 0) {
+          this.velocity.y = 0;
+          const offset: number = this.hitbox.position.y - this.position.y + this.hitbox.height;
+          this.position.y = platformCollusionBlock.position.y - offset - 0.01;
           break;
         }
       }
