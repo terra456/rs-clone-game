@@ -16,8 +16,8 @@ class SpriteBase {
     this.image = new Image();
     this.image.src = imageSrc;
     this.image.onload = () => {
-      this.width = this.image.width * this.scale;
-      this.height = this.image.height * this.scale;
+      this.width = this.image.width / this.scale;
+      this.height = this.image.height / this.scale;
       this.loaded = true;
     };
   }
