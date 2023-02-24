@@ -37,10 +37,12 @@ export class Login extends BaseComponent {
                         lastLevel: 1,
                         totalScore: 0,
                     }
-                    console.log(newUser)
                     createUser(newUser).then((data) =>{
                         console.log(data);
                         openForNewUser();
+                    })
+                    .catch((err) => {
+                        console.log(err.message);
                     });
                 } else {
                     error?.classList.add('login__error--visible');

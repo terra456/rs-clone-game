@@ -6,21 +6,20 @@ enum Paths {
 }
 
 export async function createUser(newUser: IUser) {
-    const settings = {
+    const settings: RequestInit = {
         method: 'POST',
-        mode: 'no-cors' as RequestMode,
         headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/json'
         },
         body: JSON.stringify(newUser),
     };
+    console.log(settings);
     try {
         const response = await fetch(`${server}${Paths.users}`, settings);
         const user = await response.json();
         return user;
     } catch(err) {
-        console.error(err); 
+        console.error('err', err); 
     }
 }
 
