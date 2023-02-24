@@ -11,7 +11,7 @@ export class Login extends BaseComponent {
         super('div', 'login');
         this.element.innerHTML = `
           <div class="login__main">
-          <div class="login__close">X</div>
+          <button class="login__close">X</button>
           <input id="nameInput" class="login__input" placeholder="Username" type="text">
           <input id="passInput" class="login__input" placeholder="Password" type="password">
           <div class="login__controls">

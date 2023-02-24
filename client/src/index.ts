@@ -2,6 +2,7 @@ import { Settings } from './components/settings/Settings';
 import { Login } from "./components/login/Login";
 import { Register } from "./components/register/Register";
 import { StartGame } from "./components/start/StartGame";
+import { getSavedGames } from './utils/db';
 
 const main: HTMLElement | null = document.querySelector('main');
 const btnLogin: HTMLElement | null = document.querySelector('#loginBtn');
@@ -9,7 +10,7 @@ const btnStartGame: HTMLElement | null = document.querySelector('#startGameBtn')
 const btnSettings: HTMLElement | null = document.querySelector('#settingsBtn');
 
  const isAuthorized: boolean = Number(localStorage.getItem('authorized')) === 0 ? false : true;
- isAuthorized ? openApp : openLogin();
+ isAuthorized ? openApp() : openLogin();
 
 if (btnLogin !== null) {
     btnLogin.addEventListener('click', () => {
@@ -30,9 +31,10 @@ if (btnSettings !== null) {
 }
 
 export function openApp() {
-  //проверка есть ли сохраненные игры
-  const hasGames: boolean = true;
-  hasGames ? openStartGame() : openForNewUser();
+  //const userId: string = localStorage.getItem('authorized') || '0';
+  getSavedGames('3').then((data) => {
+    data !== `Данных в saved где user_id = ${3} не найдено` ? openStartGame() : openForNewUser();
+  });
 }
 
 function openTab(element: HTMLElement) {
