@@ -1,4 +1,5 @@
-export interface IUser {
+export interface IUserFull {
+    id: number
     name: string,
     password: string,
     avatar: string,
@@ -6,3 +7,5 @@ export interface IUser {
     lastLevel: number,
     totalScore: number
 }
+
+export type IUser = Omit<IUserFull, "id">;

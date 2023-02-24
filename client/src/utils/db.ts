@@ -1,4 +1,4 @@
-import { IUser } from './types';
+import { IUser, IUserFull } from './types';
 const server: String = 'https://rs-clone-game-production.up.railway.app';
 
 enum Paths {
@@ -38,5 +38,15 @@ export async function getUsers() {
         return users;
     } catch(err) {
         console.error(err); 
+    }
+}
+
+export function loginUser(data: IUserFull[], login: string, pass: string): boolean {
+    const user: IUserFull | undefined = data.find((x: IUser) => x.name === login && x.password === pass);
+    if (user === undefined) {
+        return false;
+    } else {
+        localStorage.setItem('authorized', user.id.toString());
+        return true;
     }
 }
