@@ -19,10 +19,11 @@ class Sprite {
     this.loaded = false;
     this.image = new Image();
     this.image.onload = () => {
-      this.width = (this.image.width / this.frameRate) * this.scale;
-      this.height = this.image.height * this.scale;
+      this.width = (this.image.width / this.frameRate) / this.scale;
+      this.height = this.image.height / this.scale;
       this.loaded = true;
-    }
+      console.log(this.width);
+    };
     this.image.src = imageSrc;
     this.frameRate = frameRate;
     this.currentFrame = 0;
