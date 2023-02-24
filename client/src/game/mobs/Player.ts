@@ -36,11 +36,11 @@ class Player extends Sprite {
         x: this.position.x,
         y: this.position.y,
       },
-      width: 35 * this.scale,
-      height: 55 * this.scale,
+      width: 35 / this.scale,
+      height: 55 / this.scale,
       offset: {
-        x: 65 * this.scale,
-        y: 50 * this.scale,
+        x: 65 / this.scale,
+        y: 50 / this.scale,
       }
     };
     this.animations = animations;

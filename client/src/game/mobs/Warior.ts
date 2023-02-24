@@ -12,10 +12,10 @@ class Warior extends Player {
         x: this.position.x,
         y: this.position.y
       },
-      width: 300 * this.scale,
-      height: 150 * this.scale,
+      width: 300 / this.scale,
+      height: 150 / this.scale,
       //вычитаем ширину спрайта
-      leftPadding: ((300 - 160) * this.scale) / 2
+      leftPadding: ((300 - 160) / this.scale) / 2
     };
     console.log(this.cameraBox.leftPadding);
   }

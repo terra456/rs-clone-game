@@ -20,19 +20,20 @@ class GameCanvas {
     this.canvas.width = width;
     this.canvas.height = height;
     this.gameField = {
-      width: 576,
-      height: 432
+      width: 5948,
+      height: 1055
     };
     //делим на высоту фона, т.е игрового поля.
     this.scale = this.canvas.height / this.gameField.height;
+    console.log(this.scale);
     this.scaledCanvas = {
-      width: width / this.scale,
-      height: height / this.scale
+      width: width * this.scale,
+      height: height * this.scale
     };
     parentNode.appendChild(this.canvas);
     const context = this.canvas.getContext('2d');
     if (context != null) {
-      this.animate(context, this.canvas.width, this.canvas.height, this.scaledCanvas);
+      this.animate(context, this.canvas.width, this.canvas.height, this.canvas);
     }
   }
 
@@ -50,11 +51,12 @@ class GameCanvas {
       }
     };
 
-    const collusionField = new CollusionField(context, 16);
+    const collusionField = new CollusionField(context, 16 / scale);
     const floorCollusions = collusionField.generateCollusionBlocks(floorCollisions);
     const platformCollusions = collusionField.generateCollusionBlocks(platformCollisions);
-    const background = new Background(context, '../../assets/background.png', field.width);
-    // const background2 = new SpriteBase(context, { x: 0, y: 0 }, '../assets/background/1_level/bg_1.png', 1);
+    // const background = new Background(context, '../../assets/background.png', field.width);
+    const background2 = new SpriteBase(context, { x: 0, y: 1055 - 571 }, '../assets/background/1_level/mtn.png', 1);
+    const background1 = new SpriteBase(context, { x: 0, y: 0 }, '../assets/background/1_level/bg_1.png', 1);
     const playerAnimation: IAnimations = {
       idle: {
         imageSrc: '../../assets/warrior/Idle.png',
@@ -99,7 +101,7 @@ class GameCanvas {
     };
     const player = new Warior(
       context,
-      0.5,
+      scale,
       { x: 10, y: 300 },
       field,
       floorCollusions,
@@ -116,8 +118,11 @@ class GameCanvas {
       context.scale(scale, scale);
       // ecли scale 1, то scaledCanvas.height = this.canvas.height
       context.translate(camera.position.x, 0);
-      background.update();
-      // background2.update();
+      // background.update();
+      background2.position.x = 0;
+      background2.update();
+      console.log(background2.width, background2.position);
+      background1.update();
       floorCollusions.forEach((block) => {
         block.update();
       });
