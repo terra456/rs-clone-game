@@ -6,14 +6,13 @@ enum Paths {
 }
 
 export async function createUser(newUser: IUser) {
-    const settings: RequestInit = {
+    const settings = {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(newUser),
     };
-    console.log(settings);
     try {
         const response = await fetch(`${server}${Paths.users}`, settings);
         const user = await response.json();
@@ -45,7 +44,11 @@ export function loginUser(data: IUserFull[], login: string, pass: string): boole
     if (user === undefined) {
         return false;
     } else {
-        localStorage.setItem('authorized', user.id.toString());
+        setUserAuthorized(user.id);
         return true;
     }
+}
+
+export function setUserAuthorized(id: number) {
+    localStorage.setItem('authorized', id.toString());
 }
