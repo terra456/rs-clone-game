@@ -54,7 +54,7 @@ class GameCanvas {
     const tilesField = new TilesField(context, 16, layers[0].width, '../assets/background/1_level/Tileset.png', scale);
     const tiles = tilesField.generateCollusionBlocks(layers[0].data);
     const tiles1 = tilesField.generateCollusionBlocks(layers[1].data);
-    const tiles2 = tilesField.generateCollusionBlocks(layers[2].data);
+    const coins = tilesField.generateCollusionBlocks(layers[2].data);
     const background1 = new SpriteBase(context, { x: 0, y: 0 }, '../assets/background/1_level/bg_1.png', 1);
     const bgLoop = new Background(context, scaledCanvas, scale);
     const bgImages = bgLoop.generate('../assets/background/1_level/mtn.png', { width: 2618, height: 571 });
@@ -107,6 +107,7 @@ class GameCanvas {
       field,
       tiles,
       tiles1,
+      coins,
       '../../assets/warrior/Idle.png',
       8,
       playerAnimation);
@@ -114,6 +115,7 @@ class GameCanvas {
       window.requestAnimationFrame(animationLoop);
       context.fillStyle = 'grey';
       context.fillRect(0, 0, w, h);
+      context.strokeText(player.score.toString(), w - 50, 50);
       context.save();
       context.scale(scale, scale);
       // ecли scale 1, то scaledCanvas.height = this.canvas.height
@@ -128,7 +130,7 @@ class GameCanvas {
       tiles1.forEach((block) => {
         block.update();
       });
-      tiles2.forEach((block) => {
+      coins.forEach((block) => {
         block.update();
       });
       player.update();
