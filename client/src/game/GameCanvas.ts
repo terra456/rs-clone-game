@@ -7,6 +7,7 @@ import SpriteBase from './sprite/SpriteBase';
 import Warior from './mobs/Warior';
 import TilesField from './collusions/TilesField';
 import { layers } from './maps/1_level/map';
+import CollusionField from './collusions/CollusionField';
 
 class GameCanvas {
   scaledCanvas: { width: number, height: number };
@@ -54,7 +55,8 @@ class GameCanvas {
     const tilesField = new TilesField(context, 16, layers[0].width, '../assets/background/1_level/Tileset.png', scale);
     const tiles = tilesField.generateCollusionBlocks(layers[0].data);
     const tiles1 = tilesField.generateCollusionBlocks(layers[1].data);
-    const coins = tilesField.generateCollusionBlocks(layers[2].data);
+    const collisionField = new CollusionField(context, 16, layers[0].width);
+    const coins = collisionField.generateCollusionBlocks(layers[2].data, '../assets/icons/coin.png');
     const background1 = new SpriteBase(context, { x: 0, y: 0 }, '../assets/background/1_level/bg_1.png', 1);
     const bgLoop = new Background(context, scaledCanvas, scale);
     const bgImages = bgLoop.generate('../assets/background/1_level/mtn.png', { width: 2618, height: 571 });
@@ -100,6 +102,7 @@ class GameCanvas {
         frameBuffer: 3,
       },
     };
+    const coinImg = new SpriteBase(context, { x: w - 120, y: 15 }, '../assets/icons/coin.png');
     const player = new Warior(
       context,
       scale,
@@ -115,7 +118,6 @@ class GameCanvas {
       window.requestAnimationFrame(animationLoop);
       context.fillStyle = 'grey';
       context.fillRect(0, 0, w, h);
-      context.strokeText(player.score.toString(), w - 50, 50);
       context.save();
       context.scale(scale, scale);
       // ecли scale 1, то scaledCanvas.height = this.canvas.height
@@ -157,8 +159,9 @@ class GameCanvas {
           player.switchSprite('fallLeft');
         }
       }
-
       context.restore();
+      coinImg.update();
+      context.strokeText(player.score.toString(), w - 50, 50);
     };
     animationLoop();
     window.addEventListener('keydown', (event: KeyboardEvent) => {

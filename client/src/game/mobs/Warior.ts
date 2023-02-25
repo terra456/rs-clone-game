@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import { coordinatesType, type CollusionBlock, type IAnimations } from '../types';
+import SpriteBase from '../sprite/SpriteBase';
+import { coordinatesType, ICollusionBlock, type IAnimations } from '../types';
 import { collision } from '../utils';
 import Player from './Player';
 
@@ -7,9 +8,9 @@ class Warior extends Player {
   cameraBox: { position: { x: number, y: number }, width: number, height: number, leftPadding: number };
   score: number;
   lifes: number;
-  coins: CollusionBlock[];
+  coins: ICollusionBlock[];
 
-  constructor (cont: CanvasRenderingContext2D, scale: number, position: { x: number, y: number }, field: { width: number, height: number }, collusions: CollusionBlock[], floorCollusions: CollusionBlock[], coins: CollusionBlock[], imageSrc: string, frameRate: number, animations: IAnimations) {
+  constructor (cont: CanvasRenderingContext2D, scale: number, position: { x: number, y: number }, field: { width: number, height: number }, collusions: ICollusionBlock[], floorCollusions: ICollusionBlock[], coins: ICollusionBlock[], imageSrc: string, frameRate: number, animations: IAnimations) {
     super(cont, scale, position, field, collusions, floorCollusions, imageSrc, frameRate, animations)
     this.cameraBox = {
       position: {

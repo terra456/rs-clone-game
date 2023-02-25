@@ -34,12 +34,13 @@ export type coordinatesType = {
   y: number
 }
 
-export interface CollusionBlock {
+export interface ICollusionBlock {
   context: CanvasRenderingContext2D
   position: { x: number, y: number }
   width: number
   height: number
-  size: number
+  size?: number
+  imgSrc?: string
   draw: () => void
   update: () => void
 }
