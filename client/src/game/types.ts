@@ -8,6 +8,7 @@ export interface IAnimations {
   jumpLeft: ISprite
   fall: ISprite
   fallLeft: ISprite
+  die: ISprite
   image?: HTMLImageElement
 }
 

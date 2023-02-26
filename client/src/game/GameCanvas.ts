@@ -52,6 +52,12 @@ class GameCanvas {
       }
     };
 
+    let myReq: any;
+
+    const gameOver = (): void => {
+      cancelAnimationFrame(myReq);
+      context.strokeText('Game Ower', w / 2 - 100, h / 2);
+    };
     const tilesField = new TilesField(context, 16, layers[0].width, '../assets/background/1_level/Tileset.png', scale);
     const tiles = tilesField.generateCollusionBlocks(layers[0].data);
     const tiles1 = tilesField.generateCollusionBlocks(layers[1].data);
@@ -101,8 +107,17 @@ class GameCanvas {
         frameRate: 2,
         frameBuffer: 3,
       },
+      die: {
+        imageSrc: '../../assets/warrior/Die.png',
+        frameRate: 8,
+        frameBuffer: 3,
+      },
     };
     const coinImg = new SpriteBase(context, { x: w - 120, y: 15 }, '../assets/icons/coin.png');
+    const lifeHearts: SpriteBase[] = [];
+    for (let i = 0; i < 3; i++) {
+      lifeHearts.push(new SpriteBase(context, { x: 30 + i * 30, y: 15 }, '../assets/icons/heart.png', 0.5));
+    }
     const player = new Warior(
       context,
       scale,
@@ -113,9 +128,10 @@ class GameCanvas {
       coins,
       '../../assets/warrior/Idle.png',
       8,
-      playerAnimation);
+      playerAnimation,
+      gameOver);
     function animationLoop () {
-      window.requestAnimationFrame(animationLoop);
+      myReq = window.requestAnimationFrame(animationLoop);
       context.fillStyle = 'grey';
       context.fillRect(0, 0, w, h);
       context.save();
@@ -139,13 +155,14 @@ class GameCanvas {
       player.velocity.x = 0;
       if (keys.left) {
         player.switchSprite('runLeft');
-        player.velocity.x = -2;
+        player.velocity.x = -5;
         player.lastDirection = Directions.left;
+        player.isCameraLeft(camera);
       } else if (keys.right) {
         player.switchSprite('run');
-        player.velocity.x = 2;
+        player.velocity.x = 5;
         player.lastDirection = Directions.right;
-        player.isCameraLeft(camera);
+        player.isCameraRight(camera);
       } else if (player.velocity.y === 0) {
         player.lastDirection === Directions.right ? player.switchSprite('idle') : player.switchSprite('idleLeft');
       }
@@ -160,6 +177,12 @@ class GameCanvas {
         }
       }
       context.restore();
+      if (lifeHearts.length > player.lifes) {
+        lifeHearts.pop();
+      }
+      lifeHearts.forEach((el) => {
+        el.update();
+      });
       coinImg.update();
       context.strokeText(player.score.toString(), w - 50, 50);
     };
@@ -184,6 +207,7 @@ class GameCanvas {
         case 32:
           console.log('space');
           event.preventDefault();
+          player.crashIntoMob();
           break;
 
         default:
