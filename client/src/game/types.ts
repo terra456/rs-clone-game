@@ -12,6 +12,14 @@ export interface IAnimations {
   image?: HTMLImageElement
 }
 
+export interface IAnimationsEnemy {
+  fly: ISprite
+  flyLeft: ISprite
+  attack: ISprite
+  attackLeft: ISprite
+  hit: ISprite
+}
+
 export interface ISprite {
   imageSrc: string
   frameRate: number

@@ -1,4 +1,4 @@
-import { Directions, IAnimations } from './types';
+import { Directions, IAnimations, IAnimationsEnemy } from './types';
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 // import Player from './mobs/Player';
 import Sprite from './sprite/Sprite';
@@ -8,6 +8,7 @@ import Warior from './mobs/Warior';
 import TilesField from './collusions/TilesField';
 import { layers } from './maps/1_level/map';
 import CollusionField from './collusions/CollusionField';
+import Enemy from './mobs/Enemy';
 
 class GameCanvas {
   scaledCanvas: { width: number, height: number };
@@ -130,6 +131,46 @@ class GameCanvas {
       8,
       playerAnimation,
       gameOver);
+
+    const mobAnimation: IAnimationsEnemy = {
+      fly: {
+        imageSrc: '../../assets/enemy/fly.png',
+        frameRate: 4,
+        frameBuffer: 3,
+      },
+      flyLeft: {
+        imageSrc: '../../assets/enemy/flyLeft.png',
+        frameRate: 4,
+        frameBuffer: 3,
+      },
+      attack: {
+        imageSrc: '../../assets/enemy/attack.png',
+        frameRate: 4,
+        frameBuffer: 3,
+      },
+      attackLeft: {
+        imageSrc: '../../assets/enemy/attackLeft.png',
+        frameRate: 4,
+        frameBuffer: 3,
+      },
+      hit: {
+        imageSrc: '../../assets/enemy/hit.png',
+        frameRate: 4,
+        frameBuffer: 3,
+      },
+    }
+    const enemyMob = new Enemy(
+      context,
+      scale,
+      {x: 30, y: 400},
+      field,
+      tiles,
+      tiles1,
+      '../../assets/enemy/fly.png',
+      4,
+      mobAnimation
+    );
+
     function animationLoop () {
       myReq = window.requestAnimationFrame(animationLoop);
       context.fillStyle = 'grey';
@@ -176,6 +217,9 @@ class GameCanvas {
           player.switchSprite('fallLeft');
         }
       }
+
+      enemyMob.update();
+
       context.restore();
       if (lifeHearts.length > player.lifes) {
         lifeHearts.pop();

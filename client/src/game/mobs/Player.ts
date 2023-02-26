@@ -1,4 +1,4 @@
-import { IAnimations, Directions, hitboxType, ICollusionBlock } from './../types';
+import { IAnimations, Directions, hitboxType, ICollusionBlock, IAnimationsEnemy } from './../types';
 import type CollusionBlock from '../collusions/CollusionBlock';
 import Sprite from '../sprite/Sprite';
 import { collision, platformCollision } from '../utils';
@@ -18,7 +18,7 @@ class Player extends Sprite {
   lastDirection: Directions;
   platformCollusions: ICollusionBlock[];
 
-  constructor (cont: CanvasRenderingContext2D, scale: number, position: { x: number, y: number }, field: { width: number, height: number }, collusions: ICollusionBlock[], floorCollusions: ICollusionBlock[], imageSrc: string, frameRate: number, animations: IAnimations) {
+  constructor (cont: CanvasRenderingContext2D, scale: number, position: { x: number, y: number }, field: { width: number, height: number }, collusions: ICollusionBlock[], floorCollusions: ICollusionBlock[], imageSrc: string, frameRate: number, animations: IAnimations | IAnimationsEnemy) {
     super(cont, position, imageSrc, frameRate, scale);
     this.context = cont;
     this.position = position;
