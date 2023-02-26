@@ -2,11 +2,12 @@ import { Directions, IAnimations } from './types';
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 // import Player from './mobs/Player';
 import Sprite from './sprite/Sprite';
-import { floorCollisions, platformCollisions } from './maps/collisions';
-import CollusionField from './collusions/CollusionField';
-import Background from './maps/1_level/Background';
+import Background from './maps/Background';
 import SpriteBase from './sprite/SpriteBase';
 import Warior from './mobs/Warior';
+import TilesField from './collusions/TilesField';
+import { layers } from './maps/1_level/map';
+import CollusionField from './collusions/CollusionField';
 
 class GameCanvas {
   scaledCanvas: { width: number, height: number };
@@ -51,12 +52,20 @@ class GameCanvas {
       }
     };
 
-    const collusionField = new CollusionField(context, 16 / scale);
-    const floorCollusions = collusionField.generateCollusionBlocks(floorCollisions);
-    const platformCollusions = collusionField.generateCollusionBlocks(platformCollisions);
-    // const background = new Background(context, '../../assets/background.png', field.width);
-    const background2 = new SpriteBase(context, { x: 0, y: 1055 - 571 }, '../assets/background/1_level/mtn.png', 1);
+    let myReq: any;
+
+    const gameOver = (): void => {
+      cancelAnimationFrame(myReq);
+      context.strokeText('Game Ower', w / 2 - 100, h / 2);
+    };
+    const tilesField = new TilesField(context, 16, layers[0].width, '../assets/background/1_level/Tileset.png', scale);
+    const tiles = tilesField.generateCollusionBlocks(layers[0].data);
+    const tiles1 = tilesField.generateCollusionBlocks(layers[1].data);
+    const collisionField = new CollusionField(context, 16, layers[0].width);
+    const coins = collisionField.generateCollusionBlocks(layers[2].data, '../assets/icons/coin.png');
     const background1 = new SpriteBase(context, { x: 0, y: 0 }, '../assets/background/1_level/bg_1.png', 1);
+    const bgLoop = new Background(context, scaledCanvas, scale);
+    const bgImages = bgLoop.generate('../assets/background/1_level/mtn.png', { width: 2618, height: 571 });
     const playerAnimation: IAnimations = {
       idle: {
         imageSrc: '../../assets/warrior/Idle.png',
@@ -98,51 +107,62 @@ class GameCanvas {
         frameRate: 2,
         frameBuffer: 3,
       },
+      die: {
+        imageSrc: '../../assets/warrior/Die.png',
+        frameRate: 8,
+        frameBuffer: 3,
+      },
     };
+    const coinImg = new SpriteBase(context, { x: w - 120, y: 15 }, '../assets/icons/coin.png');
+    const lifeHearts: SpriteBase[] = [];
+    for (let i = 0; i < 3; i++) {
+      lifeHearts.push(new SpriteBase(context, { x: 30 + i * 30, y: 15 }, '../assets/icons/heart.png', 0.5));
+    }
     const player = new Warior(
       context,
       scale,
       { x: 10, y: 300 },
       field,
-      floorCollusions,
-      platformCollusions,
+      tiles,
+      tiles1,
+      coins,
       '../../assets/warrior/Idle.png',
       8,
-      playerAnimation);
-    //const player2 = new Player(context, this.scale, { x: 50, y: 50 }, { width: this.canvas.width, height: this.canvas.height }, floorCollusions,'../../assets/warrior/Idle.png', 8);
+      playerAnimation,
+      gameOver);
     function animationLoop () {
-      window.requestAnimationFrame(animationLoop);
+      myReq = window.requestAnimationFrame(animationLoop);
       context.fillStyle = 'grey';
       context.fillRect(0, 0, w, h);
       context.save();
       context.scale(scale, scale);
       // ecли scale 1, то scaledCanvas.height = this.canvas.height
       context.translate(camera.position.x, 0);
-      // background.update();
-      background2.position.x = 0;
-      background2.update();
-      console.log(background2.width, background2.position);
-      background1.update();
-      floorCollusions.forEach((block) => {
+      bgImages.forEach((block) => {
         block.update();
       });
-      platformCollusions.forEach((block) => {
+      background1.update();
+      tiles.forEach((block) => {
+        block.update();
+      });
+      tiles1.forEach((block) => {
+        block.update();
+      });
+      coins.forEach((block) => {
         block.update();
       });
       player.update();
       player.velocity.x = 0;
       if (keys.left) {
         player.switchSprite('runLeft');
-        player.velocity.x = -2;
+        player.velocity.x = -5;
         player.lastDirection = Directions.left;
+        player.isCameraLeft(camera);
       } else if (keys.right) {
         player.switchSprite('run');
-        player.velocity.x = 2;
+        player.velocity.x = 5;
         player.lastDirection = Directions.right;
-        // if (player.isCameraLeft()) {
-        //   camera.position.x -= player.velocity.x;
-        // };
-        player.isCameraLeft(camera);
+        player.isCameraRight(camera);
       } else if (player.velocity.y === 0) {
         player.lastDirection === Directions.right ? player.switchSprite('idle') : player.switchSprite('idleLeft');
       }
@@ -156,10 +176,15 @@ class GameCanvas {
           player.switchSprite('fallLeft');
         }
       }
-
-
-      //player2.update();
       context.restore();
+      if (lifeHearts.length > player.lifes) {
+        lifeHearts.pop();
+      }
+      lifeHearts.forEach((el) => {
+        el.update();
+      });
+      coinImg.update();
+      context.strokeText(player.score.toString(), w - 50, 50);
     };
     animationLoop();
     window.addEventListener('keydown', (event: KeyboardEvent) => {
@@ -182,6 +207,7 @@ class GameCanvas {
         case 32:
           console.log('space');
           event.preventDefault();
+          player.crashIntoMob();
           break;
 
         default:

@@ -1,3 +1,5 @@
+import SpriteBase from '../sprite/SpriteBase';
+
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 class CollusionBlock {
   context: CanvasRenderingContext2D;
@@ -5,13 +7,18 @@ class CollusionBlock {
   width: number;
   height: number;
   size: number;
+  imageSrc: string | undefined;
+  img?: SpriteBase;
 
-  constructor (cont: CanvasRenderingContext2D, position: { x: number, y: number }, size: number) {
+  constructor (cont: CanvasRenderingContext2D, position: { x: number, y: number }, size: number, imageSrc: string | undefined = undefined) {
     this.context = cont;
     this.position = position;
     this.width = size;
     this.height = size;
     this.size = size;
+    if (imageSrc) {
+      this.img = new SpriteBase(this.context, position, imageSrc);
+    }
   }
 
   draw () {
@@ -20,7 +27,7 @@ class CollusionBlock {
   }
 
   update () {
-    this.draw();
+    this.img ? this.img.update() : this.draw();
   }
 }
 
