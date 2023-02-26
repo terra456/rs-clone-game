@@ -8,6 +8,7 @@ export interface IAnimations {
   jumpLeft: ISprite
   fall: ISprite
   fallLeft: ISprite
+  die: ISprite
   image?: HTMLImageElement
 }
 
@@ -34,12 +35,13 @@ export type coordinatesType = {
   y: number
 }
 
-export interface CollusionBlock {
+export interface ICollusionBlock {
   context: CanvasRenderingContext2D
   position: { x: number, y: number }
   width: number
   height: number
-  size: number
+  size?: number
+  imgSrc?: string
   draw: () => void
   update: () => void
 }
