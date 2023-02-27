@@ -12,7 +12,6 @@ class Warior extends Player {
   coins: ICollusionBlock[];
   enemies: Enemy[];
   gameOver: () => void;
-  isDie: boolean;
 
   constructor (cont: CanvasRenderingContext2D, scale: number, position: { x: number, y: number }, field: { width: number, height: number }, collusions: ICollusionBlock[], floorCollusions: ICollusionBlock[], coins: ICollusionBlock[], enemies: Enemy[], imageSrc: string, frameRate: number, animations: IAnimations, gameOver: () => void) {
     super(cont, scale, position, field, collusions, floorCollusions, imageSrc, frameRate, animations)
@@ -32,18 +31,32 @@ class Warior extends Player {
     this.coins = coins;
     this.enemies = enemies;
     this.gameOver = gameOver;
-    this.isDie = false;
   }
 
   update () {
-    if (!this.isDie) {
-      super.update();
-      //квадраты для видимости
-      this.context.fillStyle = 'rgba(0, 255, 0, 0.2)';
-      this.context.fillRect(this.cameraBox.position.x, this.cameraBox.position.y, this.cameraBox.width, this.cameraBox.height);
-      this.updateCameraBox();
+    super.update();
+    //квадраты для видимости
+    this.context.fillStyle = 'rgba(0, 255, 0, 0.2)';
+    this.context.fillRect(this.cameraBox.position.x, this.cameraBox.position.y, this.cameraBox.width, this.cameraBox.height);
+    this.updateCameraBox();
+    if (!this.isDied) {
       this.checkCoins();
       this.checkFallOut();
+      this.checkEnemies();
+    } else {
+      if (this.dieTimer >= 30) {
+        if (this.lifes === 0) {
+          this.gameOver();
+        } else {
+          this.isDied = false;
+          this.dieTimer = 0;
+          this.switchSprite('idle');
+          this.position.y -= 200;
+          this.position.x -= 500;
+        }
+      } else {
+        this.switchSprite('hit');
+      }
     }
   };
 
@@ -85,10 +98,20 @@ class Warior extends Player {
 
   checkEnemies () {
     for (let i = 0; i < this.enemies.length; i++) {
-      const coin = this.coins[i];
-      if (collision(this.hitbox, coin)) {
-        this.score += 5;
-        this.coins.splice(i, 1);
+      const enemy = this.enemies[i];
+      if (!enemy.isDied) {
+        if (collision(this.hitbox, enemy)) {
+          console.log('crash');
+          if (this.velocity.y > 0) {
+            enemy.isDied = true;
+            this.score += enemy.price;
+          } else {
+            this.die();
+          }
+        }
+      }
+      if (enemy.dieTimer >= 16) {
+        this.enemies.splice(i, 1);
       }
     }
   }
@@ -101,17 +124,7 @@ class Warior extends Player {
 
   die () {
     this.lifes -= 1;
-    if (this.lifes === 0) {
-      this.gameOver();
-    } else {
-      this.position.y -= 200;
-      this.position.x -= 500;
-    }
-  }
-
-  crashIntoMob () {
-    this.switchSprite('die');
-    this.die();
+    this.isDied = true;
   }
 }
 

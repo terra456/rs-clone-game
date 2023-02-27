@@ -28,7 +28,6 @@ class GameCanvas {
     };
     //делим на высоту фона, т.е игрового поля.
     this.scale = this.canvas.height / this.gameField.height;
-    console.log(this.scale);
     this.scaledCanvas = {
       width: width * this.scale,
       height: height * this.scale
@@ -58,7 +57,6 @@ class GameCanvas {
 
     const gameOver = (): void => {
       cancelAnimationFrame(myReq);
-      context.strokeText('Game Ower', w / 2 - 100, h / 2);
     };
     const tilesField = new TilesField(context, 16, layers[0].width, '../assets/background/1_level/Tileset.png', scale);
     const tiles = tilesField.generateCollusionBlocks(layers[0].data);
@@ -75,7 +73,6 @@ class GameCanvas {
     const background1 = new SpriteBase(context, { x: 0, y: 0 }, '../assets/background/1_level/bg_1.png', 1);
     const bgLoop = new Background(context, scaledCanvas, scale);
     const bgImages = bgLoop.generate('../assets/background/1_level/mtn.png', { width: 2618, height: 571 });
-    enemies.forEach((el) => { console.log(el.position.x, camera.position.x + scaledCanvas.width); });
     const coinImg = new SpriteBase(context, { x: w - 120, y: 15 }, '../assets/icons/coin.png');
     const lifeHearts: SpriteBase[] = [];
     for (let i = 0; i < 3; i++) {
@@ -118,32 +115,33 @@ class GameCanvas {
       });
       player.update();
       player.velocity.x = 0;
-      if (keys.left) {
-        player.switchSprite('runLeft');
-        player.velocity.x = -5;
-        player.lastDirection = Directions.left;
-        player.isCameraLeft(camera);
-      } else if (keys.right) {
-        player.switchSprite('run');
-        player.velocity.x = 5;
-        player.lastDirection = Directions.right;
-        player.isCameraRight(camera);
-        // bee.isDied = true;
-        // bee.gravity = 1;
-      } else if (player.velocity.y === 0) {
-        player.lastDirection === Directions.right ? player.switchSprite('idle') : player.switchSprite('idleLeft');
-      }
-
-      if (player.velocity.y < 0) {
-        player.lastDirection === Directions.right ? player.switchSprite('jump') : player.switchSprite('jumpLeft');
-      } else if (player.velocity.y > 0) {
-        if (player.lastDirection === Directions.right) {
-          player.switchSprite('fall');
-        } else {
-          player.switchSprite('fallLeft');
+      if (!player.isDied) {
+        if (keys.left) {
+          player.switchSprite('runLeft');
+          player.velocity.x = -5;
+          player.lastDirection = Directions.left;
+          player.isCameraLeft(camera);
+        } else if (keys.right) {
+          player.switchSprite('run');
+          player.velocity.x = 5;
+          player.lastDirection = Directions.right;
+          player.isCameraRight(camera);
+          // bee.isDied = true;
+          // bee.gravity = 1;
+        } else if (player.velocity.y === 0) {
+          player.lastDirection === Directions.right ? player.switchSprite('idle') : player.switchSprite('idleLeft');
+        }
+        if (player.velocity.y < 0) {
+          player.lastDirection === Directions.right ? player.switchSprite('jump') : player.switchSprite('jumpLeft');
+        } else if (player.velocity.y > 0) {
+          if (player.lastDirection === Directions.right) {
+            player.switchSprite('fall');
+          } else {
+            player.switchSprite('fallLeft');
+          }
         }
       }
-      enemies.forEach((el) => {
+      enemies.forEach((el, i) => {
         if (el.velocity.x === 0) {
           if (-camera.position.x + scaledCanvas.width >= el.position.x * el.scale) {
             el.go();
@@ -151,14 +149,6 @@ class GameCanvas {
         }
         el.update();
       });
-      // if (bee.isDied) {
-      //   bee.position.x -= 0;
-      // } else {
-      //   bee.position.x -= 2;
-      //   bee.switchSprite('fly');
-      // }
-      // bee.update();
-      // boar.switchSprite('move');
 
       context.restore();
       if (lifeHearts.length > player.lifes) {
@@ -191,7 +181,6 @@ class GameCanvas {
         case 32:
           console.log('space');
           event.preventDefault();
-          player.crashIntoMob();
           break;
 
         default:

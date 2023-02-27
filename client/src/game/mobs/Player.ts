@@ -49,6 +49,7 @@ class Player extends Sprite {
     this.lastDirection = Directions.right;
 
     this.isDied = false;
+    this.dieTimer = 0;
 
     for (let key in this.animations) {
       const image: HTMLImageElement = new Image();
@@ -152,8 +153,9 @@ class Player extends Sprite {
   }
 
   dying () {
+    console.log(this.dieTimer);
     this.dieTimer += 1;
-    // this.switchSprite('hit');
+    this.switchSprite('hit');
   }
 }
 
