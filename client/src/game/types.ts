@@ -47,6 +47,10 @@ export enum Directions {
   right = 'right'
 }
 
+export interface IPlayerSound {
+  attack: string
+}
+
 export type hitboxType = {
   position: coordinatesType
   width: number

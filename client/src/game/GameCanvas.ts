@@ -86,6 +86,9 @@ class GameCanvas {
     for (let i = 0; i < 3; i++) {
       lifeHearts.push(new SpriteBase(context, { x: 30 + i * 30, y: 15 }, '../assets/icons/heart.png', 0.5));
     }
+    const playerSounds = {
+      attack: '../assets/audio/sounds/12_Player_Movement_SFX/56_Attack_03.wav'
+    }
     const player = new Warior(
       context,
       scale,
@@ -100,7 +103,8 @@ class GameCanvas {
       wariorAnimation,
       gameOver,
       winGame,
-      gem
+      gem,
+      playerSounds
     );
 
     function animationLoop () {
@@ -130,6 +134,15 @@ class GameCanvas {
       if (!player.isDied) {
         if (keys.atack) {
           player.lastDirection === Directions.right ? player.switchSprite('atack') : player.switchSprite('atackLeft');
+          if (player.isAudioPlaying === false) {
+            console.log('audio play')
+            const attackAudio: HTMLAudioElement = new Audio(player.sounds.attack);
+            attackAudio.addEventListener('ended', () => {
+              player.isAudioPlaying = false;
+            })
+            player.isAudioPlaying = true;
+            attackAudio.play();
+          }
           if (player.currentFrame === player.frameRate - 1) {
             player.isAtack = false;
             keys.atack = false;
