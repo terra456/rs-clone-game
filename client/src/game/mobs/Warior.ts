@@ -13,8 +13,10 @@ class Warior extends Player {
   enemies: Enemy[];
   gameOver: () => void;
   isAtack: boolean;
+  gem: SpriteBase;
+  winGame: (score: number) => void;
 
-  constructor (cont: CanvasRenderingContext2D, scale: number, position: { x: number, y: number }, field: { width: number, height: number }, collusions: ICollusionBlock[], floorCollusions: ICollusionBlock[], coins: ICollusionBlock[], enemies: Enemy[], imageSrc: string, frameRate: number, animations: IAnimations, gameOver: () => void) {
+  constructor (cont: CanvasRenderingContext2D, scale: number, position: { x: number, y: number }, field: { width: number, height: number }, collusions: ICollusionBlock[], floorCollusions: ICollusionBlock[], coins: ICollusionBlock[], enemies: Enemy[], imageSrc: string, frameRate: number, animations: IAnimations, gameOver: () => void, winGame: (score: number) => void, gem: SpriteBase) {
     super(cont, scale, position, field, collusions, floorCollusions, imageSrc, frameRate, animations)
 
     this.cameraBox = {
@@ -32,7 +34,9 @@ class Warior extends Player {
     this.coins = coins;
     this.enemies = enemies;
     this.gameOver = gameOver;
+    this.winGame = winGame;
     this.isAtack = false;
+    this.gem = gem;
   }
 
   update () {
@@ -95,6 +99,10 @@ class Warior extends Player {
         this.score += 5;
         this.coins.splice(i, 1);
       }
+    }
+    if (collision(this.hitbox, this.gem)) {
+      this.score += 100;
+      this.winGame(this.score);
     }
   }
 

@@ -59,6 +59,11 @@ class GameCanvas {
     const gameOver = (): void => {
       cancelAnimationFrame(myReq);
     };
+
+    const winGame = (score: number): void => {
+      cancelAnimationFrame(myReq);
+      console.log('win!!!', score);
+    };
     const tilesField = new TilesField(context, 16, layers[0].width, '../assets/background/1_level/Tileset.png', scale);
     const tiles = tilesField.generateCollusionBlocks(layers[0].data);
     const tiles1 = tilesField.generateCollusionBlocks(layers[1].data);
@@ -75,6 +80,8 @@ class GameCanvas {
     const bgLoop = new Background(context, scaledCanvas, scale);
     const bgImages = bgLoop.generate('../assets/background/1_level/mtn.png', { width: 2618, height: 571 });
     const coinImg = new SpriteBase(context, { x: w - 120, y: 15 }, '../assets/icons/coin.png');
+    const gem = new SpriteBase(context, { x: this.gameField.width - 200, y: this.gameField.height * 0.7 }, '../assets/icons/gem.png');
+    console.log(this.gameField.width - 200, this.gameField.height * 0.7);
     const lifeHearts: SpriteBase[] = [];
     for (let i = 0; i < 3; i++) {
       lifeHearts.push(new SpriteBase(context, { x: 30 + i * 30, y: 15 }, '../assets/icons/heart.png', 0.5));
@@ -91,7 +98,10 @@ class GameCanvas {
       '../../assets/warrior/Idle.png',
       8,
       wariorAnimation,
-      gameOver);
+      gameOver,
+      winGame,
+      gem
+    );
 
     function animationLoop () {
       myReq = window.requestAnimationFrame(animationLoop);
@@ -114,6 +124,7 @@ class GameCanvas {
       coins.forEach((block) => {
         block.update();
       });
+      gem.update();
       player.update();
       player.velocity.x = 0;
       if (!player.isDied) {
