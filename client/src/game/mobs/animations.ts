@@ -1,4 +1,4 @@
-import { IAnimations, IAnimationsEnemy } from './types';
+import { IAnimations, IAnimationsEnemy } from '../types';
 
 export const wariorAnimation: IAnimations = {
   hitbox: {
