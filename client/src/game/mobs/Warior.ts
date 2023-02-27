@@ -57,6 +57,17 @@ class Warior extends Player {
     runAudio.play();
   }
 
+  playShortAudio(audioPath: string) {
+    if (this.isAudioPlaying === false) {
+      const audio: HTMLAudioElement = new Audio(audioPath);
+      audio.addEventListener('ended', () => {
+        this.isAudioPlaying = false;
+      })
+      this.isAudioPlaying = true;
+      audio.play();
+    }
+  }
+
   update () {
     super.update();
     //квадраты для видимости
