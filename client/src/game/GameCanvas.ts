@@ -53,6 +53,7 @@ class GameCanvas {
     };
 
     let myReq: any;
+    let isPaused: boolean = false;
 
     const gameOver = (): void => {
       cancelAnimationFrame(myReq);
@@ -62,6 +63,17 @@ class GameCanvas {
       cancelAnimationFrame(myReq);
       console.log('win!!!', score);
     };
+
+    const pauseGame = (): void => {
+      isPaused = true;
+      cancelAnimationFrame(myReq);
+    };
+
+    const resumeGame = (): void => {
+      isPaused = false;
+      animationLoop();
+    };
+
     const tilesField = new TilesField(context, 16, layers[0].width, '../assets/background/1_level/Tileset.png', scale);
     const tiles = tilesField.generateCollusionBlocks(layers[0].data);
     const tiles1 = tilesField.generateCollusionBlocks(layers[1].data);
@@ -224,6 +236,13 @@ class GameCanvas {
           // player.switchSprite('atack');
           keys.atack = true;
           player.isAtack = true;
+          break;
+
+        case 19:
+          console.log('pause');
+          event.preventDefault();
+          // player.switchSprite('atack');
+          !isPaused ? pauseGame() : resumeGame();
           break;
 
         default:
