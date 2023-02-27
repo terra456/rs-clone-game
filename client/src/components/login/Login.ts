@@ -79,7 +79,7 @@ export class Login extends BaseComponent {
         if (btnStart !== null) {
             btnStart.addEventListener('click', () => {
                 error?.classList.remove('login__error--visible');
-                this.startGame(document.body);
+                this.startGame();
             });
         }
     }
@@ -92,8 +92,12 @@ export class Login extends BaseComponent {
         return false;
     }
 
-    startGame(node: HTMLElement) {
+    startGame() {
         this.element.remove();
-        const gameCanvas = new GameCanvas(node);
+        const node: HTMLElement | null = document.querySelector('#game');
+        if (node) {
+            const gameCanvas = new GameCanvas(node);
+            gameCanvas.startGame();
+        }
     };
 }

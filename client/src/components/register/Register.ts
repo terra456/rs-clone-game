@@ -1,4 +1,3 @@
-import GameCanvas from "../../game/GameCanvas";
 import { openLogin } from "../../index";
 import { setUserAuthorized } from "../../utils/db";
 import { BaseComponent } from "../BaseComponent";
@@ -25,7 +24,7 @@ export class Register extends BaseComponent {
         if (btnNew !== null) {
           btnNew.addEventListener('click', () => {
             this.element.remove();
-            const gameCanvas = new GameCanvas(document.body);
+            
           });
         }
     }

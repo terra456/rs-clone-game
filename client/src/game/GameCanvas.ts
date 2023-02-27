@@ -12,11 +12,11 @@ import { wariorAnimation } from './mobs/animations';
 class GameCanvas {
   scaledCanvas: { width: number, height: number };
   canvas: HTMLCanvasElement;
-  context: CanvasRenderingContext2D;
+  context: CanvasRenderingContext2D | null;
   scale: number;
   gameField: { width: number, height: number };
 
-  constructor (parentNode: HTMLElement, width = 1024, height = 576) {
+  constructor (parentNode: HTMLElement = document.body, width = 1024, height = 576) {
     this.canvas = document.createElement('canvas');
     this.canvas.width = width;
     this.canvas.height = height;
@@ -31,9 +31,12 @@ class GameCanvas {
       height: height * this.scale
     };
     parentNode.appendChild(this.canvas);
-    const context = this.canvas.getContext('2d');
-    if (context != null) {
-      this.animate(context, this.canvas.width, this.canvas.height, this.canvas);
+    this.context = this.canvas.getContext('2d');
+  }
+
+  startGame () {
+    if (this.context != null) {
+      this.animate(this.context, this.canvas.width, this.canvas.height, this.canvas);
     }
   }
 
@@ -269,6 +272,19 @@ class GameCanvas {
           break;
       }
     });
+    window.addEventListener('pauseTheGame', () => {
+      if (!isPaused) {
+        pauseGame();
+      }
+    });
+    window.addEventListener('resumeTheGame', () => {
+      if (isPaused) {
+        resumeGame();
+      }
+    });
+    // window.addEventListener('canselGameEvent', () => {
+    //   this.canvas.remove();
+    // });
   };
 }
 

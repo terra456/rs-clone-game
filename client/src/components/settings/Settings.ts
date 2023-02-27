@@ -1,4 +1,5 @@
 import { openApp } from "../../index";
+import { canselGameEvent, resumeEvent } from "../../utils/events";
 import { BaseComponent } from "../BaseComponent";
 import './settings.scss';
 
@@ -77,13 +78,15 @@ export class Settings extends BaseComponent {
           btnSave.addEventListener('click', () => {
             localStorage.setItem('soundsVolume', soundsRange.value);
             localStorage.setItem('soundsOn', soundsToggle.innerHTML);
+            btnSave.dispatchEvent(resumeEvent);
           });
         }
 
         const btnCancel: HTMLElement | null = this.element.querySelector('.settings__cancel');
         if (btnCancel !== null) {
           btnCancel.addEventListener('click', () => {
-            openApp();
+            this.element.remove();
+            document.querySelector('canvas')?.remove();
           });
         }
     }
