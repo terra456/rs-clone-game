@@ -80,7 +80,7 @@ class Player extends Sprite {
     this.applyGravity();
     this.updateHitbox();
     this.checkForVerticalCollusions();
-    this.checkForDeath();
+    // this.checkForDeath();
   }
 
   updateHitbox () {
@@ -153,8 +153,6 @@ class Player extends Sprite {
   }
 
   dying () {
-    console.log(this.dieTimer);
-    this.dieTimer += 1;
     this.switchSprite('hit');
   }
 }

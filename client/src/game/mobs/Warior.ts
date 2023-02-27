@@ -57,7 +57,7 @@ class Warior extends Player {
           this.position.x -= 500;
         }
       } else {
-        this.switchSprite('hit');
+        this.checkFallWhenDied();
       }
     }
   };
@@ -126,9 +126,10 @@ class Warior extends Player {
             this.die();
           }
         }
-      }
-      if (enemy.dieTimer >= 16) {
-        this.enemies.splice(i, 1);
+      } else {
+        if (enemy.currentFrame === enemy.frameRate - 1) {
+          this.enemies.splice(i, 1);
+        }
       }
     }
   }
@@ -144,10 +145,9 @@ class Warior extends Player {
     this.isDied = true;
   }
 
-  dying () {
-    console.log(this.dieTimer, this.velocity.y);
+  checkFallWhenDied () {
     this.dieTimer += 1;
-    if (this.dieTimer > 2 && this.velocity.y === 0) {
+    if (this.velocity.y === 0) {
       this.switchSprite('hit');
     }
   }

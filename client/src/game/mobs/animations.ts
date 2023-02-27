@@ -98,7 +98,7 @@ export const beeAnimation: IAnimationsEnemy = {
   hit: {
     imageSrc: '../../assets/enemy/bee/hit.png',
     frameRate: 4,
-    frameBuffer: 3,
+    frameBuffer: 2,
   },
 };
 
