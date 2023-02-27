@@ -87,7 +87,8 @@ class GameCanvas {
       lifeHearts.push(new SpriteBase(context, { x: 30 + i * 30, y: 15 }, '../assets/icons/heart.png', 0.5));
     }
     const playerSounds = {
-      attack: '../assets/audio/sounds/12_Player_Movement_SFX/56_Attack_03.wav'
+      attack: '../assets/audio/sounds/12_Player_Movement_SFX/56_Attack_03.wav',
+      run: '../assets/audio/sounds/12_Player_Movement_SFX/03_Step_grass_03.wav'
     }
     const player = new Warior(
       context,
@@ -133,9 +134,9 @@ class GameCanvas {
       player.velocity.x = 0;
       if (!player.isDied) {
         if (keys.atack) {
+          player.isRunning = false;
           player.lastDirection === Directions.right ? player.switchSprite('atack') : player.switchSprite('atackLeft');
           if (player.isAudioPlaying === false) {
-            console.log('audio play')
             const attackAudio: HTMLAudioElement = new Audio(player.sounds.attack);
             attackAudio.addEventListener('ended', () => {
               player.isAudioPlaying = false;
@@ -146,6 +147,7 @@ class GameCanvas {
           if (player.currentFrame === player.frameRate - 1) {
             player.isAtack = false;
             keys.atack = false;
+            player.isRunning = false;
             player.lastDirection === Directions.right ? player.switchSprite('idle') : player.switchSprite('idleLeft');
           }
         }
@@ -154,12 +156,21 @@ class GameCanvas {
           player.velocity.x = -5;
           player.lastDirection = Directions.left;
           player.isCameraLeft(camera);
+          if (!player.isRunning) {
+            player.isRunning = true;
+            player.playRunAudio();
+          }
         } else if (keys.right) {
           player.switchSprite('run');
           player.velocity.x = 5;
           player.lastDirection = Directions.right;
           player.isCameraRight(camera);
+          if (!player.isRunning) {
+            player.isRunning = true;
+            player.playRunAudio();
+          }
         } else if (player.velocity.y === 0 && !keys.atack) {
+          player.isRunning = false;
           player.lastDirection === Directions.right ? player.switchSprite('idle') : player.switchSprite('idleLeft');
         }
         if (player.velocity.y < 0 && !keys.atack) {
@@ -168,6 +179,7 @@ class GameCanvas {
           player.lastDirection === Directions.right ? player.switchSprite('fall') : player.switchSprite('fallLeft');
         }
       } else {
+        player.isRunning = false;
         player.switchSprite('hit');
       }
       enemies.forEach((el) => {

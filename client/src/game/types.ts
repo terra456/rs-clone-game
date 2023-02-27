@@ -48,7 +48,8 @@ export enum Directions {
 }
 
 export interface IPlayerSound {
-  attack: string
+  attack: string,
+  run: string
 }
 
 export type hitboxType = {

@@ -18,6 +18,7 @@ class Warior extends Player {
   winGame: (score: number) => void;
   sounds: IPlayerSound;
   isAudioPlaying: boolean;
+  isRunning: boolean;
 
   constructor (cont: CanvasRenderingContext2D, scale: number, position: { x: number, y: number }, field: { width: number, height: number }, collusions: ICollusionBlock[], floorCollusions: ICollusionBlock[], coins: ICollusionBlock[], enemies: Enemy[], imageSrc: string, frameRate: number, animations: IAnimations, gameOver: () => void, winGame: (score: number) => void, gem: SpriteBase, sounds: IPlayerSound) {
     super(cont, scale, position, field, collusions, floorCollusions, imageSrc, frameRate, animations)
@@ -42,6 +43,18 @@ class Warior extends Player {
     this.gem = gem;
     this.sounds = sounds;
     this.isAudioPlaying = false;
+    this.isRunning = false;
+  }
+
+  playRunAudio() {
+    const runAudio: HTMLAudioElement = new Audio(this.sounds.run);
+    runAudio.addEventListener('ended', () => {
+      if (this.isRunning) {
+        runAudio.currentTime = 0;
+        runAudio.play();
+      }
+    })
+    runAudio.play();
   }
 
   update () {
