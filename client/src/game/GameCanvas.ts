@@ -211,6 +211,7 @@ class GameCanvas {
         case 38:
           console.log('up');
           player.velocity.y = -10;
+          event.preventDefault();
           break;
         case 39:
           console.log('right');
