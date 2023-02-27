@@ -2,6 +2,7 @@
 import SpriteBase from '../sprite/SpriteBase';
 import { coordinatesType, ICollusionBlock, type IAnimations } from '../types';
 import { collision } from '../utils';
+import Enemy from './Enemy';
 import Player from './Player';
 
 class Warior extends Player {
@@ -9,11 +10,13 @@ class Warior extends Player {
   score: number;
   lifes: number;
   coins: ICollusionBlock[];
+  enemies: Enemy[];
   gameOver: () => void;
   isDie: boolean;
 
-  constructor (cont: CanvasRenderingContext2D, scale: number, position: { x: number, y: number }, field: { width: number, height: number }, collusions: ICollusionBlock[], floorCollusions: ICollusionBlock[], coins: ICollusionBlock[], imageSrc: string, frameRate: number, animations: IAnimations, gameOver: () => void) {
+  constructor (cont: CanvasRenderingContext2D, scale: number, position: { x: number, y: number }, field: { width: number, height: number }, collusions: ICollusionBlock[], floorCollusions: ICollusionBlock[], coins: ICollusionBlock[], enemies: Enemy[], imageSrc: string, frameRate: number, animations: IAnimations, gameOver: () => void) {
     super(cont, scale, position, field, collusions, floorCollusions, imageSrc, frameRate, animations)
+
     this.cameraBox = {
       position: {
         x: this.position.x,
@@ -27,6 +30,7 @@ class Warior extends Player {
     this.lifes = 3;
     this.score = 0;
     this.coins = coins;
+    this.enemies = enemies;
     this.gameOver = gameOver;
     this.isDie = false;
   }
@@ -55,7 +59,7 @@ class Warior extends Player {
     const cameraRightSide: number = this.cameraBox.position.x + this.cameraBox.width;
     // ширина всей игры
     if (cameraRightSide >= 6000) return;
-    if (cameraRightSide >= (this.field.width / this.scale) / 2) {
+    if (cameraRightSide >= this.field.width) {
       camera.position.x -= this.velocity.x;
     }
   }
@@ -71,6 +75,16 @@ class Warior extends Player {
 
   checkCoins () {
     for (let i = 0; i < this.coins.length; i++) {
+      const coin = this.coins[i];
+      if (collision(this.hitbox, coin)) {
+        this.score += 5;
+        this.coins.splice(i, 1);
+      }
+    }
+  }
+
+  checkEnemies () {
+    for (let i = 0; i < this.enemies.length; i++) {
       const coin = this.coins[i];
       if (collision(this.hitbox, coin)) {
         this.score += 5;

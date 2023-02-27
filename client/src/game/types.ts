@@ -1,5 +1,16 @@
 /* eslint-disable @typescript-eslint/consistent-type-definitions */
-export interface IAnimations {
+export interface IAnimationsBase {
+  hitbox: {
+    width: number,
+    height: number,
+    offset: {
+      x: number,
+      y: number,
+    }
+  },
+}
+
+export interface IAnimations extends IAnimationsBase {
   idle: ISprite
   idleLeft: ISprite
   run: ISprite
@@ -8,15 +19,18 @@ export interface IAnimations {
   jumpLeft: ISprite
   fall: ISprite
   fallLeft: ISprite
-  die: ISprite
+  hit: ISprite
   image?: HTMLImageElement
 }
 
-export interface IAnimationsEnemy {
-  fly: ISprite
-  flyLeft: ISprite
-  attack: ISprite
-  attackLeft: ISprite
+export interface IAnimationsEnemy extends IAnimationsBase {
+  idle?: ISprite
+  move: ISprite
+  moveLeft?: ISprite
+  run?: ISprite
+  attack?: ISprite
+  attackLeft?: ISprite
+  hide?: ISprite
   hit: ISprite
 }
 

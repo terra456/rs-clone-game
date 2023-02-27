@@ -9,6 +9,7 @@ import TilesField from './collusions/TilesField';
 import { layers } from './maps/1_level/map';
 import CollusionField from './collusions/CollusionField';
 import Enemy from './mobs/Enemy';
+import { beeAnimation, boarAnimation, snailAnimation, wariorAnimation } from './mobs/animations';
 
 class GameCanvas {
   scaledCanvas: { width: number, height: number };
@@ -62,58 +63,19 @@ class GameCanvas {
     const tilesField = new TilesField(context, 16, layers[0].width, '../assets/background/1_level/Tileset.png', scale);
     const tiles = tilesField.generateCollusionBlocks(layers[0].data);
     const tiles1 = tilesField.generateCollusionBlocks(layers[1].data);
+    const params = {
+      scale,
+      field,
+      tiles,
+      tiles1
+    };
     const collisionField = new CollusionField(context, 16, layers[0].width);
     const coins = collisionField.generateCollusionBlocks(layers[2].data, '../assets/icons/coin.png');
+    const enemies = collisionField.generateEnemies(layers[3].data, params);
     const background1 = new SpriteBase(context, { x: 0, y: 0 }, '../assets/background/1_level/bg_1.png', 1);
     const bgLoop = new Background(context, scaledCanvas, scale);
     const bgImages = bgLoop.generate('../assets/background/1_level/mtn.png', { width: 2618, height: 571 });
-    const playerAnimation: IAnimations = {
-      idle: {
-        imageSrc: '../../assets/warrior/Idle.png',
-        frameRate: 8,
-        frameBuffer: 3,
-      },
-      idleLeft: {
-        imageSrc: '../../assets/warrior/IdleLeft.png',
-        frameRate: 8,
-        frameBuffer: 3,
-      },
-      run: {
-        imageSrc: '../../assets/warrior/Run.png',
-        frameRate: 8,
-        frameBuffer: 5,
-      },
-      runLeft: {
-        imageSrc: '../../assets/warrior/RunLeft.png',
-        frameRate: 8,
-        frameBuffer: 5,
-      },
-      jump: {
-        imageSrc: '../../assets/warrior/Jump.png',
-        frameRate: 2,
-        frameBuffer: 3,
-      },
-      jumpLeft: {
-        imageSrc: '../../assets/warrior/JumpLeft.png',
-        frameRate: 2,
-        frameBuffer: 3,
-      },
-      fall: {
-        imageSrc: '../../assets/warrior/Fall.png',
-        frameRate: 2,
-        frameBuffer: 3,
-      },
-      fallLeft: {
-        imageSrc: '../../assets/warrior/FallLeft.png',
-        frameRate: 2,
-        frameBuffer: 3,
-      },
-      die: {
-        imageSrc: '../../assets/warrior/Die.png',
-        frameRate: 8,
-        frameBuffer: 3,
-      },
-    };
+    enemies.forEach((el) => { console.log(el.position.x, camera.position.x + scaledCanvas.width); });
     const coinImg = new SpriteBase(context, { x: w - 120, y: 15 }, '../assets/icons/coin.png');
     const lifeHearts: SpriteBase[] = [];
     for (let i = 0; i < 3; i++) {
@@ -127,49 +89,11 @@ class GameCanvas {
       tiles,
       tiles1,
       coins,
+      enemies,
       '../../assets/warrior/Idle.png',
       8,
-      playerAnimation,
+      wariorAnimation,
       gameOver);
-
-    const mobAnimation: IAnimationsEnemy = {
-      fly: {
-        imageSrc: '../../assets/enemy/fly.png',
-        frameRate: 4,
-        frameBuffer: 3,
-      },
-      flyLeft: {
-        imageSrc: '../../assets/enemy/flyLeft.png',
-        frameRate: 4,
-        frameBuffer: 3,
-      },
-      attack: {
-        imageSrc: '../../assets/enemy/attack.png',
-        frameRate: 4,
-        frameBuffer: 3,
-      },
-      attackLeft: {
-        imageSrc: '../../assets/enemy/attackLeft.png',
-        frameRate: 4,
-        frameBuffer: 3,
-      },
-      hit: {
-        imageSrc: '../../assets/enemy/hit.png',
-        frameRate: 4,
-        frameBuffer: 3,
-      },
-    }
-    const enemyMob = new Enemy(
-      context,
-      scale,
-      {x: 30, y: 400},
-      field,
-      tiles,
-      tiles1,
-      '../../assets/enemy/fly.png',
-      4,
-      mobAnimation
-    );
 
     function animationLoop () {
       myReq = window.requestAnimationFrame(animationLoop);
@@ -204,6 +128,8 @@ class GameCanvas {
         player.velocity.x = 5;
         player.lastDirection = Directions.right;
         player.isCameraRight(camera);
+        // bee.isDied = true;
+        // bee.gravity = 1;
       } else if (player.velocity.y === 0) {
         player.lastDirection === Directions.right ? player.switchSprite('idle') : player.switchSprite('idleLeft');
       }
@@ -217,8 +143,22 @@ class GameCanvas {
           player.switchSprite('fallLeft');
         }
       }
-
-      enemyMob.update();
+      enemies.forEach((el) => {
+        if (el.velocity.x === 0) {
+          if (-camera.position.x + scaledCanvas.width >= el.position.x * el.scale) {
+            el.go();
+          }
+        }
+        el.update();
+      });
+      // if (bee.isDied) {
+      //   bee.position.x -= 0;
+      // } else {
+      //   bee.position.x -= 2;
+      //   bee.switchSprite('fly');
+      // }
+      // bee.update();
+      // boar.switchSprite('move');
 
       context.restore();
       if (lifeHearts.length > player.lifes) {
