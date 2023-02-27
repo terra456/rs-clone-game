@@ -93,6 +93,7 @@ export class Login extends BaseComponent {
     }
 
     startGame(node: HTMLElement) {
+        this.element.remove();
         const gameCanvas = new GameCanvas(node);
     };
 }

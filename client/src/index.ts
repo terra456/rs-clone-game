@@ -14,18 +14,21 @@ const btnSettings: HTMLElement | null = document.querySelector('#settingsBtn');
 
 if (btnLogin !== null) {
     btnLogin.addEventListener('click', () => {
+       document.querySelector('canvas')?.remove();
        openLogin();
     });
 }
 
 if (btnStartGame !== null) {
     btnStartGame.addEventListener('click', () => {
+        document.querySelector('canvas')?.remove();
         openStartGame();
     });
 }
 
 if (btnSettings !== null) {
     btnSettings.addEventListener('click', () => {
+        document.querySelector('canvas')?.remove();
         openTab(new Settings().element);
     });
 }

@@ -1,15 +1,13 @@
 import { Directions, IAnimations, IAnimationsEnemy } from './types';
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 // import Player from './mobs/Player';
-import Sprite from './sprite/Sprite';
 import Background from './maps/Background';
 import SpriteBase from './sprite/SpriteBase';
 import Warior from './mobs/Warior';
 import TilesField from './collusions/TilesField';
 import { layers } from './maps/1_level/map';
 import CollusionField from './collusions/CollusionField';
-import Enemy from './mobs/Enemy';
-import { beeAnimation, boarAnimation, snailAnimation, wariorAnimation } from './mobs/animations';
+import { wariorAnimation } from './mobs/animations';
 
 class GameCanvas {
   scaledCanvas: { width: number, height: number };
