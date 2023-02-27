@@ -77,7 +77,7 @@ class GameCanvas {
       animationLoop();
     };
 
-    const tilesField = new TilesField(context, 16, layers[0].width, '../assets/background/1_level/Tileset.png', scale);
+    const tilesField = new TilesField(context, 16, layers[0].width, './assets/background/1_level/Tileset.png', scale);
     const tiles = tilesField.generateCollusionBlocks(layers[0].data);
     const tiles1 = tilesField.generateCollusionBlocks(layers[1].data);
     const params = {
@@ -87,25 +87,25 @@ class GameCanvas {
       tiles1
     };
     const collisionField = new CollusionField(context, 16, layers[0].width);
-    const coins = collisionField.generateCollusionBlocks(layers[2].data, '../assets/icons/coin.png');
+    const coins = collisionField.generateCollusionBlocks(layers[2].data, './assets/icons/coin.png');
     const enemies = collisionField.generateEnemies(layers[3].data, params);
-    const background1 = new SpriteBase(context, { x: 0, y: 0 }, '../assets/background/1_level/bg_1.png', 1);
+    const background1 = new SpriteBase(context, { x: 0, y: 0 }, './assets/background/1_level/bg_1.png', 1);
     const bgLoop = new Background(context, scaledCanvas, scale);
-    const bgImages = bgLoop.generate('../assets/background/1_level/mtn.png', { width: 2618, height: 571 });
-    const coinImg = new SpriteBase(context, { x: w - 120, y: 15 }, '../assets/icons/coin.png');
-    const gem = new SpriteBase(context, { x: this.gameField.width - 200, y: this.gameField.height * 0.7 }, '../assets/icons/gem.png');
+    const bgImages = bgLoop.generate('./assets/background/1_level/mtn.png', { width: 2618, height: 571 });
+    const coinImg = new SpriteBase(context, { x: w - 120, y: 15 }, './assets/icons/coin.png');
+    const gem = new SpriteBase(context, { x: this.gameField.width - 200, y: this.gameField.height * 0.7 }, './assets/icons/gem.png');
     console.log(this.gameField.width - 200, this.gameField.height * 0.7);
     const lifeHearts: SpriteBase[] = [];
     for (let i = 0; i < 3; i++) {
-      lifeHearts.push(new SpriteBase(context, { x: 30 + i * 30, y: 15 }, '../assets/icons/heart.png', 0.5));
+      lifeHearts.push(new SpriteBase(context, { x: 30 + i * 30, y: 15 }, './assets/icons/heart.png', 0.5));
     }
     const playerSounds = {
-      attack: '../assets/audio/sounds/12_Player_Movement_SFX/56_Attack_03.wav',
-      run: '../assets/audio/sounds/12_Player_Movement_SFX/03_Step_grass_03.wav',
-      hit: '../assets/audio/sounds/12_Player_Movement_SFX/61_Hit_03.wav',
-      jump: '../assets/audio/sounds/12_Player_Movement_SFX/30_Jump_03.wav',
-      landing: '../assets/audio/sounds/12_Player_Movement_SFX/45_Landing_01.wav',
-      coin: '../assets/audio/sounds/10_UI_Menu_SFX/079_Buy_sell_01.wav'
+      attack: './assets/audio/sounds/12_Player_Movement_SFX/56_Attack_03.wav',
+      run: './assets/audio/sounds/12_Player_Movement_SFX/03_Step_grass_03.wav',
+      hit: './assets/audio/sounds/12_Player_Movement_SFX/61_Hit_03.wav',
+      jump: './assets/audio/sounds/12_Player_Movement_SFX/30_Jump_03.wav',
+      landing: './assets/audio/sounds/12_Player_Movement_SFX/45_Landing_01.wav',
+      coin: './assets/audio/sounds/10_UI_Menu_SFX/079_Buy_sell_01.wav'
     }
     const player = new Warior(
       context,
