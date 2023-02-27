@@ -43,7 +43,7 @@ export class Login extends BaseComponent {
                         totalScore: 0,
                     }
                     createUser(newUser).then((data) =>{
-                        setUserAuthorized(data.id);
+                        setUserAuthorized(data[0].id);
                         openForNewUser();
                     })
                     .catch((err) => {
