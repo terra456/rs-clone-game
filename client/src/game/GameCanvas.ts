@@ -116,7 +116,7 @@ class GameCanvas {
       tiles1,
       coins,
       enemies,
-      '../assets/warrior/Idle.png',
+      './assets/warrior/Idle.png',
       8,
       wariorAnimation,
       gameOver,
