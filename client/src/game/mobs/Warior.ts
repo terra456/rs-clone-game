@@ -1,3 +1,4 @@
+import { IPlayerSound } from './../types';
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import SpriteBase from '../sprite/SpriteBase';
 import { coordinatesType, hitboxSmallType, hitboxType, ICollusionBlock, type IAnimations } from '../types';
@@ -15,8 +16,10 @@ class Warior extends Player {
   isAtack: boolean;
   gem: SpriteBase;
   winGame: (score: number) => void;
+  sounds: IPlayerSound;
+  isAudioPlaying: boolean;
 
-  constructor (cont: CanvasRenderingContext2D, scale: number, position: { x: number, y: number }, field: { width: number, height: number }, collusions: ICollusionBlock[], floorCollusions: ICollusionBlock[], coins: ICollusionBlock[], enemies: Enemy[], imageSrc: string, frameRate: number, animations: IAnimations, gameOver: () => void, winGame: (score: number) => void, gem: SpriteBase) {
+  constructor (cont: CanvasRenderingContext2D, scale: number, position: { x: number, y: number }, field: { width: number, height: number }, collusions: ICollusionBlock[], floorCollusions: ICollusionBlock[], coins: ICollusionBlock[], enemies: Enemy[], imageSrc: string, frameRate: number, animations: IAnimations, gameOver: () => void, winGame: (score: number) => void, gem: SpriteBase, sounds: IPlayerSound) {
     super(cont, scale, position, field, collusions, floorCollusions, imageSrc, frameRate, animations)
 
     this.cameraBox = {
@@ -37,6 +40,8 @@ class Warior extends Player {
     this.winGame = winGame;
     this.isAtack = false;
     this.gem = gem;
+    this.sounds = sounds;
+    this.isAudioPlaying = false;
   }
 
   update () {
