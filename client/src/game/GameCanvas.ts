@@ -282,9 +282,6 @@ class GameCanvas {
         resumeGame();
       }
     });
-    // window.addEventListener('canselGameEvent', () => {
-    //   this.canvas.remove();
-    // });
   };
 }
 

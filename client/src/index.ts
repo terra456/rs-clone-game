@@ -4,7 +4,6 @@ import { Register } from "./components/register/Register";
 import { StartGame } from "./components/start/StartGame";
 import { getSavedGames } from './utils/db';
 import { pausedEvent } from './utils/events';
-import GameCanvas from './game/GameCanvas';
 import { BaseComponent } from './components/BaseComponent';
 
 const main: HTMLElement | null = document.querySelector('main');

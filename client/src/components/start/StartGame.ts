@@ -52,6 +52,7 @@ export class StartGame extends BaseComponent {
           btnNew.addEventListener('click', () => {
             this.element.remove();
             const gameCanvas = new GameCanvas(document.body);
+            gameCanvas.startGame();
           });
         }
     }
