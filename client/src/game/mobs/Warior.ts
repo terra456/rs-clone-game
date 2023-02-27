@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import SpriteBase from '../sprite/SpriteBase';
-import { coordinatesType, ICollusionBlock, type IAnimations } from '../types';
+import { coordinatesType, hitboxSmallType, hitboxType, ICollusionBlock, type IAnimations } from '../types';
 import { collision } from '../utils';
 import Enemy from './Enemy';
 import Player from './Player';
@@ -12,6 +12,7 @@ class Warior extends Player {
   coins: ICollusionBlock[];
   enemies: Enemy[];
   gameOver: () => void;
+  isAtack: boolean;
 
   constructor (cont: CanvasRenderingContext2D, scale: number, position: { x: number, y: number }, field: { width: number, height: number }, collusions: ICollusionBlock[], floorCollusions: ICollusionBlock[], coins: ICollusionBlock[], enemies: Enemy[], imageSrc: string, frameRate: number, animations: IAnimations, gameOver: () => void) {
     super(cont, scale, position, field, collusions, floorCollusions, imageSrc, frameRate, animations)
@@ -31,6 +32,7 @@ class Warior extends Player {
     this.coins = coins;
     this.enemies = enemies;
     this.gameOver = gameOver;
+    this.isAtack = false;
   }
 
   update () {
@@ -100,12 +102,27 @@ class Warior extends Player {
     for (let i = 0; i < this.enemies.length; i++) {
       const enemy = this.enemies[i];
       if (!enemy.isDied) {
-        if (collision(this.hitbox, enemy)) {
-          console.log('crash');
-          if (this.velocity.y > 0) {
+        let collisionEnemy: boolean;
+        if (this.isAtack) {
+          const hitbox: hitboxSmallType = {
+            width: this.hitbox.width * 2,
+            height: this.hitbox.height * 2,
+            position: {
+              x: this.hitbox.position.x - this.hitbox.width / 2,
+              y: this.hitbox.position.y + this.hitbox.height / 2
+            }
+          };
+          collisionEnemy = collision(hitbox, enemy);
+        } else {
+          collisionEnemy = collision(this.hitbox, enemy);
+        }
+        if (collisionEnemy) {
+          if (this.velocity.y > 0 || this.isAtack) {
             enemy.isDied = true;
+            enemy.dying();
             this.score += enemy.price;
           } else {
+            this.velocity.y += this.gravity;
             this.die();
           }
         }
@@ -125,6 +142,14 @@ class Warior extends Player {
   die () {
     this.lifes -= 1;
     this.isDied = true;
+  }
+
+  dying () {
+    console.log(this.dieTimer, this.velocity.y);
+    this.dieTimer += 1;
+    if (this.dieTimer > 2 && this.velocity.y === 0) {
+      this.switchSprite('hit');
+    }
   }
 }
 

@@ -43,7 +43,8 @@ class GameCanvas {
     const field = scaledCanvas;
     const keys = {
       left: false,
-      right: false
+      right: false,
+      atack: false
     };
     const scale: number = this.scale;
     const camera = {
@@ -116,6 +117,14 @@ class GameCanvas {
       player.update();
       player.velocity.x = 0;
       if (!player.isDied) {
+        if (keys.atack) {
+          player.lastDirection === Directions.right ? player.switchSprite('atack') : player.switchSprite('atackLeft');
+          if (player.currentFrame === player.frameRate - 1) {
+            player.isAtack = false;
+            keys.atack = false;
+            player.lastDirection === Directions.right ? player.switchSprite('idle') : player.switchSprite('idleLeft');
+          }
+        }
         if (keys.left) {
           player.switchSprite('runLeft');
           player.velocity.x = -5;
@@ -126,22 +135,18 @@ class GameCanvas {
           player.velocity.x = 5;
           player.lastDirection = Directions.right;
           player.isCameraRight(camera);
-          // bee.isDied = true;
-          // bee.gravity = 1;
-        } else if (player.velocity.y === 0) {
+        } else if (player.velocity.y === 0 && !keys.atack) {
           player.lastDirection === Directions.right ? player.switchSprite('idle') : player.switchSprite('idleLeft');
         }
-        if (player.velocity.y < 0) {
+        if (player.velocity.y < 0 && !keys.atack) {
           player.lastDirection === Directions.right ? player.switchSprite('jump') : player.switchSprite('jumpLeft');
-        } else if (player.velocity.y > 0) {
-          if (player.lastDirection === Directions.right) {
-            player.switchSprite('fall');
-          } else {
-            player.switchSprite('fallLeft');
-          }
+        } else if (player.velocity.y > 0 && !keys.atack) {
+          player.lastDirection === Directions.right ? player.switchSprite('fall') : player.switchSprite('fallLeft');
         }
+      } else {
+        player.switchSprite('hit');
       }
-      enemies.forEach((el, i) => {
+      enemies.forEach((el) => {
         if (el.velocity.x === 0) {
           if (-camera.position.x + scaledCanvas.width >= el.position.x * el.scale) {
             el.go();
@@ -181,6 +186,9 @@ class GameCanvas {
         case 32:
           console.log('space');
           event.preventDefault();
+          // player.switchSprite('atack');
+          keys.atack = true;
+          player.isAtack = true;
           break;
 
         default:

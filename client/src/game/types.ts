@@ -20,6 +20,8 @@ export interface IAnimations extends IAnimationsBase {
   fall: ISprite
   fallLeft: ISprite
   hit: ISprite
+  atack: ISprite
+  atackLeft: ISprite
   image?: HTMLImageElement
 }
 
@@ -50,6 +52,12 @@ export type hitboxType = {
   width: number
   height: number
   offset: coordinatesType
+};
+
+export type hitboxSmallType = {
+  position: coordinatesType
+  width: number
+  height: number
 };
 
 export type coordinatesType = {

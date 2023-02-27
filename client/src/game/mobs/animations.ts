@@ -50,8 +50,18 @@ export const wariorAnimation: IAnimations = {
     frameBuffer: 3,
   },
   hit: {
-    imageSrc: '../../assets/warrior/Die.png',
-    frameRate: 8,
+    imageSrc: '../../assets/warrior/Death.png',
+    frameRate: 6,
+    frameBuffer: 6,
+  },
+  atack: {
+    imageSrc: '../../assets/warrior/Attack1.png',
+    frameRate: 4,
+    frameBuffer: 3,
+  },
+  atackLeft: {
+    imageSrc: '../../assets/warrior/AttackLeft.png',
+    frameRate: 4,
     frameBuffer: 3,
   },
 };

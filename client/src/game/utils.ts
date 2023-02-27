@@ -1,7 +1,7 @@
 import SpriteBase from './sprite/SpriteBase';
-import { type hitboxType, type ICollusionBlock } from './types';
+import { hitboxSmallType, type hitboxType, type ICollusionBlock } from './types';
 
-export function collision (object1: hitboxType, object2: ICollusionBlock | SpriteBase): boolean {
+export function collision (object1: hitboxType | hitboxSmallType, object2: ICollusionBlock | SpriteBase): boolean {
   return (
     object1.position.y + object1.height >= object2.position.y &&
     object1.position.y <= object2.position.y + object2.height &&
