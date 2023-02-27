@@ -9,6 +9,7 @@ import TilesField from './collusions/TilesField';
 import { layers } from './maps/1_level/map';
 import CollusionField from './collusions/CollusionField';
 import Enemy from './mobs/Enemy';
+import { beeAnimation, boarAnimation, snailAnimation, wariorAnimation } from './mobs/animations';
 
 class GameCanvas {
   scaledCanvas: { width: number, height: number };
@@ -27,7 +28,6 @@ class GameCanvas {
     };
     //делим на высоту фона, т.е игрового поля.
     this.scale = this.canvas.height / this.gameField.height;
-    console.log(this.scale);
     this.scaledCanvas = {
       width: width * this.scale,
       height: height * this.scale
@@ -43,7 +43,8 @@ class GameCanvas {
     const field = scaledCanvas;
     const keys = {
       left: false,
-      right: false
+      right: false,
+      atack: false
     };
     const scale: number = this.scale;
     const camera = {
@@ -57,64 +58,30 @@ class GameCanvas {
 
     const gameOver = (): void => {
       cancelAnimationFrame(myReq);
-      context.strokeText('Game Ower', w / 2 - 100, h / 2);
+    };
+
+    const winGame = (score: number): void => {
+      cancelAnimationFrame(myReq);
+      console.log('win!!!', score);
     };
     const tilesField = new TilesField(context, 16, layers[0].width, '../assets/background/1_level/Tileset.png', scale);
     const tiles = tilesField.generateCollusionBlocks(layers[0].data);
     const tiles1 = tilesField.generateCollusionBlocks(layers[1].data);
+    const params = {
+      scale,
+      field,
+      tiles,
+      tiles1
+    };
     const collisionField = new CollusionField(context, 16, layers[0].width);
     const coins = collisionField.generateCollusionBlocks(layers[2].data, '../assets/icons/coin.png');
+    const enemies = collisionField.generateEnemies(layers[3].data, params);
     const background1 = new SpriteBase(context, { x: 0, y: 0 }, '../assets/background/1_level/bg_1.png', 1);
     const bgLoop = new Background(context, scaledCanvas, scale);
     const bgImages = bgLoop.generate('../assets/background/1_level/mtn.png', { width: 2618, height: 571 });
-    const playerAnimation: IAnimations = {
-      idle: {
-        imageSrc: '../../assets/warrior/Idle.png',
-        frameRate: 8,
-        frameBuffer: 3,
-      },
-      idleLeft: {
-        imageSrc: '../../assets/warrior/IdleLeft.png',
-        frameRate: 8,
-        frameBuffer: 3,
-      },
-      run: {
-        imageSrc: '../../assets/warrior/Run.png',
-        frameRate: 8,
-        frameBuffer: 5,
-      },
-      runLeft: {
-        imageSrc: '../../assets/warrior/RunLeft.png',
-        frameRate: 8,
-        frameBuffer: 5,
-      },
-      jump: {
-        imageSrc: '../../assets/warrior/Jump.png',
-        frameRate: 2,
-        frameBuffer: 3,
-      },
-      jumpLeft: {
-        imageSrc: '../../assets/warrior/JumpLeft.png',
-        frameRate: 2,
-        frameBuffer: 3,
-      },
-      fall: {
-        imageSrc: '../../assets/warrior/Fall.png',
-        frameRate: 2,
-        frameBuffer: 3,
-      },
-      fallLeft: {
-        imageSrc: '../../assets/warrior/FallLeft.png',
-        frameRate: 2,
-        frameBuffer: 3,
-      },
-      die: {
-        imageSrc: '../../assets/warrior/Die.png',
-        frameRate: 8,
-        frameBuffer: 3,
-      },
-    };
     const coinImg = new SpriteBase(context, { x: w - 120, y: 15 }, '../assets/icons/coin.png');
+    const gem = new SpriteBase(context, { x: this.gameField.width - 200, y: this.gameField.height * 0.7 }, '../assets/icons/gem.png');
+    console.log(this.gameField.width - 200, this.gameField.height * 0.7);
     const lifeHearts: SpriteBase[] = [];
     for (let i = 0; i < 3; i++) {
       lifeHearts.push(new SpriteBase(context, { x: 30 + i * 30, y: 15 }, '../assets/icons/heart.png', 0.5));
@@ -127,48 +94,13 @@ class GameCanvas {
       tiles,
       tiles1,
       coins,
+      enemies,
       '../../assets/warrior/Idle.png',
       8,
-      playerAnimation,
-      gameOver);
-
-    const mobAnimation: IAnimationsEnemy = {
-      fly: {
-        imageSrc: '../../assets/enemy/fly.png',
-        frameRate: 4,
-        frameBuffer: 3,
-      },
-      flyLeft: {
-        imageSrc: '../../assets/enemy/flyLeft.png',
-        frameRate: 4,
-        frameBuffer: 3,
-      },
-      attack: {
-        imageSrc: '../../assets/enemy/attack.png',
-        frameRate: 4,
-        frameBuffer: 3,
-      },
-      attackLeft: {
-        imageSrc: '../../assets/enemy/attackLeft.png',
-        frameRate: 4,
-        frameBuffer: 3,
-      },
-      hit: {
-        imageSrc: '../../assets/enemy/hit.png',
-        frameRate: 4,
-        frameBuffer: 3,
-      },
-    }
-    const enemyMob = new Enemy(
-      context,
-      scale,
-      {x: 30, y: 400},
-      field,
-      tiles,
-      tiles1,
-      '../../assets/enemy/fly.png',
-      4,
-      mobAnimation
+      wariorAnimation,
+      gameOver,
+      winGame,
+      gem
     );
 
     function animationLoop () {
@@ -192,33 +124,47 @@ class GameCanvas {
       coins.forEach((block) => {
         block.update();
       });
+      gem.update();
       player.update();
       player.velocity.x = 0;
-      if (keys.left) {
-        player.switchSprite('runLeft');
-        player.velocity.x = -5;
-        player.lastDirection = Directions.left;
-        player.isCameraLeft(camera);
-      } else if (keys.right) {
-        player.switchSprite('run');
-        player.velocity.x = 5;
-        player.lastDirection = Directions.right;
-        player.isCameraRight(camera);
-      } else if (player.velocity.y === 0) {
-        player.lastDirection === Directions.right ? player.switchSprite('idle') : player.switchSprite('idleLeft');
-      }
-
-      if (player.velocity.y < 0) {
-        player.lastDirection === Directions.right ? player.switchSprite('jump') : player.switchSprite('jumpLeft');
-      } else if (player.velocity.y > 0) {
-        if (player.lastDirection === Directions.right) {
-          player.switchSprite('fall');
-        } else {
-          player.switchSprite('fallLeft');
+      if (!player.isDied) {
+        if (keys.atack) {
+          player.lastDirection === Directions.right ? player.switchSprite('atack') : player.switchSprite('atackLeft');
+          if (player.currentFrame === player.frameRate - 1) {
+            player.isAtack = false;
+            keys.atack = false;
+            player.lastDirection === Directions.right ? player.switchSprite('idle') : player.switchSprite('idleLeft');
+          }
         }
+        if (keys.left) {
+          player.switchSprite('runLeft');
+          player.velocity.x = -5;
+          player.lastDirection = Directions.left;
+          player.isCameraLeft(camera);
+        } else if (keys.right) {
+          player.switchSprite('run');
+          player.velocity.x = 5;
+          player.lastDirection = Directions.right;
+          player.isCameraRight(camera);
+        } else if (player.velocity.y === 0 && !keys.atack) {
+          player.lastDirection === Directions.right ? player.switchSprite('idle') : player.switchSprite('idleLeft');
+        }
+        if (player.velocity.y < 0 && !keys.atack) {
+          player.lastDirection === Directions.right ? player.switchSprite('jump') : player.switchSprite('jumpLeft');
+        } else if (player.velocity.y > 0 && !keys.atack) {
+          player.lastDirection === Directions.right ? player.switchSprite('fall') : player.switchSprite('fallLeft');
+        }
+      } else {
+        player.switchSprite('hit');
       }
-
-      enemyMob.update();
+      enemies.forEach((el) => {
+        if (el.velocity.x === 0) {
+          if (-camera.position.x + scaledCanvas.width >= el.position.x * el.scale) {
+            el.go();
+          }
+        }
+        el.update();
+      });
 
       context.restore();
       if (lifeHearts.length > player.lifes) {
@@ -251,7 +197,9 @@ class GameCanvas {
         case 32:
           console.log('space');
           event.preventDefault();
-          player.crashIntoMob();
+          // player.switchSprite('atack');
+          keys.atack = true;
+          player.isAtack = true;
           break;
 
         default:

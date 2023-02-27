@@ -17,6 +17,8 @@ class Player extends Sprite {
   animations: any;
   lastDirection: Directions;
   platformCollusions: ICollusionBlock[];
+  isDied: boolean;
+  dieTimer: number;
 
   constructor (cont: CanvasRenderingContext2D, scale: number, position: { x: number, y: number }, field: { width: number, height: number }, collusions: ICollusionBlock[], floorCollusions: ICollusionBlock[], imageSrc: string, frameRate: number, animations: IAnimations | IAnimationsEnemy) {
     super(cont, position, imageSrc, frameRate, scale);
@@ -36,15 +38,18 @@ class Player extends Sprite {
         x: this.position.x,
         y: this.position.y,
       },
-      width: 35 / this.scale,
-      height: 55 / this.scale,
+      width: animations.hitbox.width / this.scale,
+      height: animations.hitbox.height / this.scale,
       offset: {
-        x: 65 / this.scale,
-        y: 50 / this.scale,
+        x: animations.hitbox.offset.x / this.scale,
+        y: animations.hitbox.offset.y / this.scale,
       }
     };
     this.animations = animations;
     this.lastDirection = Directions.right;
+
+    this.isDied = false;
+    this.dieTimer = 0;
 
     for (let key in this.animations) {
       const image: HTMLImageElement = new Image();
@@ -64,7 +69,7 @@ class Player extends Sprite {
     //квадраты для видимости
     this.context.fillStyle = 'rgba(255, 0, 0, 0.2)';
     this.context.fillRect(this.position.x, this.position.y, this.width, this.height);
-    this.context.fillStyle = 'rgba(0, 0, 255, 0.2)';
+    this.context.fillStyle = 'rgba(0, 0, 255, 0.8)';
     this.context.fillRect(this.hitbox.position.x, this.hitbox.position.y, this.hitbox.width, this.hitbox.height);
     this.updateFrames();
     this.updateHitbox();
@@ -75,12 +80,7 @@ class Player extends Sprite {
     this.applyGravity();
     this.updateHitbox();
     this.checkForVerticalCollusions();
-    // this.position.y += this.velocity.y;
-    // if (this.position.y + this.height + this.velocity.y < this.field.height) {
-    //   this.velocity.y += this.gravity;
-    // } else {
-    //   this.velocity.y = 0;
-    // }
+    // this.checkForDeath();
   }
 
   updateHitbox () {
@@ -143,6 +143,17 @@ class Player extends Sprite {
   applyGravity () {
     this.velocity.y += this.gravity;
     this.position.y += this.velocity.y;
+  }
+
+  checkForDeath () {
+    if (!this.isDied) {
+      return;
+    }
+    this.dying();
+  }
+
+  dying () {
+    this.switchSprite('hit');
   }
 }
 
