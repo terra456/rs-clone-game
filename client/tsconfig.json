@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "sourceMap": true,
+    "outDir": "./dist",
+    //"rootDir": "/.src",
+    "allowSyntheticDefaultImports": true,
+    "noImplicitAny": true,
+    "module": "es6",
+    "target": "es5",
+    "allowJs": true,
+    "strictNullChecks": true
+  },
+  "files": ["src/index.ts"],
+  "include": ["src/**/*",],
+  "exclude": ["node_modules"]
+}

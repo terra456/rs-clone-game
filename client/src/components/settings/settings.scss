@@ -1,0 +1,54 @@
+.settings {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    &__block {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    &__toggle {
+        margin: 0 10px;
+
+        &--off {
+            opacity: .6;
+        }
+    }
+
+    &__lang {
+        margin: 0 10px;
+    }
+
+    &__list {
+        margin: 0 0 0 20px;
+        padding: 0;
+        list-style: none;
+    }
+
+    &__diff {
+        text-align: center;
+        cursor: pointer;
+        padding: 2px 5px;
+
+        &:hover {
+            background-color: khaki;
+        }
+
+        &--chosen {
+            background-color: cornflowerblue ;
+        }
+    }
+
+    &__controls {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    &__cancel {
+        margin-left: 20px;
+    }
+}
