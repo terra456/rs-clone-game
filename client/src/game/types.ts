@@ -52,7 +52,8 @@ export interface IPlayerSound {
   run: string,
   hit: string,
   jump: string,
-  landing: string
+  landing: string,
+  coin: string
 }
 
 export type hitboxType = {

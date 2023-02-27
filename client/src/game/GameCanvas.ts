@@ -91,7 +91,8 @@ class GameCanvas {
       run: '../assets/audio/sounds/12_Player_Movement_SFX/03_Step_grass_03.wav',
       hit: '../assets/audio/sounds/12_Player_Movement_SFX/61_Hit_03.wav',
       jump: '../assets/audio/sounds/12_Player_Movement_SFX/30_Jump_03.wav',
-      landing: '../assets/audio/sounds/12_Player_Movement_SFX/45_Landing_01.wav'
+      landing: '../assets/audio/sounds/12_Player_Movement_SFX/45_Landing_01.wav',
+      coin: '../assets/audio/sounds/10_UI_Menu_SFX/079_Buy_sell_01.wav'
     }
     const player = new Warior(
       context,
