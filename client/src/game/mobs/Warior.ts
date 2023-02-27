@@ -49,49 +49,62 @@ class Warior extends Player {
   }
 
   playRunAudio() {
-    const runAudio: HTMLAudioElement = new Audio(this.sounds.run);
-    runAudio.addEventListener('ended', () => {
-      if (this.isRunning) {
-        runAudio.currentTime = 0;
-        runAudio.play();
-      }
-    })
-    runAudio.play();
+    if ((localStorage.getItem('soundsOn') || 'On') === 'On') {
+      const runAudio: HTMLAudioElement = new Audio(this.sounds.run);
+      runAudio.volume = Number(localStorage.getItem('soundsVolume') || '5') / 10;
+      runAudio.addEventListener('ended', () => {
+        if (this.isRunning) {
+          runAudio.currentTime = 0;
+          runAudio.play();
+        }
+      })
+      runAudio.play();
+    }
   }
 
   playJumpAudio() {
-    const audio: HTMLAudioElement = new Audio(this.sounds.jump);
-    const audio2: HTMLAudioElement = new Audio(this.sounds.landing);
-      audio.addEventListener('ended', () => {
-        audio2.play();
+    if ((localStorage.getItem('soundsOn') || 'On') === 'On') {
+      const audio: HTMLAudioElement = new Audio(this.sounds.jump);
+      const audio2: HTMLAudioElement = new Audio(this.sounds.landing);
+      audio.volume = Number(localStorage.getItem('soundsVolume') || '5') / 10;
+      audio2.volume = Number(localStorage.getItem('soundsVolume') || '5') / 10;
+        audio.addEventListener('ended', () => {
+          audio2.play();
+          this.isAudioPlaying = true;
+          audio2.addEventListener('ended', () => {
+            this.isAudioPlaying = false;
+          });
+        })
         this.isAudioPlaying = true;
-        audio2.addEventListener('ended', () => {
-          this.isAudioPlaying = false;
-        });
-      })
-      this.isAudioPlaying = true;
-      audio.play();
+        audio.play();
+    }
   }
 
   playShortAudio(audioPath: string) {
-    if (this.isAudioPlaying === false) {
-      const audio: HTMLAudioElement = new Audio(audioPath);
-      audio.addEventListener('ended', () => {
-        this.isAudioPlaying = false;
-      })
-      this.isAudioPlaying = true;
-      audio.play();
+    if ((localStorage.getItem('soundsOn') || 'On') === 'On') {
+      if (this.isAudioPlaying === false) {
+        const audio: HTMLAudioElement = new Audio(audioPath);
+        audio.volume = Number(localStorage.getItem('soundsVolume') || '5') / 10;
+        audio.addEventListener('ended', () => {
+          this.isAudioPlaying = false;
+        })
+        this.isAudioPlaying = true;
+        audio.play();
+      }
     }
   }
 
   playCoinAudio() {
-    if (this.isCoinAudioPlaying === false) {
-      const audio: HTMLAudioElement = new Audio(this.sounds.coin);
-      audio.addEventListener('ended', () => {
-        this.isCoinAudioPlaying = false;
-      })
-      this.isCoinAudioPlaying = true;
-      audio.play();
+    if ((localStorage.getItem('soundsOn') || 'On') === 'On') {
+      if (this.isCoinAudioPlaying === false) {
+        const audio: HTMLAudioElement = new Audio(this.sounds.coin);
+        audio.volume = Number(localStorage.getItem('soundsVolume') || '5') / 10;
+        audio.addEventListener('ended', () => {
+          this.isCoinAudioPlaying = false;
+        })
+        this.isCoinAudioPlaying = true;
+        audio.play();
+      }
     }
   }
 

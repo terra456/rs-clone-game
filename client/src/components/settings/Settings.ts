@@ -1,3 +1,4 @@
+import { openApp } from "../../index";
 import { BaseComponent } from "../BaseComponent";
 import './settings.scss';
 
@@ -12,8 +13,8 @@ export class Settings extends BaseComponent {
           </div>
           <div class="settings__block">
             <p>Sounds</p>
-            <button class="settings__toggle">On</button>
-            <input type="range">
+            <button class="settings__toggle" id="soundsToggle">On</button>
+            <input id="soundsInput" type="range" min="1" max="5" step="1" value="5">
           </div>
           <div class="settings__block">
             <p>Difficulty</p>
@@ -28,7 +29,7 @@ export class Settings extends BaseComponent {
             <button class="settings__lang">Eng</button>
           </div>
           <div class="settings__controls">
-            <button class="btn">Save</button>
+            <button class="btn" id="btnSave">Save</button>
             <button class="btn settings__cancel">Cancel</button>
           </div>
         `;
@@ -54,11 +55,36 @@ export class Settings extends BaseComponent {
             }))
         }
 
+        const soundsToggle: HTMLElement | null = this.element.querySelector('#soundsToggle');
+        if (soundsToggle !== null) {
+          soundsToggle.innerHTML = localStorage.getItem('soundsOn') || 'On';
+        }
+
         const langToggle: HTMLElement | null = this.element.querySelector('.settings__lang');
         if (langToggle !== null) {
             langToggle.addEventListener('click', () => {
                 langToggle.innerHTML === 'Eng' ? langToggle.innerHTML = 'Ru' : langToggle.innerHTML = 'Eng';
             });
+        }
+
+        const soundsRange: HTMLInputElement | null = this.element.querySelector('#soundsInput');
+        if (soundsRange !== null) {
+          soundsRange.value = localStorage.getItem('soundsVolume') || '5';
+        }
+
+        const btnSave: HTMLElement | null = this.element.querySelector('#btnSave');
+        if (btnSave !== null && soundsRange !== null && soundsToggle !== null) {
+          btnSave.addEventListener('click', () => {
+            localStorage.setItem('soundsVolume', soundsRange.value);
+            localStorage.setItem('soundsOn', soundsToggle.innerHTML);
+          });
+        }
+
+        const btnCancel: HTMLElement | null = this.element.querySelector('.settings__cancel');
+        if (btnCancel !== null) {
+          btnCancel.addEventListener('click', () => {
+            openApp();
+          });
         }
     }
 }
