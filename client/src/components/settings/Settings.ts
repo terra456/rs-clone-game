@@ -78,6 +78,7 @@ export class Settings extends BaseComponent {
           btnSave.addEventListener('click', () => {
             localStorage.setItem('soundsVolume', soundsRange.value);
             localStorage.setItem('soundsOn', soundsToggle.innerHTML);
+            this.element.remove();
             btnSave.dispatchEvent(resumeEvent);
           });
         }
