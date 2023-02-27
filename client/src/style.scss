@@ -11,14 +11,34 @@
     }
 }
 
+body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 .btn {
     display: block;
-    border-radius: 10px;
     border: none;
-    padding: 10px 20px;
-    background-color: cornflowerblue;
+    width: 300px;
+    height: 80px;
+    background: url('../src/assets/ui/btn.png');
+
+    font-size: 20px;
+    color: #D6AE65;
 
     &--out {
-        background-color: coral;
+        background: url('../src/assets/ui/btn_disabled.png');
+        color: #D6C6A9;
+    }
+
+    &:hover {
+        background: url('../src/assets/ui/btn_hovered.png');
+        color: #FEF2D3;
+    }
+
+    &:active {
+        background: url('../src/assets/ui/btn_clicked.png');
+        color: #D6C6A9;
     }
 }

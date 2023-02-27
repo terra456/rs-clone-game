@@ -1,10 +1,27 @@
 .start_game {
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
 
+    &__controls {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
     &__btn {
         margin-bottom: 20px;
+    }
+
+    &__loaded {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        &--invisible {
+            display: none;
+        }
     }
 }
