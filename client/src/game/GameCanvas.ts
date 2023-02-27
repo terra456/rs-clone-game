@@ -88,7 +88,8 @@ class GameCanvas {
     }
     const playerSounds = {
       attack: '../assets/audio/sounds/12_Player_Movement_SFX/56_Attack_03.wav',
-      run: '../assets/audio/sounds/12_Player_Movement_SFX/03_Step_grass_03.wav'
+      run: '../assets/audio/sounds/12_Player_Movement_SFX/03_Step_grass_03.wav',
+      hit: '../assets/audio/sounds/12_Player_Movement_SFX/61_Hit_03.wav'
     }
     const player = new Warior(
       context,
@@ -136,14 +137,7 @@ class GameCanvas {
         if (keys.atack) {
           player.isRunning = false;
           player.lastDirection === Directions.right ? player.switchSprite('atack') : player.switchSprite('atackLeft');
-          if (player.isAudioPlaying === false) {
-            const attackAudio: HTMLAudioElement = new Audio(player.sounds.attack);
-            attackAudio.addEventListener('ended', () => {
-              player.isAudioPlaying = false;
-            })
-            player.isAudioPlaying = true;
-            attackAudio.play();
-          }
+          player.playShortAudio(player.sounds.attack);
           if (player.currentFrame === player.frameRate - 1) {
             player.isAtack = false;
             keys.atack = false;
@@ -180,6 +174,7 @@ class GameCanvas {
         }
       } else {
         player.isRunning = false;
+        player.playShortAudio(player.sounds.hit);
         player.switchSprite('hit');
       }
       enemies.forEach((el) => {
