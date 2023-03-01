@@ -3,6 +3,7 @@ import { openLogin } from "../../index";
 import { getSavedGames, setUserAuthorized } from "../../utils/db";
 import { BaseComponent } from "../BaseComponent";
 import './start.scss';
+import GameCanvas from '../../game/GameCanvas';
 
 export class StartGame extends BaseComponent {
     constructor() {
@@ -11,7 +12,7 @@ export class StartGame extends BaseComponent {
           <div class="start_game__controls">
           <button class="btn start_game__btn">Continue game</button>
           <button class="btn start_game__btn" id="btnLoad">Load game</button>
-          <button class="btn start_game__btn">New game</button>
+          <button class="btn start_game__btn" id="btnNew">New game</button>
           <button class="btn btn--out start_game__btn">Sign out</button>
           </div>
           <div class="start_game__loaded start_game__loaded--invisible">
@@ -21,6 +22,7 @@ export class StartGame extends BaseComponent {
         const btnLoad: HTMLElement| null = this.element.querySelector('#btnLoad');
         const btnOut: HTMLElement | null = this.element.querySelector('.btn--out');
         const loadedBlock: HTMLElement | null = this.element.querySelector('.start_game__loaded');
+        const btnNew: HTMLElement | null = this.element.querySelector('#btnNew');
 
         if (btnLoad !== null) {
           btnLoad.addEventListener('click', () => {
@@ -43,6 +45,14 @@ export class StartGame extends BaseComponent {
           btnOut.addEventListener('click', () => {
             setUserAuthorized(0);
             openLogin();
+          });
+        }
+
+        if (btnNew !== null) {
+          btnNew.addEventListener('click', () => {
+            this.element.remove();
+            const gameCanvas = new GameCanvas(document.body);
+            gameCanvas.startGame();
           });
         }
     }

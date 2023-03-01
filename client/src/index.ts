@@ -3,6 +3,8 @@ import { Login } from "./components/login/Login";
 import { Register } from "./components/register/Register";
 import { StartGame } from "./components/start/StartGame";
 import { getSavedGames } from './utils/db';
+import { pausedEvent } from './utils/events';
+import { BaseComponent } from './components/BaseComponent';
 
 const main: HTMLElement | null = document.querySelector('main');
 const btnLogin: HTMLElement | null = document.querySelector('#loginBtn');
@@ -14,18 +16,24 @@ const btnSettings: HTMLElement | null = document.querySelector('#settingsBtn');
 
 if (btnLogin !== null) {
     btnLogin.addEventListener('click', () => {
+        btnLogin.dispatchEvent(pausedEvent);
+    //    document.querySelector('canvas')?.remove();
        openLogin();
     });
 }
 
 if (btnStartGame !== null) {
     btnStartGame.addEventListener('click', () => {
+        btnStartGame.dispatchEvent(pausedEvent);
+        // document.querySelector('canvas')?.remove();
         openStartGame();
     });
 }
 
 if (btnSettings !== null) {
     btnSettings.addEventListener('click', () => {
+        btnSettings.dispatchEvent(pausedEvent);
+        // document.querySelector('canvas')?.remove();
         openTab(new Settings().element);
     });
 }

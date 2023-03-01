@@ -1,6 +1,7 @@
 import { IUser } from './../../utils/types';
 import { openApp, openForNewUser } from "../../index";
 import { BaseComponent } from "../BaseComponent";
+import GameCanvas from "../../game/GameCanvas";
 import './login.scss';
 import './../../style.scss';
 import { createUser, getUsers, loginUser, setUserAuthorized } from "../../utils/db";
@@ -18,12 +19,12 @@ export class Login extends BaseComponent {
             <button class="btn login__register" id="btnRegister">Register</button>
           </div>
           <p class="login__error">Please fill inputs</p>
-          <button class="btn">Play now</button>
-          </div>
+          <button class="btn"id="btnStart">Play now</button>
         `;
 
         const btnRegister: HTMLElement | null = this.element.querySelector('#btnRegister');
         const btnLogin: HTMLElement | null = this.element.querySelector('#btnLogin');
+        const btnStart: HTMLElement | null = this.element.querySelector('#btnStart');
         const error: HTMLElement | null = this.element.querySelector('.login__error');
         const btnClose: HTMLElement | null = this.element.querySelector('.login__close');
 
@@ -42,7 +43,7 @@ export class Login extends BaseComponent {
                         totalScore: 0,
                     }
                     createUser(newUser).then((data) =>{
-                        setUserAuthorized(data.id);
+                        setUserAuthorized(data[0].id);
                         openForNewUser();
                     })
                     .catch((err) => {
@@ -74,6 +75,13 @@ export class Login extends BaseComponent {
                 this.element.remove();
             });
         }
+
+        if (btnStart !== null) {
+            btnStart.addEventListener('click', () => {
+                error?.classList.remove('login__error--visible');
+                this.startGame();
+            });
+        }
     }
 
     validateInputs(): boolean {
@@ -83,4 +91,13 @@ export class Login extends BaseComponent {
         }
         return false;
     }
+
+    startGame() {
+        this.element.remove();
+        const node: HTMLElement | null = document.querySelector('#game');
+        if (node) {
+            const gameCanvas = new GameCanvas(node);
+            gameCanvas.startGame();
+        }
+    };
 }
