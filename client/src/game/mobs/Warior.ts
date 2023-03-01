@@ -20,19 +20,20 @@ class Warior extends Player {
   isAudioPlaying: boolean;
   isCoinAudioPlaying: boolean;
   isRunning: boolean;
+  gameAllSize: { width: number, height: number };
 
-  constructor (cont: CanvasRenderingContext2D, scale: number, position: { x: number, y: number }, field: { width: number, height: number }, collusions: ICollusionBlock[], floorCollusions: ICollusionBlock[], coins: ICollusionBlock[], enemies: Enemy[], imageSrc: string, frameRate: number, animations: IAnimations, gameOver: () => void, winGame: (score: number) => void, gem: SpriteBase, sounds: IPlayerSound) {
+  constructor (cont: CanvasRenderingContext2D, scale: number, position: { x: number, y: number }, field: { width: number, height: number }, collusions: ICollusionBlock[], floorCollusions: ICollusionBlock[], coins: ICollusionBlock[], enemies: Enemy[], imageSrc: string, frameRate: number, animations: IAnimations, gameOver: () => void, winGame: (score: number) => void, gem: SpriteBase, gameAllSize: { width: number, height: number }, sounds: IPlayerSound) {
     super(cont, scale, position, field, collusions, floorCollusions, imageSrc, frameRate, animations)
-
+    this.gameAllSize = gameAllSize;
     this.cameraBox = {
       position: {
         x: this.position.x,
         y: this.position.y
       },
-      width: 300 / this.scale,
+      width: (this.field.width * 0.8) / this.scale,
       height: 150 / this.scale,
-      //вычитаем ширину спрайта
-      leftPadding: ((300 - 160) / this.scale) / 2
+      //вычитаем половину ширины спрайта
+      leftPadding: (((this.field.width * 0.8) - 150) / this.scale) / 2
     };
     this.lifes = 3;
     this.score = 0;
@@ -146,17 +147,19 @@ class Warior extends Player {
   isCameraRight (camera: { position: coordinatesType }) {
     const cameraRightSide: number = this.cameraBox.position.x + this.cameraBox.width;
     // ширина всей игры
-    if (cameraRightSide >= 6000) return;
-    if (cameraRightSide >= this.field.width) {
+    if (cameraRightSide >= this.gameAllSize.width) return;
+    if (cameraRightSide >= this.field.width / this.scale + Math.abs(camera.position.x)) {
       camera.position.x -= this.velocity.x;
     }
   }
 
   isCameraLeft (camera: { position: coordinatesType }) {
     const cameraLeftSide: number = this.cameraBox.position.x;
+    console.log('camera', cameraLeftSide, Math.abs(camera.position.x));
     // ширина всей игры
-    // if (cameraLeftSide <= 0) return;
-    if (cameraLeftSide >= 0) {
+    if (this.cameraBox.position.x <= 0) return;
+    // if (cameraLeftSide <= this.cameraBox.leftPadding) return;
+    if (cameraLeftSide <= Math.abs(camera.position.x)) {
       camera.position.x -= this.velocity.x;
     }
   }

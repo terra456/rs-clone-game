@@ -94,7 +94,7 @@ class GameCanvas {
     const bgImages = bgLoop.generate('./assets/background/1_level/mtn.png', { width: 2618, height: 571 });
     const coinImg = new SpriteBase(context, { x: w - 120, y: 15 }, './assets/icons/coin.png');
     const gem = new SpriteBase(context, { x: this.gameField.width - 200, y: this.gameField.height * 0.7 }, './assets/icons/gem.png');
-    console.log(this.gameField.width - 200, this.gameField.height * 0.7);
+    console.log(this.gameField.width - 200, this.gameField.height - 200);
     const lifeHearts: SpriteBase[] = [];
     for (let i = 0; i < 3; i++) {
       lifeHearts.push(new SpriteBase(context, { x: 30 + i * 30, y: 15 }, './assets/icons/heart.png', 0.5));
@@ -122,6 +122,7 @@ class GameCanvas {
       gameOver,
       winGame,
       gem,
+      this.gameField,
       playerSounds
     );
 
