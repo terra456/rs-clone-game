@@ -90,7 +90,7 @@ class GameCanvas {
     const coins = collisionField.generateCollusionBlocks(layers[2].data, './assets/icons/coin.png');
     const enemies = collisionField.generateEnemies(layers[3].data, params);
     const background1 = new SpriteBase(context, { x: 0, y: 0 }, './assets/background/1_level/bg_1.png', 1);
-    const bgLoop = new Background(context, scaledCanvas, scale);
+    const bgLoop = new Background(context, this.gameField, scale);
     const bgImages = bgLoop.generate('./assets/background/1_level/mtn.png', { width: 2618, height: 571 });
     const coinImg = new SpriteBase(context, { x: w - 120, y: 15 }, './assets/icons/coin.png');
     const gem = new SpriteBase(context, { x: this.gameField.width - 200, y: this.gameField.height * 0.7 }, './assets/icons/gem.png');
