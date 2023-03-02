@@ -1,6 +1,9 @@
+/* eslint-disable no-dupe-args */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 // import CollusionBlock from './CollusionBlock';
 import TileBlock from './TileBlock';
+import { type TilesFieldType } from '../types';
+
 // import TileBlock from './TileBlock';
 
 class TilesField {
@@ -13,17 +16,16 @@ class TilesField {
   height: number;
   scale: number;
 
-  constructor (context: CanvasRenderingContext2D, size: number, columns: number = 36, imgSrc: string, scale: number) {
+  constructor ({ context, size, columns, imgSrc }: TilesFieldType) {
     this.context = context;
     this.size = size;
     this.columns = columns;
-    this.scale = scale;
     this.loaded = false;
     this.image = new Image();
     this.image.src = imgSrc;
     this.image.onload = () => {
-      this.width = this.image.width / this.scale;
-      this.height = this.image.height / this.scale;
+      this.width = this.image.width;
+      this.height = this.image.height;
       this.loaded = true;
     };
   }

@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/consistent-type-definitions */
 export interface IAnimationsBase {
   hitbox: {
-    width: number,
-    height: number,
+    width: number
+    height: number
     offset: {
-      x: number,
-      y: number,
+      x: number
+      y: number
     }
-  },
+  }
 }
 
 export interface IAnimations extends IAnimationsBase {
@@ -48,11 +48,11 @@ export enum Directions {
 }
 
 export interface IPlayerSound {
-  attack: string,
-  run: string,
-  hit: string,
-  jump: string,
-  landing: string,
+  attack: string
+  run: string
+  hit: string
+  jump: string
+  landing: string
   coin: string
 }
 
@@ -83,4 +83,13 @@ export interface ICollusionBlock {
   imgSrc?: string
   draw: () => void
   update: () => void
+}
+
+export type TilesFieldType = {
+  context: CanvasRenderingContext2D
+  size: number
+  columns: number
+  imgSrc: string
+  loaded?: boolean
+  scale?: number
 }

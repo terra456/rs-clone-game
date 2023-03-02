@@ -11,11 +11,10 @@ class BackgroundLoop {
   sprites: SpriteBase[];
   scale: number;
 
-  constructor (context: CanvasRenderingContext2D, field: { width: number, height: number }, scale: number) {
+  constructor (context: CanvasRenderingContext2D, field: { width: number, height: number }) {
     this.context = context;
     this.width = field.width;
     this.height = field.height;
-    this.scale = scale;
   }
 
   generate (image: string, bgSize: { width: number, height: number }) {

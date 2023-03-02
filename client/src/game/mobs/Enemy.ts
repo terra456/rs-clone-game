@@ -7,8 +7,19 @@ class Enemy extends Player {
   speed: number;
   price: number;
 
-  constructor (cont: CanvasRenderingContext2D, scale: number, position: { x: number, y: number }, field: { width: number, height: number }, collusions: ICollusionBlock[], floorCollusions: ICollusionBlock[], imageSrc: string, frameRate: number, animations: IAnimationsEnemy, speed: number, price: number) {
-    super(cont, scale, position, field, collusions, floorCollusions, imageSrc, frameRate, animations);
+  constructor (
+    cont: CanvasRenderingContext2D,
+    position: { x: number, y: number },
+    field: { width: number, height: number },
+    collusions: ICollusionBlock[],
+    floorCollusions: ICollusionBlock[],
+    imageSrc: string,
+    frameRate: number,
+    animations: IAnimationsEnemy,
+    speed: number,
+    price: number
+  ) {
+    super(cont, position, field, collusions, floorCollusions, imageSrc, frameRate, animations);
     this.speed = speed;
     this.price = price;
   }

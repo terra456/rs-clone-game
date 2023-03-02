@@ -16,7 +16,7 @@ class GameCanvas {
   scale: number;
   gameField: { width: number, height: number };
 
-  constructor (parentNode: HTMLElement = document.body, width = 1024, height = 576) {
+  constructor (parentNode: HTMLElement = document.body, width = 600, height = 800) {
     this.canvas = document.createElement('canvas');
     this.canvas.width = width;
     this.canvas.height = height;
@@ -27,8 +27,8 @@ class GameCanvas {
     //делим на высоту фона, т.е игрового поля.
     this.scale = this.canvas.height / this.gameField.height;
     this.scaledCanvas = {
-      width: width * this.scale,
-      height: height * this.scale
+      width: width / this.scale,
+      height: height / this.scale
     };
     parentNode.appendChild(this.canvas);
     this.context = this.canvas.getContext('2d');
@@ -36,12 +36,11 @@ class GameCanvas {
 
   startGame () {
     if (this.context != null) {
-      this.animate(this.context, this.canvas.width, this.canvas.height, this.canvas);
+      this.animate(this.context, this.canvas.width, this.canvas.height, this.scaledCanvas);
     }
   }
 
   animate (context: CanvasRenderingContext2D, w: number, h: number, scaledCanvas: { width: number, height: number }) {
-    const field = scaledCanvas;
     const keys = {
       left: false,
       right: false,
@@ -57,6 +56,7 @@ class GameCanvas {
 
     let myReq: any;
     let isPaused: boolean = false;
+    let isFull: boolean = false;
 
     const gameOver = (): void => {
       cancelAnimationFrame(myReq);
@@ -77,24 +77,26 @@ class GameCanvas {
       animationLoop();
     };
 
-    const tilesField = new TilesField(context, 16, layers[0].width, './assets/background/1_level/Tileset.png', scale);
+    const changeScaling = (): void => {
+      console.log(screen);
+    }
+
+    const tilesField = new TilesField({
+      context,
+      size: 16,
+      columns: Number(layers[0].width),
+      imgSrc: './assets/background/1_level/Tileset.png'
+    });
     const tiles = tilesField.generateCollusionBlocks(layers[0].data);
     const tiles1 = tilesField.generateCollusionBlocks(layers[1].data);
-    const params = {
-      scale,
-      field,
-      tiles,
-      tiles1
-    };
     const collisionField = new CollusionField(context, 16, layers[0].width);
     const coins = collisionField.generateCollusionBlocks(layers[2].data, './assets/icons/coin.png');
-    const enemies = collisionField.generateEnemies(layers[3].data, params);
+    const enemies = collisionField.generateEnemies(layers[3].data, this.gameField, tiles, tiles1);
     const background1 = new SpriteBase(context, { x: 0, y: 0 }, './assets/background/1_level/bg_1.png', 1);
-    const bgLoop = new Background(context, this.gameField, scale);
+    const bgLoop = new Background(context, this.gameField);
     const bgImages = bgLoop.generate('./assets/background/1_level/mtn.png', { width: 2618, height: 571 });
     const coinImg = new SpriteBase(context, { x: w - 120, y: 15 }, './assets/icons/coin.png');
     const gem = new SpriteBase(context, { x: this.gameField.width - 200, y: this.gameField.height * 0.7 }, './assets/icons/gem.png');
-    console.log(this.gameField.width - 200, this.gameField.height - 200);
     const lifeHearts: SpriteBase[] = [];
     for (let i = 0; i < 3; i++) {
       lifeHearts.push(new SpriteBase(context, { x: 30 + i * 30, y: 15 }, './assets/icons/heart.png', 0.5));
@@ -109,9 +111,8 @@ class GameCanvas {
     }
     const player = new Warior(
       context,
-      scale,
       { x: 10, y: 300 },
-      field,
+      this.gameField,
       tiles,
       tiles1,
       coins,
@@ -122,7 +123,7 @@ class GameCanvas {
       gameOver,
       winGame,
       gem,
-      this.gameField,
+      scaledCanvas,
       playerSounds
     );
 
@@ -198,7 +199,7 @@ class GameCanvas {
       }
       enemies.forEach((el) => {
         if (el.velocity.x === 0) {
-          if (-camera.position.x + scaledCanvas.width >= el.position.x * el.scale) {
+          if (-camera.position.x + scaledCanvas.width >= el.position.x) {
             el.go();
           }
         }
@@ -249,6 +250,10 @@ class GameCanvas {
           !isPaused ? pauseGame() : resumeGame();
           break;
 
+        case 122:
+          event.preventDefault();
+          changeScaling();
+
         default:
           console.log(event.keyCode);
           break;
@@ -269,7 +274,6 @@ class GameCanvas {
           break;
 
         default:
-          console.log(event.keyCode);
           break;
       }
     });

@@ -19,13 +19,13 @@ class Player extends Sprite {
   platformCollusions: ICollusionBlock[];
   isDied: boolean;
   dieTimer: number;
+  sprite: string;
 
-  constructor (cont: CanvasRenderingContext2D, scale: number, position: { x: number, y: number }, field: { width: number, height: number }, collusions: ICollusionBlock[], floorCollusions: ICollusionBlock[], imageSrc: string, frameRate: number, animations: IAnimations | IAnimationsEnemy) {
-    super(cont, position, imageSrc, frameRate, scale);
+  constructor (cont: CanvasRenderingContext2D, position: { x: number, y: number }, field: { width: number, height: number }, collusions: ICollusionBlock[], floorCollusions: ICollusionBlock[], imageSrc: string, frameRate: number, animations: IAnimations | IAnimationsEnemy) {
+    super(cont, position, imageSrc, frameRate);
     this.context = cont;
     this.position = position;
     this.field = field;
-    this.scale = scale;
     this.velocity = {
       x: 0,
       y: 1
@@ -38,11 +38,11 @@ class Player extends Sprite {
         x: this.position.x,
         y: this.position.y,
       },
-      width: animations.hitbox.width / this.scale,
-      height: animations.hitbox.height / this.scale,
+      width: animations.hitbox.width,
+      height: animations.hitbox.height,
       offset: {
-        x: animations.hitbox.offset.x / this.scale,
-        y: animations.hitbox.offset.y / this.scale,
+        x: animations.hitbox.offset.x,
+        y: animations.hitbox.offset.y,
       }
     };
     this.animations = animations;
@@ -59,6 +59,7 @@ class Player extends Sprite {
   }
 
   switchSprite(key: string) {
+    this.sprite = key;
     if (this.image === this.animations[key] || !this.loaded) return;
     this.image = this.animations[key].image;
     this.frameBuffer = this.animations[key].frameBuffer;

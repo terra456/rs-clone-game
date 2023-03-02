@@ -31,7 +31,7 @@ class CollusionField {
     return collusionBlocks;
   }
 
-  generateEnemies (arr: number[], params: any) {
+  generateEnemies (arr: number[], field: any, tiles: any, tiles1: any) {
     const collusions2d: number[][] = [];
     const enemiesBlocks: Enemy[] = [];
     for (let i = 0; i < arr.length; i += this.columns) {
@@ -44,28 +44,26 @@ class CollusionField {
           if (symb === 34) {
             const boar = new Enemy(
               this.context,
-              params.scale,
               { x: x * this.size, y: y * this.size - 25 },
-              params.field,
-              params.tiles,
-              params.tiles1,
+              field,
+              tiles,
+              tiles1,
               './assets/enemy/Boar/Walk-Base-Sheet.png',
               6,
               boarAnimation,
               2,
               25
             );
-            console.log('boar', boar.position.x * boar.scale);
+            console.log('boar', boar.position.x);
             enemiesBlocks.push(boar);
           }
           if (symb === 39) {
             const snail = new Enemy(
               this.context,
-              params.scale,
               { x: x * this.size - 5, y: y * this.size },
-              params.field,
-              params.tiles,
-              params.tiles1,
+              field,
+              tiles,
+              tiles1,
               './assets/enemy/snail/walk-Sheet.png',
               8,
               snailAnimation,
@@ -77,10 +75,9 @@ class CollusionField {
           if (symb === 22) {
             const bee = new Enemy(
               this.context,
-              params.scale,
               { x: x * this.size, y: y * this.size },
-              params.field,
-              params.tiles,
+              field,
+              tiles,
               [],
               './assets/enemy/bee/fly.png',
               4,

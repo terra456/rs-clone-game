@@ -1,4 +1,4 @@
-import { IPlayerSound } from './../types';
+import { Directions, IPlayerSound } from './../types';
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import SpriteBase from '../sprite/SpriteBase';
 import { coordinatesType, hitboxSmallType, hitboxType, ICollusionBlock, type IAnimations } from '../types';
@@ -20,21 +20,21 @@ class Warior extends Player {
   isAudioPlaying: boolean;
   isCoinAudioPlaying: boolean;
   isRunning: boolean;
-  gameAllSize: { width: number, height: number };
+  gameBox: { width: number, height: number };
 
-  constructor (cont: CanvasRenderingContext2D, scale: number, position: { x: number, y: number }, field: { width: number, height: number }, collusions: ICollusionBlock[], floorCollusions: ICollusionBlock[], coins: ICollusionBlock[], enemies: Enemy[], imageSrc: string, frameRate: number, animations: IAnimations, gameOver: () => void, winGame: (score: number) => void, gem: SpriteBase, gameAllSize: { width: number, height: number }, sounds: IPlayerSound) {
-    super(cont, scale, position, field, collusions, floorCollusions, imageSrc, frameRate, animations)
-    this.gameAllSize = gameAllSize;
+  constructor (cont: CanvasRenderingContext2D, position: { x: number, y: number }, field: { width: number, height: number }, collusions: ICollusionBlock[], floorCollusions: ICollusionBlock[], coins: ICollusionBlock[], enemies: Enemy[], imageSrc: string, frameRate: number, animations: IAnimations, gameOver: () => void, winGame: (score: number) => void, gem: SpriteBase, gameBox: { width: number, height: number }, sounds: IPlayerSound) {
+    super(cont, position, field, collusions, floorCollusions, imageSrc, frameRate, animations)
     this.cameraBox = {
       position: {
         x: this.position.x,
         y: this.position.y
       },
-      width: (this.field.width * 0.8) / this.scale,
-      height: 150 / this.scale,
+      width: (gameBox.width * 0.8),
+      height: 150,
       //вычитаем половину ширины спрайта
-      leftPadding: (((this.field.width * 0.8) - 150) / this.scale) / 2
+      leftPadding: ((gameBox.width * 0.8)) / 2 - 100
     };
+    this.gameBox = gameBox;
     this.lifes = 3;
     this.score = 0;
     this.coins = coins;
@@ -47,6 +47,7 @@ class Warior extends Player {
     this.isAudioPlaying = false;
     this.isCoinAudioPlaying = false;
     this.isRunning = false;
+    console.log(gameBox);
   }
 
   playRunAudio() {
@@ -120,18 +121,22 @@ class Warior extends Player {
       this.checkFallOut();
       this.checkEnemies();
     } else {
-      if (this.dieTimer >= 30) {
-        if (this.lifes === 0) {
-          this.gameOver();
+      if (this.velocity.y === 0) {
+        if (this.sprite !== 'hit') {
+          this.switchSprite('hit');
         } else {
-          this.isDied = false;
-          this.dieTimer = 0;
-          this.switchSprite('idle');
-          this.position.y -= 200;
-          this.position.x -= 500;
+          if (this.currentFrame === this.frameRate - 1) {
+            if (this.lifes === 0) {
+              this.gameOver();
+            } else {
+              this.isDied = false;
+              this.dieTimer = 0;
+              this.switchSprite('idle');
+              this.position.y -= 200;
+              this.position.x -= 500;
+            }
+          }
         }
-      } else {
-        this.checkFallWhenDied();
       }
     }
   };
@@ -147,8 +152,9 @@ class Warior extends Player {
   isCameraRight (camera: { position: coordinatesType }) {
     const cameraRightSide: number = this.cameraBox.position.x + this.cameraBox.width;
     // ширина всей игры
-    if (cameraRightSide >= this.gameAllSize.width) return;
-    if (cameraRightSide >= this.field.width / this.scale + Math.abs(camera.position.x)) {
+    console.log(cameraRightSide, camera.position.x, this.gameBox.width);
+    if (cameraRightSide >= this.field.width) return;
+    if (cameraRightSide >= this.gameBox.width + Math.abs(camera.position.x)) {
       camera.position.x -= this.velocity.x;
     }
   }
@@ -216,7 +222,7 @@ class Warior extends Player {
   }
 
   checkFallOut () {
-    if (this.hitbox.position.y + this.hitbox.height >= this.field.height / this.scale) {
+    if (this.hitbox.position.y + this.hitbox.height >= this.gameBox.height) {
       this.die();
     }
   }
@@ -224,12 +230,9 @@ class Warior extends Player {
   die () {
     this.lifes -= 1;
     this.isDied = true;
-  }
-
-  checkFallWhenDied () {
-    this.dieTimer += 1;
-    if (this.velocity.y === 0) {
-      this.switchSprite('hit');
+    if (this.velocity.y !== 0) {
+      this.velocity.y = 1;
+      this.lastDirection === Directions.right ? this.switchSprite('fall') : this.switchSprite('fallLeft');
     }
   }
 }
