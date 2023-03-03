@@ -1,4 +1,4 @@
-import { Directions, IPlayerSound } from './../types';
+import { Directions, PlayerSoundType } from '../types';
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import SpriteBase from '../sprite/SpriteBase';
 import { coordinatesType, hitboxSmallType, hitboxType, ICollusionBlock, type IAnimations } from '../types';
@@ -16,13 +16,14 @@ class Warior extends Player {
   isAtack: boolean;
   gem: SpriteBase;
   winGame: (score: number) => void;
-  sounds: IPlayerSound;
+  sounds: any;
   isAudioPlaying: boolean;
   isCoinAudioPlaying: boolean;
   isRunning: boolean;
   gameBox: { width: number, height: number };
+  isSoundsOn: boolean;
 
-  constructor (cont: CanvasRenderingContext2D, position: { x: number, y: number }, field: { width: number, height: number }, collusions: ICollusionBlock[], floorCollusions: ICollusionBlock[], coins: ICollusionBlock[], enemies: Enemy[], imageSrc: string, frameRate: number, animations: IAnimations, gameOver: () => void, winGame: (score: number) => void, gem: SpriteBase, gameBox: { width: number, height: number }, sounds: IPlayerSound) {
+  constructor (cont: CanvasRenderingContext2D, position: { x: number, y: number }, field: { width: number, height: number }, collusions: ICollusionBlock[], floorCollusions: ICollusionBlock[], coins: ICollusionBlock[], enemies: Enemy[], imageSrc: string, frameRate: number, animations: IAnimations, gameOver: () => void, winGame: (score: number) => void, gem: SpriteBase, gameBox: { width: number, height: number }, isSoundsOn: boolean, sounds: any) {
     super(cont, position, field, collusions, floorCollusions, imageSrc, frameRate, animations)
     this.cameraBox = {
       position: {
@@ -43,70 +44,22 @@ class Warior extends Player {
     this.winGame = winGame;
     this.isAtack = false;
     this.gem = gem;
-    this.sounds = sounds;
+    this.isSoundsOn = isSoundsOn;
     this.isAudioPlaying = false;
     this.isCoinAudioPlaying = false;
     this.isRunning = false;
-    console.log(gameBox);
-  }
-
-  playRunAudio() {
-    if ((localStorage.getItem('soundsOn') || 'On') === 'On') {
-      const runAudio: HTMLAudioElement = new Audio(this.sounds.run);
-      runAudio.volume = Number(localStorage.getItem('soundsVolume') || '5') / 10;
-      runAudio.addEventListener('ended', () => {
-        if (this.isRunning) {
-          runAudio.currentTime = 0;
-          runAudio.play();
-        }
-      })
-      runAudio.play();
+    this.sounds = {};
+    for (const key in sounds) {
+      const audio: HTMLAudioElement = new Audio(sounds[key]);
+      Object.defineProperty(this.sounds, key, {
+        value: audio
+      });
     }
   }
 
-  playJumpAudio() {
-    if ((localStorage.getItem('soundsOn') || 'On') === 'On') {
-      const audio: HTMLAudioElement = new Audio(this.sounds.jump);
-      const audio2: HTMLAudioElement = new Audio(this.sounds.landing);
-      audio.volume = Number(localStorage.getItem('soundsVolume') || '5') / 10;
-      audio2.volume = Number(localStorage.getItem('soundsVolume') || '5') / 10;
-        audio.addEventListener('ended', () => {
-          audio2.play();
-          this.isAudioPlaying = true;
-          audio2.addEventListener('ended', () => {
-            this.isAudioPlaying = false;
-          });
-        })
-        this.isAudioPlaying = true;
-        audio.play();
-    }
-  }
-
-  playShortAudio(audioPath: string) {
-    if ((localStorage.getItem('soundsOn') || 'On') === 'On') {
-      if (this.isAudioPlaying === false) {
-        const audio: HTMLAudioElement = new Audio(audioPath);
-        audio.volume = Number(localStorage.getItem('soundsVolume') || '5') / 10;
-        audio.addEventListener('ended', () => {
-          this.isAudioPlaying = false;
-        })
-        this.isAudioPlaying = true;
-        audio.play();
-      }
-    }
-  }
-
-  playCoinAudio() {
-    if ((localStorage.getItem('soundsOn') || 'On') === 'On') {
-      if (this.isCoinAudioPlaying === false) {
-        const audio: HTMLAudioElement = new Audio(this.sounds.coin);
-        audio.volume = Number(localStorage.getItem('soundsVolume') || '5') / 10;
-        audio.addEventListener('ended', () => {
-          this.isCoinAudioPlaying = false;
-        })
-        this.isCoinAudioPlaying = true;
-        audio.play();
-      }
+  playAudio (key: string) {
+    if (this.isSoundsOn) {
+      this.sounds[key].play();
     }
   }
 
@@ -152,7 +105,6 @@ class Warior extends Player {
   isCameraRight (camera: { position: coordinatesType }) {
     const cameraRightSide: number = this.cameraBox.position.x + this.cameraBox.width;
     // ширина всей игры
-    console.log(cameraRightSide, camera.position.x, this.gameBox.width);
     if (cameraRightSide >= this.field.width) return;
     if (cameraRightSide >= this.gameBox.width + Math.abs(camera.position.x)) {
       camera.position.x -= this.velocity.x;
@@ -161,7 +113,6 @@ class Warior extends Player {
 
   isCameraLeft (camera: { position: coordinatesType }) {
     const cameraLeftSide: number = this.cameraBox.position.x;
-    console.log('camera', cameraLeftSide, Math.abs(camera.position.x));
     // ширина всей игры
     if (this.cameraBox.position.x <= 0) return;
     // if (cameraLeftSide <= this.cameraBox.leftPadding) return;
@@ -176,7 +127,7 @@ class Warior extends Player {
       if (collision(this.hitbox, coin)) {
         this.score += 5;
         this.coins.splice(i, 1);
-        this.playCoinAudio();
+        this.playAudio('coin');
       }
     }
     if (collision(this.hitbox, this.gem)) {
@@ -207,6 +158,7 @@ class Warior extends Player {
           if (this.velocity.y > 0 || this.isAtack) {
             enemy.isDied = true;
             enemy.dying();
+            this.playAudio('kill');
             this.score += enemy.price;
           } else {
             this.velocity.y += this.gravity;

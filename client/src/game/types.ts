@@ -49,13 +49,14 @@ export enum Directions {
   right = 'right'
 }
 
-export interface IPlayerSound {
+export type PlayerSoundType = {
   attack: string
   run: string
   hit: string
   jump: string
   landing: string
   coin: string
+  kill: string
 }
 
 export type hitboxType = {

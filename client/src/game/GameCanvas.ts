@@ -18,6 +18,7 @@ class GameCanvas {
   gameField: { width: number, height: number };
   tileSise: { width: number; height: number; };
   mapSise: { width: number; height: number; };
+  isSoundsOn: boolean;
   
   constructor (parentNode: HTMLElement = document.body, width = 1024, height = 600) {
     this.canvas = document.createElement('canvas');
@@ -30,6 +31,7 @@ class GameCanvas {
     };
     parentNode.appendChild(this.canvas);
     this.context = this.canvas.getContext('2d');
+    this.isSoundsOn = (localStorage.getItem('soundsOn') != null) ? localStorage.getItem('soundsOn') === 'On' : true;
   }
 
   async startGame () {
@@ -167,7 +169,8 @@ class GameCanvas {
       hit: './assets/audio/sounds/12_Player_Movement_SFX/61_Hit_03.wav',
       jump: './assets/audio/sounds/12_Player_Movement_SFX/30_Jump_03.wav',
       landing: './assets/audio/sounds/12_Player_Movement_SFX/45_Landing_01.wav',
-      coin: './assets/audio/sounds/10_UI_Menu_SFX/079_Buy_sell_01.wav'
+      coin: './assets/audio/sounds/10_UI_Menu_SFX/079_Buy_sell_01.wav',
+      kill: './assets/audio/sounds/10_Battle_SFX/69_Enemy_death_01.wav'
     };
     const player = new Warior(
       context,
@@ -184,6 +187,7 @@ class GameCanvas {
       winGame,
       gem,
       scaledCanvas,
+      this.isSoundsOn,
       playerSounds
     );
 
@@ -209,13 +213,11 @@ class GameCanvas {
       player.velocity.x = 0;
       if (!player.isDied) {
         if (keys.atack) {
-          player.isRunning = false;
           player.lastDirection === Directions.right ? player.switchSprite('atack') : player.switchSprite('atackLeft');
-          player.playShortAudio(player.sounds.attack);
+          player.playAudio('attack');
           if (player.currentFrame === player.frameRate - 1) {
             player.isAtack = false;
             keys.atack = false;
-            player.isRunning = false;
             player.lastDirection === Directions.right ? player.switchSprite('idle') : player.switchSprite('idleLeft');
           }
         }
@@ -224,33 +226,27 @@ class GameCanvas {
           player.velocity.x = -5;
           player.lastDirection = Directions.left;
           player.isCameraLeft(camera);
-          if (!player.isRunning) {
-            player.isRunning = true;
-            player.playRunAudio();
-          }
+          player.playAudio('run');
         } else if (keys.right) {
           player.switchSprite('run');
           player.velocity.x = 5;
           player.lastDirection = Directions.right;
           player.isCameraRight(camera);
-          if (!player.isRunning) {
-            player.isRunning = true;
-            player.playRunAudio();
-          }
+          player.playAudio('run');
         } else if (player.velocity.y === 0 && !keys.atack) {
           player.isRunning = false;
           player.lastDirection === Directions.right ? player.switchSprite('idle') : player.switchSprite('idleLeft');
         }
         if (player.velocity.y < 0 && !keys.atack) {
-          if (!player.isAudioPlaying) player.playJumpAudio();
+          player.playAudio('jump');
           player.lastDirection === Directions.right ? player.switchSprite('jump') : player.switchSprite('jumpLeft');
         } else if (player.velocity.y > 0 && !keys.atack) {
-          player.playShortAudio(player.sounds.landing);
+          player.playAudio('landing');
           player.lastDirection === Directions.right ? player.switchSprite('fall') : player.switchSprite('fallLeft');
         }
       } else {
         player.isRunning = false;
-        player.playShortAudio(player.sounds.hit);
+        player.playAudio('hit');
         player.switchSprite('hit');
       }
       enemies.forEach((el) => {
