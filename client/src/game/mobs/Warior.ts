@@ -23,7 +23,25 @@ class Warior extends Player {
   gameBox: { width: number, height: number };
   isSoundsOn: boolean;
 
-  constructor (cont: CanvasRenderingContext2D, position: { x: number, y: number }, field: { width: number, height: number }, collusions: ICollusionBlock[], floorCollusions: ICollusionBlock[], coins: ICollusionBlock[], enemies: Enemy[], imageSrc: string, frameRate: number, animations: IAnimations, gameOver: () => void, winGame: (score: number) => void, gem: SpriteBase, gameBox: { width: number, height: number }, isSoundsOn: boolean, sounds: any) {
+  constructor (
+    cont: CanvasRenderingContext2D,
+    position: { x: number, y: number },
+    field: { width: number, height: number },
+    collusions: ICollusionBlock[],
+    floorCollusions: ICollusionBlock[],
+    coins: ICollusionBlock[],
+    enemies: Enemy[],
+    imageSrc: string,
+    frameRate: number,
+    animations: IAnimations,
+    gameOver: () => void,
+    winGame: (score: number) => void,
+    gem: SpriteBase,
+    gameBox: { width: number, height: number },
+    isSoundsOn: boolean,
+    volume: number,
+    sounds: any
+  ) {
     super(cont, position, field, collusions, floorCollusions, imageSrc, frameRate, animations)
     this.cameraBox = {
       position: {
@@ -54,6 +72,7 @@ class Warior extends Player {
       Object.defineProperty(this.sounds, key, {
         value: audio
       });
+      this.sounds[key].volume = volume / 100;
     }
   }
 

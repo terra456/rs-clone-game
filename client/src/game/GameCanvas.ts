@@ -19,6 +19,7 @@ class GameCanvas {
   tileSise: { width: number; height: number; };
   mapSise: { width: number; height: number; };
   isSoundsOn: boolean;
+  soundsVolume: number;
   
   constructor (parentNode: HTMLElement = document.body, width = 1024, height = 600) {
     this.canvas = document.createElement('canvas');
@@ -32,6 +33,7 @@ class GameCanvas {
     parentNode.appendChild(this.canvas);
     this.context = this.canvas.getContext('2d');
     this.isSoundsOn = (localStorage.getItem('soundsOn') != null) ? localStorage.getItem('soundsOn') === 'On' : true;
+    this.soundsVolume = (localStorage.getItem('soundsVolume') != null) ? Number(localStorage.getItem('soundsVolume')) : 5;
   }
 
   async startGame () {
@@ -188,6 +190,7 @@ class GameCanvas {
       gem,
       scaledCanvas,
       this.isSoundsOn,
+      this.soundsVolume,
       playerSounds
     );
 
