@@ -1,4 +1,4 @@
-import { Directions, IAnimations, IAnimationsEnemy } from './types';
+import { Directions, IAnimations, IAnimationsEnemy, layerType, tilemapType } from './types';
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 // import Player from './mobs/Player';
 import Background from './maps/Background';
@@ -9,23 +9,21 @@ import { layers } from './maps/1_level/map';
 import CollusionField from './collusions/CollusionField';
 import { wariorAnimation } from './mobs/animations';
 
+
 class GameCanvas {
   scaledCanvas: { width: number, height: number };
   canvas: HTMLCanvasElement;
   context: CanvasRenderingContext2D | null;
   scale: number;
   gameField: { width: number, height: number };
-
+  tileSise: { width: number; height: number; };
+  mapSise: { width: number; height: number; };
+  
   constructor (parentNode: HTMLElement = document.body, width = 1024, height = 600) {
     this.canvas = document.createElement('canvas');
     this.canvas.width = width;
     this.canvas.height = height;
-    this.gameField = {
-      width: 5948,
-      height: 1055
-    };
     //делим на высоту фона, т.е игрового поля.
-    this.scale = this.canvas.height / this.gameField.height;
     this.scaledCanvas = {
       width: this.canvas.width / this.scale,
       height: this.canvas.height / this.scale
@@ -34,19 +32,62 @@ class GameCanvas {
     this.context = this.canvas.getContext('2d');
   }
 
-  startGame () {
-    if (this.context != null) {
-      this.animate(this.context, { width: this.canvas.width, height: this.canvas.height }, this.scaledCanvas, this.gameField);
-    }
+  async startGame () {
+    await import('./maps/honey-grot')
+      .then((data) => {
+        this.gameField = {
+          width: data.width * data.tilewidth,
+          height: data.height * data.tileheight
+        };
+        this.scale = this.canvas.height / this.gameField.height;
+        this.scaledCanvas = {
+          width: this.canvas.width / this.scale,
+          height: this.canvas.height / this.scale
+        };
+        this.tileSise = {
+          width: data.tilewidth,
+          height: data.tileheight
+        };
+        this.mapSise = {
+          width: data.width,
+          height: data.height
+        };
+        const layers = {};
+        data.layers.forEach((el) => {
+          Object.defineProperty(layers, el.name, {
+            value: el.data,
+            writable: false
+          });
+        });
+        if (this.context != null) {
+          this.animate(
+            this.context,
+            { width: this.canvas.width, height: this.canvas.height },
+            this.scale,
+            this.scaledCanvas,
+            this.gameField,
+            this.tileSise,
+            this.mapSise,
+            data.tilemap,
+            layers
+          );
+        }
+      });
   }
 
   animate (
     context: CanvasRenderingContext2D,
     canvas: { width: number, height: number },
+    scale: number,
     scaledCanvas: { width: number, height: number },
-    gameField: { width: number, height: number }
+    gameField: { width: number, height: number },
+    tileSize: { width: number, height: number },
+    mapSize: { width: number, height: number },
+    tilemap: tilemapType,
+    layers: any
   ) {
-    const scale: number = this.scale;
+    let myReq: any;
+    let isPaused: boolean = false;
     const keys = {
       left: false,
       right: false,
@@ -58,9 +99,6 @@ class GameCanvas {
         y: 0
       }
     };
-
-    let myReq: any;
-    let isPaused: boolean = false;
 
     const gameOver = (): void => {
       cancelAnimationFrame(myReq);
@@ -100,15 +138,20 @@ class GameCanvas {
 
     const tilesField = new TilesField({
       context,
-      size: 16,
-      columns: Number(layers[0].width),
-      imgSrc: './assets/background/1_level/Tileset.png'
+      size: tileSize.width,
+      columns: mapSize.width,
+      imgSrc: tilemap.file,
+      tileColumns: tilemap.columns
     });
-    const tiles = tilesField.generateCollusionBlocks(layers[0].data);
-    const tiles1 = tilesField.generateCollusionBlocks(layers[1].data);
-    const collisionField = new CollusionField(context, 16, layers[0].width);
-    const coins = collisionField.generateCollusionBlocks(layers[2].data, './assets/icons/coin.png');
-    const enemies = collisionField.generateEnemies(layers[3].data, gameField, tiles, tiles1);
+    const floors = tilesField.generateCollusionBlocks(layers.floor);
+    const platforms = tilesField.generateCollusionBlocks(layers.platforms)
+      .concat(tilesField.generateCollusionBlocks(layers.ceiling));
+    const spikes = tilesField.generateCollusionBlocks(layers.spikes);
+    const decors = tilesField.generateCollusionBlocks(layers.decors);
+    const fon = tilesField.generateCollusionBlocks(layers.fon);
+    const collisionField = new CollusionField(context, tileSize.width, mapSize.width);
+    const coins = collisionField.generateCollusionBlocks(layers.coins, './assets/icons/coin.png');
+    const enemies = collisionField.generateEnemies(layers.enemy, gameField, floors, platforms);
     const background1 = new SpriteBase(context, { x: 0, y: 0 }, './assets/background/1_level/bg_1.png', 1);
     const bgLoop = new Background(context, gameField);
     const bgImages = bgLoop.generate('./assets/background/1_level/mtn.png', { width: 2618, height: 571 });
@@ -130,8 +173,8 @@ class GameCanvas {
       context,
       { x: 10, y: 300 },
       gameField,
-      tiles,
-      tiles1,
+      floors,
+      platforms,
       coins,
       enemies,
       './assets/warrior/Idle.png',
@@ -155,15 +198,12 @@ class GameCanvas {
         block.update();
       });
       background1.update();
-      tiles.forEach((block) => {
-        block.update();
-      });
-      tiles1.forEach((block) => {
-        block.update();
-      });
-      coins.forEach((block) => {
-        block.update();
-      });
+      floors.forEach((block) => { block.update(); });
+      platforms.forEach((block) => { block.update(); });
+      spikes.forEach((block) => { block.update(); });
+      decors.forEach((block) => { block.update(); });
+      fon.forEach((block) => { block.update(); });
+      coins.forEach((block) => { block.update(); });
       gem.update();
       player.update();
       player.velocity.x = 0;

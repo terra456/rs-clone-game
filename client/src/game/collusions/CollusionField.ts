@@ -40,8 +40,8 @@ class CollusionField {
     collusions2d.forEach((row, y) => {
       row.forEach((symb, x) => {
         if (symb !== 0) {
-          // enemiesBlocks.push(symb);
-          if (symb === 34) {
+          console.log(symb);
+          if (symb === 34 || symb === 6) {
             const boar = new Enemy(
               this.context,
               { x: x * this.size, y: y * this.size - 25 },
@@ -54,7 +54,6 @@ class CollusionField {
               2,
               25
             );
-            console.log('boar', boar.position.x);
             enemiesBlocks.push(boar);
           }
           if (symb === 39) {
@@ -72,7 +71,7 @@ class CollusionField {
             );
             enemiesBlocks.push(snail);
           }
-          if (symb === 22) {
+          if (symb === 22 || symb === 7) {
             const bee = new Enemy(
               this.context,
               { x: x * this.size, y: y * this.size },

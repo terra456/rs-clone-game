@@ -15,12 +15,14 @@ class TilesField {
   width: number;
   height: number;
   scale: number;
+  tileColumns: any;
 
-  constructor ({ context, size, columns, imgSrc }: TilesFieldType) {
+  constructor ({ context, size, columns, imgSrc, tileColumns }: TilesFieldType) {
     this.context = context;
     this.size = size;
     this.columns = columns;
     this.loaded = false;
+    this.tileColumns = tileColumns;
     this.image = new Image();
     this.image.src = imgSrc;
     this.image.onload = () => {
@@ -48,10 +50,9 @@ class TilesField {
   }
 
   getTileCoordinates (n: number) {
-    const atlasCol = 8;
     const tileVal = n - 1;
-    const sourceY = Math.floor(tileVal / atlasCol) * this.size;
-    const sourceX = (tileVal % atlasCol) * this.size;
+    const sourceY = Math.floor(tileVal / this.tileColumns) * this.size;
+    const sourceX = (tileVal % this.tileColumns) * this.size;
     return { x: sourceX, y: sourceY };
   }
 };

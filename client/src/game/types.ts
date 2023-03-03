@@ -1,3 +1,5 @@
+import { type } from "./maps/honey-grot"
+
 /* eslint-disable @typescript-eslint/consistent-type-definitions */
 export interface IAnimationsBase {
   hitbox: {
@@ -92,4 +94,26 @@ export type TilesFieldType = {
   imgSrc: string
   loaded?: boolean
   scale?: number
+  tileColumns: number
+}
+
+export type layerType = {
+  data: number[]
+  height: number
+  id: number
+  name: string
+  opacity: number
+  type: string
+  visible: boolean
+  width: number
+  x: number
+  y: number
+};
+
+export type tilemapType = {
+  file: string
+  tilecount: number
+  columns: number
+  width: number
+  height: number
 }
