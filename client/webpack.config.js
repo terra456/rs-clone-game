@@ -60,6 +60,9 @@ const config = {
   resolve: {
     extensions: [".tsx", ".ts", ".jsx", ".js", "..."],
   },
+  experiments: {
+    topLevelAwait: true,
+  },
 };
 
 module.exports = () => {
