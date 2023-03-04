@@ -14,12 +14,10 @@ class Warior extends Player {
   enemies: Enemy[];
   gameOver: () => void;
   isAtack: boolean;
+  isRunning: boolean;
   gem: SpriteBase;
   winGame: (score: number) => void;
   sounds: any;
-  isAudioPlaying: boolean;
-  isCoinAudioPlaying: boolean;
-  isRunning: boolean;
   gameBox: { width: number, height: number };
   isSoundsOn: boolean;
 
@@ -63,8 +61,6 @@ class Warior extends Player {
     this.isAtack = false;
     this.gem = gem;
     this.isSoundsOn = isSoundsOn;
-    this.isAudioPlaying = false;
-    this.isCoinAudioPlaying = false;
     this.isRunning = false;
     this.sounds = {};
     for (const key in sounds) {
@@ -93,20 +89,12 @@ class Warior extends Player {
       this.checkFallOut();
       this.checkEnemies();
     } else {
-      if (this.velocity.y === 0) {
-        if (this.sprite !== 'hit') {
-          this.switchSprite('hit');
-        } else {
-          if (this.currentFrame === this.frameRate - 1) {
-            if (this.lifes === 0) {
-              this.gameOver();
-            } else {
-              this.isDied = false;
-              this.dieTimer = 0;
-              this.switchSprite('idle');
-              this.position.y -= 200;
-              this.position.x -= 500;
-            }
+      if (this.isStayOn || this.sprite === 'hit') {
+        if (this.currentFrame === this.frameRate - 1) {
+          if (this.lifes === 0) {
+            this.gameOver();
+          } else {
+            this.revive();
           }
         }
       }
@@ -159,7 +147,6 @@ class Warior extends Player {
     for (let i = 0; i < this.enemies.length; i++) {
       const enemy = this.enemies[i];
       if (!enemy.isDied) {
-        let collisionEnemy: boolean;
         if (this.isAtack) {
           const hitbox: hitboxSmallType = {
             width: this.hitbox.width * 2,
@@ -169,19 +156,20 @@ class Warior extends Player {
               y: this.hitbox.position.y + this.hitbox.height / 2
             }
           };
-          collisionEnemy = collision(hitbox, enemy);
+          if (collision(hitbox, enemy)) {
+            this.killEnemy(enemy);
+          };
         } else {
-          collisionEnemy = collision(this.hitbox, enemy);
-        }
-        if (collisionEnemy) {
-          if (this.velocity.y > 0 || this.isAtack) {
-            enemy.isDied = true;
-            enemy.dying();
-            this.playAudio('kill');
-            this.score += enemy.price;
-          } else {
-            this.velocity.y += this.gravity;
-            this.die();
+          if (collision(this.hitbox, enemy)) {
+            console.log(this.hitbox.position.y, this.hitbox.height, enemy.position.y);
+            if (this.hitbox.position.y + this.hitbox.height - 10 <= enemy.position.y) {
+              this.killEnemy(enemy);
+            } else {
+              if (!this.isStayOn) {
+                this.velocity.y = 0;
+              }
+              this.die();
+            }
           }
         }
       } else {
@@ -190,6 +178,13 @@ class Warior extends Player {
         }
       }
     }
+  }
+
+  killEnemy (enemy: Enemy) {
+    enemy.isDied = true;
+    enemy.dying();
+    this.playAudio('kill');
+    this.score += enemy.price;
   }
 
   checkFallOut () {
@@ -201,10 +196,46 @@ class Warior extends Player {
   die () {
     this.lifes -= 1;
     this.isDied = true;
-    if (this.velocity.y !== 0) {
-      this.velocity.y = 1;
-      this.lastDirection === Directions.right ? this.switchSprite('fall') : this.switchSprite('fallLeft');
+  }
+
+  touchDown () {
+    if (this.isDied) {
+      this.switchSprite('hit');
+      this.playAudio('hit');
+    } else {
+      this.playAudio('landing');
     }
+    return true;
+  }
+
+  revive () {
+    this.playAudio('revive');
+    this.switchSprite('idle');
+    const checkPosition = (n: number) => {
+      this.position.x = this.position.x - n;
+      let standing = false;
+      for (let i = 0; i < this.collusions.length;) {
+        const collusionBlock = this.collusions[i];
+        console.log(this.hitbox.position.y, this.field.height / 2);
+        if (this.hitbox.position.x <= collusionBlock.position.x + collusionBlock.width &&
+          this.hitbox.position.x + this.hitbox.width >= collusionBlock.position.x &&
+          Math.abs(this.hitbox.position.y) >= this.field.height / 2) {
+          this.isStayOn = true;
+          this.velocity.y = 0;
+          const offset: number = this.hitbox.position.y - this.position.y + this.hitbox.height;
+          this.position.y = collusionBlock.position.y - offset - 0.01;
+          standing = true;
+          this.isDied = false;
+          break;
+        } else {
+          i++;
+        }
+      }
+      if (!standing) {
+        checkPosition(n + 100);
+      }
+    };
+    checkPosition(200);
   }
 }
 

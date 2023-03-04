@@ -32,6 +32,12 @@ class Enemy extends Player {
   go () {
     this.velocity.x = -this.speed;
   }
+
+  stopX (): void {
+    const tempX = this.velocity.x;
+    this.velocity.x = -tempX;
+    this.image.style.transform = 'scale(-1, 1)';
+  }
 }
 
 export default Enemy;

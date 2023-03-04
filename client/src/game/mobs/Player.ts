@@ -17,6 +17,7 @@ class Player extends Sprite {
   animations: any;
   lastDirection: Directions;
   platformCollusions: ICollusionBlock[];
+  isStayOn: boolean;
   isDied: boolean;
   dieTimer: number;
   sprite: string;
@@ -49,6 +50,7 @@ class Player extends Sprite {
     this.lastDirection = Directions.right;
 
     this.isDied = false;
+    this.isStayOn = false;
     this.dieTimer = 0;
 
     for (let key in this.animations) {
@@ -81,7 +83,6 @@ class Player extends Sprite {
     this.applyGravity();
     this.updateHitbox();
     this.checkForVerticalCollusions();
-    // this.checkForDeath();
   }
 
   updateHitbox () {
@@ -94,13 +95,13 @@ class Player extends Sprite {
       const collusionBlock = this.collusions[i];
       if (collision(this.hitbox, collusionBlock)) {
         if (this.velocity.x > 0) {
-          this.velocity.x = 0;
+          this.stopX();
           const offset: number = this.hitbox.position.x - this.position.x + this.hitbox.width;
           this.position.x = collusionBlock.position.x - offset - 0.01;
           break;
         }
         if (this.velocity.x < 0) {
-          this.velocity.x = 0;
+          this.stopX();
           const offset: number = this.hitbox.position.x - this.position.x;
           this.position.x = collusionBlock.position.x + collusionBlock.width - offset + 0.01;
           break;
@@ -109,14 +110,20 @@ class Player extends Sprite {
     }
   }
 
+  stopX () {
+    this.velocity.x = 0;
+  }
+
   checkForVerticalCollusions () {
     for (let i = 0; i < this.collusions.length; i++) {
       const collusionBlock = this.collusions[i];
       if (collision(this.hitbox, collusionBlock)) {
         if (this.velocity.y > 0) {
           this.velocity.y = 0;
+          this.isStayOn = true;
           const offset: number = this.hitbox.position.y - this.position.y + this.hitbox.height;
           this.position.y = collusionBlock.position.y - offset - 0.01;
+          this.touchDown();
           break;
         }
         if (this.velocity.y < 0) {
@@ -133,24 +140,23 @@ class Player extends Sprite {
       if (platformCollision(this.hitbox, platformCollusionBlock)) {
         if (this.velocity.y > 0) {
           this.velocity.y = 0;
+          this.isStayOn = true;
           const offset: number = this.hitbox.position.y - this.position.y + this.hitbox.height;
           this.position.y = platformCollusionBlock.position.y - offset - 0.01;
+          this.touchDown();
           break;
         }
       }
     }
   }
 
+  touchDown () {
+    return true;
+  }
+
   applyGravity () {
     this.velocity.y += this.gravity;
     this.position.y += this.velocity.y;
-  }
-
-  checkForDeath () {
-    if (!this.isDied) {
-      return;
-    }
-    this.dying();
   }
 
   dying () {

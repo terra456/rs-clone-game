@@ -20,6 +20,8 @@ class GameCanvas {
   mapSise: { width: number; height: number; };
   isSoundsOn: boolean;
   soundsVolume: number;
+  isAudioOn: boolean;
+  audioVolume: number;
   
   constructor (parentNode: HTMLElement = document.body, width = 1024, height = 600) {
     this.canvas = document.createElement('canvas');
@@ -34,6 +36,8 @@ class GameCanvas {
     this.context = this.canvas.getContext('2d');
     this.isSoundsOn = (localStorage.getItem('soundsOn') != null) ? localStorage.getItem('soundsOn') === 'On' : true;
     this.soundsVolume = (localStorage.getItem('soundsVolume') != null) ? Number(localStorage.getItem('soundsVolume')) : 5;
+    this.isAudioOn = (localStorage.getItem('audioOn') != null) ? localStorage.getItem('audioOn') === 'On' : true;
+    this.audioVolume = (localStorage.getItem('audioVolume') != null) ? Number(localStorage.getItem('audioVolume')) : 5;
   }
 
   async startGame () {
@@ -140,6 +144,13 @@ class GameCanvas {
       }
     };
 
+    if (this.isAudioOn) {
+      const audio: HTMLAudioElement = new Audio('./assets/audio/sounds/platformer_level03.mp3');
+      audio.volume = this.audioVolume / 100;
+      audio.play();
+    }
+
+
     const tilesField = new TilesField({
       context,
       size: tileSize.width,
@@ -147,9 +158,9 @@ class GameCanvas {
       imgSrc: tilemap.file,
       tileColumns: tilemap.columns
     });
-    const floors = tilesField.generateCollusionBlocks(layers.floor);
-    const platforms = tilesField.generateCollusionBlocks(layers.platforms)
+    const floors = tilesField.generateCollusionBlocks(layers.floor)
       .concat(tilesField.generateCollusionBlocks(layers.ceiling));
+    const platforms = tilesField.generateCollusionBlocks(layers.platforms);
     const spikes = tilesField.generateCollusionBlocks(layers.spikes);
     const decors = tilesField.generateCollusionBlocks(layers.decors);
     const fon = tilesField.generateCollusionBlocks(layers.fon);
@@ -168,11 +179,13 @@ class GameCanvas {
     const playerSounds = {
       attack: './assets/audio/sounds/12_Player_Movement_SFX/56_Attack_03.wav',
       run: './assets/audio/sounds/12_Player_Movement_SFX/03_Step_grass_03.wav',
-      hit: './assets/audio/sounds/12_Player_Movement_SFX/61_Hit_03.wav',
+      hit: './assets/audio/sounds/10_Battle_SFX/55_Encounter_02.wav',
       jump: './assets/audio/sounds/12_Player_Movement_SFX/30_Jump_03.wav',
       landing: './assets/audio/sounds/12_Player_Movement_SFX/45_Landing_01.wav',
       coin: './assets/audio/sounds/10_UI_Menu_SFX/079_Buy_sell_01.wav',
-      kill: './assets/audio/sounds/10_Battle_SFX/69_Enemy_death_01.wav'
+      kill: './assets/audio/sounds/10_Battle_SFX/69_Enemy_death_01.wav',
+      revive: './assets/audio/sounds/8_Buffs_Heals_SFX/30_Revive_03.wav',
+      gameOver: './assets/audio/sounds/10_Battle_SFX/17_Def_buff_01.wav'
     };
     const player = new Warior(
       context,
@@ -242,15 +255,11 @@ class GameCanvas {
         }
         if (player.velocity.y < 0 && !keys.atack) {
           player.playAudio('jump');
+          player.isStayOn = false;
           player.lastDirection === Directions.right ? player.switchSprite('jump') : player.switchSprite('jumpLeft');
         } else if (player.velocity.y > 0 && !keys.atack) {
-          player.playAudio('landing');
           player.lastDirection === Directions.right ? player.switchSprite('fall') : player.switchSprite('fallLeft');
         }
-      } else {
-        player.isRunning = false;
-        player.playAudio('hit');
-        player.switchSprite('hit');
       }
       enemies.forEach((el) => {
         if (el.velocity.x === 0) {
@@ -280,7 +289,10 @@ class GameCanvas {
           break;
         case 38:
           console.log('up');
-          player.velocity.y = -10;
+          // если добавить && player.isStayOn, то будет прыгать только когда стоит на поверхности.
+          if (!player.isDied) {
+            player.velocity.y = -10;
+          }
           event.preventDefault();
           break;
         case 39:
