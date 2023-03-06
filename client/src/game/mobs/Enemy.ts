@@ -11,15 +11,16 @@ class Enemy extends Player {
     cont: CanvasRenderingContext2D,
     position: { x: number, y: number },
     field: { width: number, height: number },
-    collusions: ICollusionBlock[],
     floorCollusions: ICollusionBlock[],
+    ceilingCollusions: ICollusionBlock[],
+    platformCollusions: ICollusionBlock[],
     imageSrc: string,
     frameRate: number,
     animations: IAnimationsEnemy,
     speed: number,
     price: number
   ) {
-    super(cont, position, field, collusions, floorCollusions, imageSrc, frameRate, animations);
+    super(cont, position, field, floorCollusions, ceilingCollusions, platformCollusions, imageSrc, frameRate, animations);
     this.speed = speed;
     this.price = price;
   }

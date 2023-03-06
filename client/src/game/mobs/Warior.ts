@@ -25,8 +25,9 @@ class Warior extends Player {
     cont: CanvasRenderingContext2D,
     position: { x: number, y: number },
     field: { width: number, height: number },
-    collusions: ICollusionBlock[],
     floorCollusions: ICollusionBlock[],
+    ceilingCollusions: ICollusionBlock[],
+    platformCollusions: ICollusionBlock[],
     coins: ICollusionBlock[],
     enemies: Enemy[],
     imageSrc: string,
@@ -40,7 +41,7 @@ class Warior extends Player {
     volume: number,
     sounds: any
   ) {
-    super(cont, position, field, collusions, floorCollusions, imageSrc, frameRate, animations)
+    super(cont, position, field, floorCollusions, ceilingCollusions, platformCollusions, imageSrc, frameRate, animations)
     this.cameraBox = {
       position: {
         x: this.position.x,
@@ -213,13 +214,13 @@ class Warior extends Player {
     this.switchSprite('idle');
     const checkPosition = (n: number) => {
       this.position.x = this.position.x - n;
+      this.updateHitbox();
       let standing = false;
-      for (let i = 0; i < this.collusions.length;) {
-        const collusionBlock = this.collusions[i];
+      for (let i = 0; i < this.floorCollusions.length;) {
+        const collusionBlock = this.floorCollusions[i];
         console.log(this.hitbox.position.y, this.field.height / 2);
         if (this.hitbox.position.x <= collusionBlock.position.x + collusionBlock.width &&
-          this.hitbox.position.x + this.hitbox.width >= collusionBlock.position.x &&
-          Math.abs(this.hitbox.position.y) >= this.field.height / 2) {
+          this.hitbox.position.x + this.hitbox.width >= collusionBlock.position.x) {
           this.isStayOn = true;
           this.velocity.y = 0;
           const offset: number = this.hitbox.position.y - this.position.y + this.hitbox.height;

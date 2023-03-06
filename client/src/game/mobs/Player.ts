@@ -10,19 +10,30 @@ class Player extends Sprite {
   velocity: { x: number, y: number };
   gravity: number;
   field: { width: number, height: number };
-  collusions: ICollusionBlock[];
+  floorCollusions: ICollusionBlock[];
+  ceilingCollusions: ICollusionBlock[];
+  platformCollusions: ICollusionBlock[];
   scale: number;
   imageSrc: string;
   hitbox: hitboxType;
   animations: any;
   lastDirection: Directions;
-  platformCollusions: ICollusionBlock[];
   isStayOn: boolean;
   isDied: boolean;
   dieTimer: number;
   sprite: string;
 
-  constructor (cont: CanvasRenderingContext2D, position: { x: number, y: number }, field: { width: number, height: number }, collusions: ICollusionBlock[], floorCollusions: ICollusionBlock[], imageSrc: string, frameRate: number, animations: IAnimations | IAnimationsEnemy) {
+  constructor (
+    cont: CanvasRenderingContext2D,
+    position: { x: number, y: number },
+    field: { width: number, height: number },
+    floorCollusions: ICollusionBlock[],
+    ceilingCollusions: ICollusionBlock[],
+    platformCollusions: ICollusionBlock[],
+    imageSrc: string,
+    frameRate: number,
+    animations: IAnimations | IAnimationsEnemy
+  ) {
     super(cont, position, imageSrc, frameRate);
     this.context = cont;
     this.position = position;
@@ -32,8 +43,9 @@ class Player extends Sprite {
       y: 1
     };
     this.gravity = 0.5;
-    this.collusions = collusions;
-    this.platformCollusions = floorCollusions;
+    this.floorCollusions = floorCollusions;
+    this.ceilingCollusions = ceilingCollusions;
+    this.platformCollusions = platformCollusions;
     this.hitbox = {
       position: {
         x: this.position.x,
@@ -91,8 +103,12 @@ class Player extends Sprite {
   }
 
   checkForHorizontalCollusions () {
-    for (let i = 0; i < this.collusions.length; i++) {
-      const collusionBlock = this.collusions[i];
+    const collusions = this.floorCollusions;
+    if (this.ceilingCollusions) {
+      collusions.concat(this.ceilingCollusions);
+    }
+    for (let i = 0; i < collusions.length; i++) {
+      const collusionBlock = collusions[i];
       if (collision(this.hitbox, collusionBlock)) {
         if (this.velocity.x > 0) {
           this.stopX();
@@ -115,8 +131,12 @@ class Player extends Sprite {
   }
 
   checkForVerticalCollusions () {
-    for (let i = 0; i < this.collusions.length; i++) {
-      const collusionBlock = this.collusions[i];
+    const collusions = this.floorCollusions;
+    if (this.ceilingCollusions) {
+      collusions.concat(this.ceilingCollusions);
+    }
+    for (let i = 0; i < collusions.length; i++) {
+      const collusionBlock = collusions[i];
       if (collision(this.hitbox, collusionBlock)) {
         if (this.velocity.y > 0) {
           this.velocity.y = 0;

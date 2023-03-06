@@ -150,7 +150,6 @@ class GameCanvas {
       audio.play();
     }
 
-
     const tilesField = new TilesField({
       context,
       size: tileSize.width,
@@ -158,15 +157,15 @@ class GameCanvas {
       imgSrc: tilemap.file,
       tileColumns: tilemap.columns
     });
-    const floors = tilesField.generateCollusionBlocks(layers.floor)
-      .concat(tilesField.generateCollusionBlocks(layers.ceiling));
+    const floors = tilesField.generateCollusionBlocks(layers.floor);
+    const ceiling = tilesField.generateCollusionBlocks(layers.ceiling);
     const platforms = tilesField.generateCollusionBlocks(layers.platforms);
     const spikes = tilesField.generateCollusionBlocks(layers.spikes);
     const decors = tilesField.generateCollusionBlocks(layers.decors);
     const fon = tilesField.generateCollusionBlocks(layers.fon);
     const collisionField = new CollusionField(context, tileSize.width, mapSize.width);
     const coins = collisionField.generateCollusionBlocks(layers.coins, './assets/icons/coin.png');
-    const enemies = collisionField.generateEnemies(layers.enemy, gameField, floors, platforms);
+    const enemies = collisionField.generateEnemies(layers.enemy, gameField, floors, ceiling, platforms);
     const background1 = new SpriteBase(context, { x: 0, y: 0 }, './assets/background/1_level/bg_1.png', 1);
     const bgLoop = new Background(context, gameField);
     const bgImages = bgLoop.generate('./assets/background/1_level/mtn.png', { width: 2618, height: 571 });
@@ -192,6 +191,7 @@ class GameCanvas {
       { x: 10, y: 300 },
       gameField,
       floors,
+      ceiling,
       platforms,
       coins,
       enemies,
@@ -219,6 +219,7 @@ class GameCanvas {
       });
       background1.update();
       floors.forEach((block) => { block.update(); });
+      ceiling.forEach((block) => { block.update(); });
       platforms.forEach((block) => { block.update(); });
       spikes.forEach((block) => { block.update(); });
       decors.forEach((block) => { block.update(); });

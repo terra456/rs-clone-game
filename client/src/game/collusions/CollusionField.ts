@@ -2,6 +2,7 @@
 import { beeAnimation, boarAnimation, snailAnimation } from '../mobs/animations';
 import Enemy from '../mobs/Enemy';
 import SpriteBase from '../sprite/SpriteBase';
+import { ICollusionBlock } from '../types';
 import CollusionBlock from './CollusionBlock';
 
 class CollusionField {
@@ -31,7 +32,12 @@ class CollusionField {
     return collusionBlocks;
   }
 
-  generateEnemies (arr: number[], field: any, tiles: any, tiles1: any) {
+  generateEnemies (arr: number[],
+    field: { width: number, height: number },
+    floorCollusions: ICollusionBlock[],
+    ceilingCollusions: ICollusionBlock[],
+    platformCollusions: ICollusionBlock[]
+  ) {
     const collusions2d: number[][] = [];
     const enemiesBlocks: Enemy[] = [];
     for (let i = 0; i < arr.length; i += this.columns) {
@@ -46,8 +52,9 @@ class CollusionField {
               this.context,
               { x: x * this.size, y: y * this.size - 25 },
               field,
-              tiles,
-              tiles1,
+              floorCollusions,
+              ceilingCollusions,
+              platformCollusions,
               './assets/enemy/Boar/Walk-Base-Sheet.png',
               6,
               boarAnimation,
@@ -61,8 +68,9 @@ class CollusionField {
               this.context,
               { x: x * this.size - 5, y: y * this.size },
               field,
-              tiles,
-              tiles1,
+              floorCollusions,
+              ceilingCollusions,
+              platformCollusions,
               './assets/enemy/snail/walk-Sheet.png',
               8,
               snailAnimation,
@@ -76,7 +84,8 @@ class CollusionField {
               this.context,
               { x: x * this.size, y: y * this.size },
               field,
-              tiles,
+              floorCollusions,
+              ceilingCollusions,
               [],
               './assets/enemy/bee/fly.png',
               4,
