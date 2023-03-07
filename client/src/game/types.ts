@@ -35,11 +35,13 @@ export interface IAnimationsEnemy extends IAnimationsBase {
   attack?: ISprite
   attackLeft?: ISprite
   hide?: ISprite
+  hideLeft?: ISprite
   hit: ISprite
+  hitLeft?: ISprite
 }
 
 export interface ISprite {
-  imageSrc: string
+  imageSrc?: string
   frameRate: number
   frameBuffer?: number
 }

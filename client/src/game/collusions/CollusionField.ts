@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import { beeAnimation, boarAnimation, snailAnimation } from '../mobs/animations';
+import { beeAnimation, boarAnimation, boarBlackAnimation, snailAnimation } from '../mobs/animations';
 import Enemy from '../mobs/Enemy';
 import SpriteBase from '../sprite/SpriteBase';
 import { ICollusionBlock } from '../types';
@@ -58,6 +58,22 @@ class CollusionField {
               './assets/enemy/Boar/Walk-Base-Sheet.png',
               6,
               boarAnimation,
+              2,
+              25
+            );
+            enemiesBlocks.push(boar);
+          }
+          if (symb === 6) {
+            const boar = new Enemy(
+              this.context,
+              { x: x * this.size, y: y * this.size - 25 },
+              field,
+              floorCollusions,
+              ceilingCollusions,
+              platformCollusions,
+              './assets/enemy/Boar/Walk-Base-SheetBlack.png',
+              6,
+              boarBlackAnimation,
               2,
               25
             );

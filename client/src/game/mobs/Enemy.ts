@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import { ICollusionBlock, IAnimationsEnemy } from './../types';
+import { collision } from '../utils';
+import { ICollusionBlock, IAnimationsEnemy, Directions } from './../types';
 import Player from "./Player";
 
 class Enemy extends Player {
@@ -25,19 +26,27 @@ class Enemy extends Player {
     this.price = price;
   }
 
-  update () {
-    this.isDied ? this.switchSprite('hit') : this.switchSprite('move');
+  update (): void {
     super.update();
   }
 
   go () {
     this.velocity.x = -this.speed;
+    this.lastDirection = Directions.left;
   }
 
   stopX (): void {
     const tempX = this.velocity.x;
     this.velocity.x = -tempX;
-    this.image.style.transform = 'scale(-1, 1)';
+    console.log(this.lastDirection);
+    if (this.lastDirection === Directions.left) {
+      console.log('moveLeft');
+      this.switchSprite('moveLeft');
+      this.lastDirection = Directions.right;
+    } else {
+      this.switchSprite('move');
+      this.lastDirection = Directions.left;
+    }
   }
 }
 

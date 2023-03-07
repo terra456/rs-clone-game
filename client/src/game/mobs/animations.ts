@@ -100,6 +100,52 @@ export const beeAnimation: IAnimationsEnemy = {
     frameRate: 4,
     frameBuffer: 2,
   },
+  hitLeft: {
+    imageSrc: './assets/enemy/bee/hit-Left.png',
+    frameRate: 4,
+    frameBuffer: 2,
+  },
+};
+
+export const boarBlackAnimation: IAnimationsEnemy = {
+  hitbox: {
+    width: 40,
+    height: 25,
+    offset: {
+      x: 5,
+      y: 5,
+    }
+  },
+  idle: {
+    imageSrc: './assets/enemy/Boar/Idle-Sheet-Black.png',
+    frameRate: 4,
+    frameBuffer: 3,
+  },
+  move: {
+    imageSrc: './assets/enemy/Boar/Walk-Base-SheetBlack.png',
+    frameRate: 6,
+    frameBuffer: 3,
+  },
+  moveLeft: {
+    imageSrc: './assets/enemy/Boar/Walk-Left-SheetBlack.png',
+    frameRate: 6,
+    frameBuffer: 3,
+  },
+  run: {
+    imageSrc: './assets/enemy/Boar/Run-Sheet-Black.png',
+    frameRate: 6,
+    frameBuffer: 3,
+  },
+  hit: {
+    imageSrc: './assets/enemy/Boar/Hit-Sheet-Black.png',
+    frameRate: 4,
+    frameBuffer: 3,
+  },
+  hitLeft: {
+    imageSrc: './assets/enemy/Boar/Hit-Left-Black.png',
+    frameRate: 4,
+    frameBuffer: 3,
+  },
 };
 
 export const boarAnimation: IAnimationsEnemy = {
@@ -121,6 +167,11 @@ export const boarAnimation: IAnimationsEnemy = {
     frameRate: 6,
     frameBuffer: 3,
   },
+  moveLeft: {
+    imageSrc: './assets/enemy/Boar/Walk-Left-Sheet.png',
+    frameRate: 6,
+    frameBuffer: 3,
+  },
   run: {
     imageSrc: './assets/enemy/Boar/Run-Sheet.png',
     frameRate: 6,
@@ -128,6 +179,11 @@ export const boarAnimation: IAnimationsEnemy = {
   },
   hit: {
     imageSrc: './assets/enemy/Boar/Hit-Sheet.png',
+    frameRate: 4,
+    frameBuffer: 3,
+  },
+  hitLeft: {
+    imageSrc: './assets/enemy/Boar/Hit-Left.png',
     frameRate: 4,
     frameBuffer: 3,
   },
@@ -147,13 +203,28 @@ export const snailAnimation: IAnimationsEnemy = {
     frameRate: 8,
     frameBuffer: 3,
   },
+  moveLeft: {
+    imageSrc: './assets/enemy/snail/walk-Sheet-Left.png',
+    frameRate: 8,
+    frameBuffer: 3,
+  },
   hide: {
     imageSrc: './assets/enemy/snail/Hide-Sheet.png',
     frameRate: 8,
     frameBuffer: 3,
   },
+  hideLeft: {
+    imageSrc: './assets/enemy/snail/Hide-Sheet-Left.png',
+    frameRate: 8,
+    frameBuffer: 3,
+  },
   hit: {
     imageSrc: './assets/enemy/snail/Dead-Sheet.png',
+    frameRate: 8,
+    frameBuffer: 3,
+  },
+  hitLeft: {
+    imageSrc: './assets/enemy/snail/Dead-Sheet-Left.png',
     frameRate: 8,
     frameBuffer: 3,
   },

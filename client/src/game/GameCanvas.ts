@@ -235,6 +235,7 @@ class GameCanvas {
           if (player.currentFrame === player.frameRate - 1) {
             player.isAtack = false;
             keys.atack = false;
+            player.stopAudio('run');
             player.lastDirection === Directions.right ? player.switchSprite('idle') : player.switchSprite('idleLeft');
           }
         }
@@ -252,6 +253,7 @@ class GameCanvas {
           player.playAudio('run');
         } else if (player.velocity.y === 0 && !keys.atack) {
           player.isRunning = false;
+          player.stopAudio('run');
           player.lastDirection === Directions.right ? player.switchSprite('idle') : player.switchSprite('idleLeft');
         }
         if (player.velocity.y < 0 && !keys.atack) {

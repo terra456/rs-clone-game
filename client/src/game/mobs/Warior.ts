@@ -79,6 +79,12 @@ class Warior extends Player {
     }
   }
 
+  stopAudio (key: string) {
+    if (this.isSoundsOn) {
+      this.sounds[key].pause();
+    }
+  }
+
   update () {
     super.update();
     //квадраты для видимости
