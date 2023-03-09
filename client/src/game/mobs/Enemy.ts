@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import { collision } from '../utils';
 import { ICollusionBlock, IAnimationsEnemy, Directions } from './../types';
 import Player from "./Player";
 
@@ -38,9 +37,8 @@ class Enemy extends Player {
   stopX (): void {
     const tempX = this.velocity.x;
     this.velocity.x = -tempX;
-    console.log(this.lastDirection);
+    console.log(this.lastDirection, this.velocity.x);
     if (this.lastDirection === Directions.left) {
-      console.log('moveLeft');
       this.switchSprite('moveLeft');
       this.lastDirection = Directions.right;
     } else {

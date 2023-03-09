@@ -86,10 +86,10 @@ class Player extends Sprite {
     this.context.fillRect(this.position.x, this.position.y, this.width, this.height);
     this.context.fillStyle = 'rgba(0, 0, 255, 0.8)';
     this.context.fillRect(this.hitbox.position.x, this.hitbox.position.y, this.hitbox.width, this.hitbox.height);
+    this.position.x += this.velocity.x;
     this.updateFrames();
     this.updateHitbox();
     this.draw();
-    this.position.x += this.velocity.x;
     this.updateHitbox();
     this.checkForHorizontalCollusions();
     this.applyGravity();

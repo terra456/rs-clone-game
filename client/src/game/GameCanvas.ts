@@ -5,10 +5,8 @@ import Background from './maps/Background';
 import SpriteBase from './sprite/SpriteBase';
 import Warior from './mobs/Warior';
 import TilesField from './collusions/TilesField';
-import { layers } from './maps/1_level/map';
 import CollusionField from './collusions/CollusionField';
 import { wariorAnimation } from './mobs/animations';
-
 
 class GameCanvas {
   scaledCanvas: { width: number, height: number };
@@ -22,7 +20,11 @@ class GameCanvas {
   soundsVolume: number;
   isAudioOn: boolean;
   audioVolume: number;
-  
+  backgroundSrc: { src: string; bgSize: { width: number; height: number; }; };
+  statickBg: string;
+  level: number;
+  scaleBg: number;
+
   constructor (parentNode: HTMLElement = document.body, width = 1024, height = 600) {
     this.canvas = document.createElement('canvas');
     this.canvas.width = width;
@@ -40,47 +42,78 @@ class GameCanvas {
     this.audioVolume = (localStorage.getItem('audioVolume') != null) ? Number(localStorage.getItem('audioVolume')) : 5;
   }
 
-  async startGame () {
-    await import('./maps/honey-grot')
-      .then((data) => {
-        this.gameField = {
-          width: data.width * data.tilewidth,
-          height: data.height * data.tileheight
+  async startGame (level: number = 3) {
+    this.level = level;
+    let data;
+    switch (level) {
+      case 1:
+        data = await import('./maps/forest');
+        this.backgroundSrc = {
+          src: './assets/background/1_level/mtn.png',
+          bgSize: { width: 2618, height: 571 }
         };
-        this.scale = this.canvas.height / this.gameField.height;
-        this.scaledCanvas = {
-          width: this.canvas.width / this.scale,
-          height: this.canvas.height / this.scale
+        this.statickBg = './assets/background/1_level/bg_1.png';
+        this.scaleBg = 1;
+        break;
+    
+      case 2:
+        data = await import('./maps/honey-grot');
+        this.backgroundSrc = {
+          src: './assets/background/2_level/fon.png',
+          bgSize: { width: 300, height: 300 }
         };
-        this.tileSise = {
-          width: data.tilewidth,
-          height: data.tileheight
+        break;
+    
+      default:
+        data = await import('./maps/river');
+        this.backgroundSrc = {
+          src: './assets/background/1_level/mtn.png',
+          bgSize: { width: 2618, height: 571 }
         };
-        this.mapSise = {
-          width: data.width,
-          height: data.height
-        };
-        const layers = {};
-        data.layers.forEach((el) => {
-          Object.defineProperty(layers, el.name, {
-            value: el.data,
-            writable: false
-          });
+        this.statickBg = './assets/background/1_level/bg_2.png';
+        this.scaleBg = 0.8;
+        break;
+    }
+
+    this.gameField = {
+      width: data.width * data.tilewidth,
+      height: data.height * data.tileheight
+    };
+    this.scale = this.canvas.height / this.gameField.height;
+    this.scaledCanvas = {
+      width: this.canvas.width / this.scale,
+      height: this.canvas.height / this.scale
+    };
+    this.tileSise = {
+      width: data.tilewidth,
+      height: data.tileheight
+    };
+    this.mapSise = {
+      width: data.width,
+      height: data.height
+    };
+    const layers = {};
+    data.layers.forEach((el) => {
+      if (el.type === 'tilelayer') {
+        Object.defineProperty(layers, el.name, {
+          value: el.data,
+          writable: false
         });
-        if (this.context != null) {
-          this.animate(
-            this.context,
-            { width: this.canvas.width, height: this.canvas.height },
-            this.scale,
-            this.scaledCanvas,
-            this.gameField,
-            this.tileSise,
-            this.mapSise,
-            data.tilemap,
-            layers
-          );
-        }
-      });
+      }
+    });
+    if (this.context != null) {
+      this.animate(
+        this.context,
+        { width: this.canvas.width, height: this.canvas.height },
+        this.scale,
+        this.scaledCanvas,
+        this.gameField,
+        this.tileSise,
+        this.mapSise,
+        data.tilemap,
+        layers
+      );
+    }
   }
 
   animate (
@@ -158,17 +191,18 @@ class GameCanvas {
       tileColumns: tilemap.columns
     });
     const floors = tilesField.generateCollusionBlocks(layers.floor);
-    const ceiling = tilesField.generateCollusionBlocks(layers.ceiling);
+    const ceiling = layers.ceiling ? tilesField.generateCollusionBlocks(layers.ceiling) : [];
     const platforms = tilesField.generateCollusionBlocks(layers.platforms);
-    const spikes = tilesField.generateCollusionBlocks(layers.spikes);
-    const decors = tilesField.generateCollusionBlocks(layers.decors);
-    const fon = tilesField.generateCollusionBlocks(layers.fon);
+    const spikes = layers.spikes ? tilesField.generateCollusionBlocks(layers.spikes) : [];
+    const decors = layers.decors ? tilesField.generateCollusionBlocks(layers.decors) : [];
+    const fon = layers.fon ? tilesField.generateCollusionBlocks(layers.fon) : [];
+    const rockfon = layers.rockfon ? tilesField.generateCollusionBlocks(layers.rockfon) : [];
     const collisionField = new CollusionField(context, tileSize.width, mapSize.width);
-    const coins = collisionField.generateCollusionBlocks(layers.coins, './assets/icons/coin.png');
+    const coins = layers.coins ? collisionField.generateCollusionBlocks(layers.coins, './assets/icons/coin.png') : [];
     const enemies = collisionField.generateEnemies(layers.enemy, gameField, floors, ceiling, platforms);
-    const background1 = new SpriteBase(context, { x: 0, y: 0 }, './assets/background/1_level/bg_1.png', 1);
+    const background1 = this.statickBg ? new SpriteBase(context, { x: 0, y: 0 }, this.statickBg, this.scaleBg) : undefined;
     const bgLoop = new Background(context, gameField);
-    const bgImages = bgLoop.generate('./assets/background/1_level/mtn.png', { width: 2618, height: 571 });
+    const bgImages = bgLoop.generate(this.backgroundSrc.src, this.backgroundSrc.bgSize);
     const coinImg = new SpriteBase(context, { x: canvas.width - 120, y: 15 }, './assets/icons/coin.png');
     const gem = new SpriteBase(context, { x: gameField.width - 200, y: gameField.height * 0.7 }, './assets/icons/gem.png');
     const lifeHearts: SpriteBase[] = [];
@@ -217,13 +251,14 @@ class GameCanvas {
       bgImages.forEach((block) => {
         block.update();
       });
-      background1.update();
-      floors.forEach((block) => { block.update(); });
+      background1?.update();
       ceiling.forEach((block) => { block.update(); });
       platforms.forEach((block) => { block.update(); });
       spikes.forEach((block) => { block.update(); });
-      decors.forEach((block) => { block.update(); });
+      rockfon.forEach((block) => { block.update(); });
       fon.forEach((block) => { block.update(); });
+      decors.forEach((block) => { block.update(); });
+      floors.forEach((block) => { block.update(); });
       coins.forEach((block) => { block.update(); });
       gem.update();
       player.update();
@@ -268,6 +303,7 @@ class GameCanvas {
         if (el.velocity.x === 0) {
           if (-camera.position.x + scaledCanvas.width >= el.position.x) {
             el.go();
+            console.log(el.lastDirection);
           }
         }
         el.update();
