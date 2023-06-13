@@ -1,81 +1,101 @@
 import { Settings } from './components/settings/Settings';
 import { Login } from "./components/login/Login";
-import { Register } from "./components/register/Register";
 import { StartGame } from "./components/start/StartGame";
 import { getSavedGames } from './utils/db';
 import { pausedEvent } from './utils/events';
-import { BaseComponent } from './components/BaseComponent';
+import Control from './components/control';
+import GameCanvas from './game/GameCanvas';
 
 const main: HTMLElement | null = document.querySelector('main');
-const btnLogin: HTMLElement | null = document.querySelector('#loginBtn');
-const btnStartGame: HTMLElement | null = document.querySelector('#startGameBtn');
-const btnSettings: HTMLElement | null = document.querySelector('#settingsBtn');
+const header: HTMLElement | null = document.querySelector('header');
+const btnLogin = new Control(header, 'button', 'btn header__btn', 'Login');
+const btnStartGame = new Control(header, 'button', 'btn header__btn', 'Start game');
+// const btnStartGame: HTMLElement | null = document.querySelector('#startGameBtn');
+// const btnSettings: HTMLElement | null = document.querySelector('#settingsBtn');
 
- const isAuthorized: boolean = Number(localStorage.getItem('authorized')) === 0 ? false : true;
- isAuthorized ? openApp() : openLogin();
+const gameCanvas = new GameCanvas(document.body);
 
-if (btnLogin !== null) {
-    btnLogin.addEventListener('click', () => {
-        btnLogin.dispatchEvent(pausedEvent);
-    //    document.querySelector('canvas')?.remove();
-       openLogin();
-    });
-}
+// const isAuthorized: boolean = Number(localStorage.getItem('authorized')) === 0 ? false : true;
+// isAuthorized ? openApp() : openLogin();
 
-if (btnStartGame !== null) {
-    btnStartGame.addEventListener('click', () => {
-        btnStartGame.dispatchEvent(pausedEvent);
-        // document.querySelector('canvas')?.remove();
-        openStartGame();
-    });
-}
+let isAuthorized: boolean = false;
 
-if (btnSettings !== null) {
-    btnSettings.addEventListener('click', () => {
-        btnSettings.dispatchEvent(pausedEvent);
-        // document.querySelector('canvas')?.remove();
-        openTab(new Settings().element);
-    });
-}
+btnLogin.node.addEventListener('click', () => {
+  btnLogin.node.dispatchEvent(pausedEvent);
+  //    document.querySelector('canvas')?.remove();
+//   openLogin();
+});
 
-export function openApp() {
-  //const userId: string = localStorage.getItem('authorized') || '0';
-  getSavedGames('3').then((data) => {
-    data !== `Данных в saved где user_id = ${3} не найдено` ? openStartGame() : openForNewUser();
-  });
-}
+btnStartGame.node.addEventListener('click', () => {
+  btnStartGame.node.dispatchEvent(pausedEvent);
+  // document.querySelector('canvas')?.remove();
+  const startGame = new StartGame(main);
+  startGame.onLoad = (): void => {
+    // loadGames();
+  };
+  startGame.onNewStart = (): void => {
+    void gameCanvas.startGame(1);
+  };
+});
+
+const login = new Login();
+main?.appendChild(login.element);
+login.openForNewUser = () => {
+  void gameCanvas.startGame(1);
+};
+
+login.startGame = () => {
+  void gameCanvas.startGame(1);
+};
+
+
+// if (btnSettings !== null) {
+//   btnSettings.addEventListener('click', () => {
+//     btnSettings.dispatchEvent(pausedEvent);
+//     // document.querySelector('canvas')?.remove();
+//     openTab(new Settings().element);
+//   });
+// }
+
+// export function openApp() {
+//   //const userId: string = localStorage.getItem('authorized') || '0';
+//   getSavedGames('3').then((data) => {
+//     data !== `Данных в saved где user_id = ${3} не найдено` ? openStartGame() : openForNewUser();
+//   });
+// }
 
 function openTab(element: HTMLElement) {
-    if (main !== null) {
-        main.innerHTML = '';
-        main.appendChild(element);
+  if (main !== null) {
+    main.innerHTML = '';
+    main.appendChild(element);
+  }
+}
+
+function toggleLoginBtn(status: boolean): void {
+  if (btnLogin !== null) {
+    if (status) {
+      btnLogin.node.innerText = 'Login';
+      btnLogin.node.classList.remove('btn--out');
+    } else {
+      btnLogin.node.innerHTML = 'Sign out';
+      btnLogin.node.classList.add('btn--out');
     }
+  }
 }
 
-function toggleLoginBtn(status: boolean) {
-    if (btnLogin !== null) {
-        if (status) {
-            btnLogin.innerHTML = 'Login';
-            btnLogin.classList.remove('btn--out');
-        } else {
-            btnLogin.innerHTML = 'Sign out';
-            btnLogin.classList.add('btn--out');
-        }
-    }
-}
+// function openStartGame() {
+//   openTab(new StartGame().element);
+//   toggleLoginBtn(false);
+// }
 
-function openStartGame() {
-    openTab(new StartGame().element);
-    toggleLoginBtn(false);
-}
+// export function openLogin() {
+//   // что за блок и откуда он?
+// //   const loginBlock: HTMLElement | null = document.querySelector('.login');
+//   if (main !== null) main.appendChild(new Login().element);
+// //   toggleLoginBtn(true);
+// }
 
-export function openLogin() {
-    const loginBlock: HTMLElement | null = document.querySelector('.login');
-    if (loginBlock === null && main !== null) main.appendChild(new Login().element);
-    toggleLoginBtn(true);
-}
-
-export function openForNewUser() {
-    openTab(new Register().element)
-    toggleLoginBtn(false);
-}
+// export function openForNewUser (): void {
+//   openTab(new Register().element);
+//   toggleLoginBtn(false);
+// }
