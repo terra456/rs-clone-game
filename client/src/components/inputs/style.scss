@@ -1,0 +1,218 @@
+.input[type="text"] {
+  box-sizing: border-box;
+  width: 226px;
+  height: 47px;
+  padding: 5px 20px;
+  background-image: url(../../assets/ui/input.png);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 226px 47px;
+  background-color: transparent;
+  border: none;
+  outline: none;
+
+  &:active {
+    border: none;
+    outline: none;
+  }
+}
+
+.input[type="radio"] {
+  box-sizing: border-box;
+  margin-right: 1em;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background-image: url(../../assets/ui/radio.png);
+  background-position: top left;
+  background-repeat: no-repeat;
+  background-color: transparent;
+  border: none;
+  outline: none;
+
+  &:active {
+    border: none;
+    outline: none;
+    background-position: top center;
+  }
+  &:disabled {
+    border: none;
+    outline: none;
+    background-position: top right;
+  }
+  &:checked {
+    background-position: bottom left;
+
+    &:active {
+      background-position: bottom center;
+    }
+    &:disabled {
+      background-position: bottom right;
+    }
+  }
+}
+
+.input[type="checkbox"] {
+  box-sizing: border-box;
+  margin-right: 1em;
+  appearance: none;
+  width: 32px;
+  height: 30px;
+  background-image: url(../../assets/ui/check.png);
+  background-position: top left;
+  background-repeat: no-repeat;
+  background-color: transparent;
+  border: none;
+  outline: none;
+
+  &:active {
+    border: none;
+    outline: none;
+    background-position: top center;
+  }
+  &:disabled {
+    border: none;
+    outline: none;
+    background-position: top right;
+  }
+  &:checked {
+    background-position: bottom left;
+
+    &:active {
+      background-position: bottom center;
+    }
+    &:disabled {
+      background-position: bottom right;
+    }
+  }
+}
+
+.input__range {
+  -webkit-appearance: none;
+  margin-top: 0.5rem;
+  width: 207px;
+  border: none !important;
+  background: transparent;
+  padding: 0;
+
+  &:disabled {
+    opacity: 0.5;
+  }
+
+  &:focus {
+    outline: none;
+  }
+  &::-webkit-slider-runnable-track {
+    width: 207px;
+    height: 17px;
+    cursor: pointer;
+    background: transparent;
+    // border-radius: 5px;
+    background-image: url(../../assets/ui/range-line.png);
+    background-position: center;
+  }
+
+  &::-moz-range-track {
+    width: 207px;
+    height: 17px;
+    margin-top: -3px;
+    cursor: pointer;
+    background: transparent;
+    // border-radius: 5px;
+    background-image: url(../../assets/ui/range-line.png);
+    background-position: center;
+  }
+  &::-webkit-slider-thumb {
+    width: 17px;
+    height: 29px;
+    margin-top: -7px;
+    // border-radius: 0.5rem;
+    background: transparent;
+    background-image: url(../../assets/ui/range-thumb.png);
+    cursor: pointer;
+    -webkit-appearance: none;
+  }
+  
+  &::-moz-range-thumb {
+    width: 17px;
+    height: 29px;
+    border: none;
+    background: transparent;
+    background-image: url(../../assets/ui/range-thumb.png);
+    cursor: pointer;
+  }
+
+  &::-ms-thumb {
+    width: 17px;
+    height: 29px;
+    // border-radius: 0.5rem;
+    background: transparent;
+    background-image: url(../../assets/ui/range-thumb.png);
+    cursor: pointer;
+  }
+  &::-ms-track {
+    width: 100%;
+    height: 0.3rem;
+    cursor: pointer;
+    background: transparent;
+    color: transparent;
+  }
+  // &::-ms-fill-lower {
+  //   background: #e1e1e1;
+  //   border-radius: 10px;
+  // }
+  // &::-ms-fill-upper {
+  //   background: #eee;
+  //   border-radius: 10px;
+  // }
+
+  // &:focus::-ms-fill-lower {
+  //   background: #eee;
+  // }
+}
+
+.fieldset {
+  border: none;
+  padding: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.settings__form {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.settings__fieldset {
+  border: none;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+.settings__fieldset-level {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0;
+
+  & .fieldset {
+    width: 100px;
+  }
+}
+
+.settings__fieldset-language {
+  justify-content: center;
+  gap: 10px;
+}
+
+.settings__desc {
+  height: 100%;
+}

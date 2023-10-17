@@ -1,0 +1,29 @@
+@import '../../variables';
+
+.btn {
+  background-color: transparent;
+  border: none;
+  width: 300px;
+  height: 80px;
+  color: $base-color;
+  font-size: 20px;
+  font-kerning: 1px;
+  text-transform: uppercase;
+  background-image: url(../../assets/ui/btn.png);
+
+  &:hover {
+    color: $second-color;
+    background-image: url(../../assets/ui/btn_hovered.png);
+  }
+  &:active {
+    background-image: url(../../assets/ui/btn_clicked.png);
+  }
+
+  &_pause:disabled {
+    color: #333333;
+    background-image: url(../../assets/ui/btn_disabled.png);
+    &:hover {
+      cursor: auto;
+    }
+  }
+}
