@@ -37,7 +37,6 @@ class Enemy extends Player {
   stopX (): void {
     const tempX = this.velocity.x;
     this.velocity.x = -tempX;
-    console.log(this.lastDirection, this.velocity.x);
     if (this.lastDirection === Directions.left) {
       this.switchSprite('moveLeft');
       this.lastDirection = Directions.right;

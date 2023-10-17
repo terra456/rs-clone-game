@@ -1,4 +1,4 @@
-import { Directions, IAnimations, IAnimationsEnemy, layerType, tilemapType } from './types';
+import { Directions, type SettingsType, type tilemapType } from './types';
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 // import Player from './mobs/Player';
 import Background from './maps/Background';
@@ -14,33 +14,41 @@ class GameCanvas {
   context: CanvasRenderingContext2D | null;
   scale: number;
   gameField: { width: number, height: number };
-  tileSise: { width: number; height: number; };
-  mapSise: { width: number; height: number; };
+  tileSise: { width: number, height: number };
+  mapSise: { width: number, height: number };
   isSoundsOn: boolean;
   soundsVolume: number;
   isAudioOn: boolean;
   audioVolume: number;
-  backgroundSrc: { src: string; bgSize: { width: number; height: number; }; };
+  backgroundSrc: { src: string, bgSize: { width: number, height: number } };
   statickBg: string;
   level: number;
   scaleBg: number;
+  stopGame: (level: number, score?: number) => void;
 
-  constructor (parentNode: HTMLElement = document.body, width = 1024, height = 600) {
+  constructor (parentNode: HTMLElement = document.body, width = 1024, height = 600, settings?: SettingsType) {
     this.canvas = document.createElement('canvas');
     this.canvas.width = width;
     this.canvas.height = height;
-    //делим на высоту фона, т.е игрового поля.
+    // делим на высоту фона, т.е игрового поля.
     this.scaledCanvas = {
       width: this.canvas.width / this.scale,
       height: this.canvas.height / this.scale
     };
     parentNode.appendChild(this.canvas);
     this.context = this.canvas.getContext('2d');
-    this.isSoundsOn = (localStorage.getItem('soundsOn') != null) ? localStorage.getItem('soundsOn') === 'On' : true;
-    this.soundsVolume = (localStorage.getItem('soundsVolume') != null) ? Number(localStorage.getItem('soundsVolume')) : 5;
-    this.isAudioOn = (localStorage.getItem('audioOn') != null) ? localStorage.getItem('audioOn') === 'On' : true;
-    this.audioVolume = (localStorage.getItem('audioVolume') != null) ? Number(localStorage.getItem('audioVolume')) : 5;
+    this.isSoundsOn = settings?.isMusic ?? true;
+    this.soundsVolume = settings?.music ?? 50;
+    this.isAudioOn = settings?.isSounds ?? true;
+    this.audioVolume = settings?.sounds ?? 50;
   }
+
+  setSettings = (settings: SettingsType) => {
+    this.isSoundsOn = settings?.isMusic;
+    this.soundsVolume = settings?.music;
+    this.isAudioOn = settings?.isSounds;
+    this.audioVolume = settings?.sounds;
+  };
 
   async startGame (level: number = 3) {
     this.level = level;
@@ -55,7 +63,7 @@ class GameCanvas {
         this.statickBg = './assets/background/1_level/bg_1.png';
         this.scaleBg = 1;
         break;
-    
+
       case 2:
         data = await import('./maps/honey-grot');
         this.backgroundSrc = {
@@ -63,7 +71,7 @@ class GameCanvas {
           bgSize: { width: 300, height: 300 }
         };
         break;
-    
+
       default:
         data = await import('./maps/river');
         this.backgroundSrc = {
@@ -143,11 +151,12 @@ class GameCanvas {
 
     const gameOver = (): void => {
       cancelAnimationFrame(myReq);
+      this.stopGame(this.level);
     };
 
     const winGame = (score: number): void => {
       cancelAnimationFrame(myReq);
-      console.log('win!!!', score);
+      this.stopGame(this.level, score);
     };
 
     const pauseGame = (): void => {
@@ -163,9 +172,6 @@ class GameCanvas {
     const changeScaling = (): void => {
       if (!document.fullscreenElement) {
         this.canvas.requestFullscreen()
-          .then(() => {
-            console.log(canvas.width, canvas.height);
-          })
           .catch((err: Error) => {
             console.error(`Error attempting to enable fullscreen mode: ${err.message} (${err.name})`);
           });
@@ -180,7 +186,7 @@ class GameCanvas {
     if (this.isAudioOn) {
       const audio: HTMLAudioElement = new Audio('./assets/audio/sounds/platformer_level03.mp3');
       audio.volume = this.audioVolume / 100;
-      audio.play();
+      void audio.play();
     }
 
     const tilesField = new TilesField({
@@ -303,7 +309,6 @@ class GameCanvas {
         if (el.velocity.x === 0) {
           if (-camera.position.x + scaledCanvas.width >= el.position.x) {
             el.go();
-            console.log(el.lastDirection);
           }
         }
         el.update();
@@ -323,11 +328,9 @@ class GameCanvas {
     window.addEventListener('keydown', (event: KeyboardEvent) => {
       switch (event.keyCode) {
         case 37:
-          console.log('left');
           keys.left = true;
           break;
         case 38:
-          console.log('up');
           // если добавить && player.isStayOn, то будет прыгать только когда стоит на поверхности.
           if (!player.isDied) {
             player.velocity.y = -10;
@@ -335,25 +338,15 @@ class GameCanvas {
           event.preventDefault();
           break;
         case 39:
-          console.log('right');
           keys.right = true;
           break;
         case 40:
-          console.log('down');
           break;
         case 32:
-          console.log('space');
           event.preventDefault();
           // player.switchSprite('atack');
           keys.atack = true;
           player.isAtack = true;
-          break;
-
-        case 19:
-          console.log('pause');
-          event.preventDefault();
-          // player.switchSprite('atack');
-          !isPaused ? pauseGame() : resumeGame();
           break;
 
         case 122:
@@ -361,7 +354,6 @@ class GameCanvas {
           changeScaling();
           break;
         default:
-          console.log(event.keyCode);
           break;
       }
     });

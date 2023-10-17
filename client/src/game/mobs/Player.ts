@@ -72,7 +72,7 @@ class Player extends Sprite {
     }
   }
 
-  switchSprite(key: string) {
+  switchSprite (key: string) {
     this.sprite = key;
     if (this.image === this.animations[key] || !this.loaded) return;
     this.image = this.animations[key].image;
@@ -81,11 +81,11 @@ class Player extends Sprite {
   }
 
   update () {
-    //квадраты для видимости
-    this.context.fillStyle = 'rgba(255, 0, 0, 0.2)';
-    this.context.fillRect(this.position.x, this.position.y, this.width, this.height);
-    this.context.fillStyle = 'rgba(0, 0, 255, 0.8)';
-    this.context.fillRect(this.hitbox.position.x, this.hitbox.position.y, this.hitbox.width, this.hitbox.height);
+    // квадраты для видимости
+    // this.context.fillStyle = 'rgba(255, 0, 0, 0.2)';
+    // this.context.fillRect(this.position.x, this.position.y, this.width, this.height);
+    // this.context.fillStyle = 'rgba(0, 0, 255, 0.8)';
+    // this.context.fillRect(this.hitbox.position.x, this.hitbox.position.y, this.hitbox.width, this.hitbox.height);
     this.position.x += this.velocity.x;
     this.updateFrames();
     this.updateHitbox();

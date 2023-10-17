@@ -1,4 +1,4 @@
-import { type } from "./maps/honey-grot"
+import { type } from './maps/honey-grot';
 
 /* eslint-disable @typescript-eslint/consistent-type-definitions */
 export interface IAnimationsBase {
@@ -119,4 +119,26 @@ export type tilemapType = {
   columns: number
   width: number
   height: number
+}
+
+export type UserData = {
+  name: string
+  saved: []
+  level: number
+  settings: SettingsType
+  wins: WinGameInfo[]
+}
+
+export type SettingsType = {
+  isMusic: boolean
+  music: number
+  isSounds: boolean
+  sounds: number
+  hardness: 'norm' | 'easy' | 'hard' | string
+  language: 'ru' | 'en' | string
+}
+
+export type WinGameInfo = {
+  level: number
+  score: number
 }

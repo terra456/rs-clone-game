@@ -87,9 +87,9 @@ class Warior extends Player {
 
   update () {
     super.update();
-    //квадраты для видимости
-    this.context.fillStyle = 'rgba(0, 255, 0, 0.2)';
-    this.context.fillRect(this.cameraBox.position.x, this.cameraBox.position.y, this.cameraBox.width, this.cameraBox.height);
+    // квадраты для видимости
+    // this.context.fillStyle = 'rgba(0, 255, 0, 0.2)';
+    // this.context.fillRect(this.cameraBox.position.x, this.cameraBox.position.y, this.cameraBox.width, this.cameraBox.height);
     this.updateCameraBox();
     if (!this.isDied) {
       this.checkCoins();
@@ -168,7 +168,6 @@ class Warior extends Player {
           };
         } else {
           if (collision(this.hitbox, enemy)) {
-            console.log(this.hitbox.position.y, this.hitbox.height, enemy.position.y);
             if (this.hitbox.position.y + this.hitbox.height - 10 <= enemy.position.y) {
               this.killEnemy(enemy);
             } else {
@@ -224,7 +223,6 @@ class Warior extends Player {
       let standing = false;
       for (let i = 0; i < this.floorCollusions.length;) {
         const collusionBlock = this.floorCollusions[i];
-        console.log(this.hitbox.position.y, this.field.height / 2);
         if (this.hitbox.position.x <= collusionBlock.position.x + collusionBlock.width &&
           this.hitbox.position.x + this.hitbox.width >= collusionBlock.position.x) {
           this.isStayOn = true;

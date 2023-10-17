@@ -20,7 +20,6 @@ class Sprite {
       this.width = (this.image.width / this.frameRate);
       this.height = this.image.height;
       this.loaded = true;
-      console.log(this.width);
     };
     this.image.src = imageSrc;
     this.frameRate = frameRate;

@@ -46,7 +46,6 @@ class CollusionField {
     collusions2d.forEach((row, y) => {
       row.forEach((symb, x) => {
         if (symb !== 0) {
-          console.log(symb);
           if (symb === 34) {
             const boar = new Enemy(
               this.context,
